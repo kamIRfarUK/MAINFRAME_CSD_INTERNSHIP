@@ -1,0 +1,464 @@
+**********************************************************
+VSAM Types
+**********************************************************
+EXERCISE 01 : ESDS Creation
+//TECN347A JOB NOTIFY=&SYSUID    
+//STEP1 EXEC PGM=IDCAMS          
+//SYSPRINT DD SYSOUT=*           
+//SYSIN DD *                     
+  DEFINE CLUSTER ( -
+  NAME(TECN347.PRODUCT.ESDS)- 
+  TRACK(5,5)-                    
+  RECORDSIZE(80,80)-             
+  CONTROLINTERVALSIZE(4096)-  
+  NONINDEXED-      
+  )                              
+/*                               
+//*DEFINE CLUSTER ( -
+//*  NAME(TECN347.PRODUCT.ESDS)- 
+//* BOTH ACCEPTED, 
+//*DEFINE CLUSTER (NAME(TECN347.PRODUCT.ESDS)- 
+//*RECORDSIZE(80,80)- ONLY COMMA SEPERATION ACCEPTED
+//*SET MAXCC=0 FOR COND 0012 ERROR
+
+
+
+EXERCISE 02 : LOAD THE RECORDS INTO ESDS DATASET
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IDCAMS                         
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN DD *                                    
+  REPRO -
+  INDATASET(TECN347.PRODUCT.PS1)-       
+  OUTDATASET(TECN347.PRODUCT.ESDS)     
+/*                                          
+//STEP2 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN DD *
+  DELETE 'TECN347.PRODUCT.PS1'
+/*
+//*DELETE IS WRITTEN IN QUOTATIONS SYSPRINT DD SYSOUT=* NOT IN STEP1
+
+
+
+
+EXERCISE 03: Print ESDS
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=*                   
+//SYSIN DD *                             
+  PRINT INDATASET(TECN347.PRODUCT.ESDS)-
+  CHAR                                   
+/*                                       
+//*SYSOUT DD SYSOUT=* IS NOT TAKEN
+
+
+
+EXERCISE 04: Print ESDS Specific Record
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=* 
+//SYSOUT DD SYSOUT=*
+//SYSIN DD *                             
+  PRINT INDATASET(TECN347.PRODUCT.ESDS)-
+  FROMADDRESS(80)-
+  TOADDRESS(400)-
+  CHAR 
+/* 
+//*SYSOUT DD SYSOUT=* IS ACCEPTED                               
+
+
+
+
+
+EXERCISE 05: KSDS Creation
+//TECN347A JOB NOTIFY=&SYSUID     
+//STEP1 EXEC PGM=IDCAMS           
+//SYSPRINT DD SYSOUT=*            
+//SYSOUT DD SYSOUT=*              
+//SYSIN DD *                      
+   DEFINE CLUSTER ( -             
+   NAME(TECN347.TRAIN.DETAILS.KSDS)-
+   TRACK(2,2)-                    
+   RECORDSIZE(80,80)-             
+   CONTROLINTERVALSIZE(512)-      
+   VOLUME(ZAPRD6)-                
+   FREESPACE(10,10)-              
+   KEYS(6,8)-                     
+   INDEXED -                      
+   )                              
+/*                                
+
+
+
+EXERCISE 06 : Load KSDS
+//TECN347A JOB NOTIFY=&SYSUID                     
+//STEP1 EXEC PGM=IDCAMS                           
+//SYSPRINT DD SYSOUT=*                               
+//SYSIN DD *                                      
+  REPRO -
+  INDATASET(TECN347.TRAIN.DETAILS.PS1)-          
+  OUTDATASET(TECN347.TRAIN.DETAILS.KSDS)      
+/* 
+//STEP2 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*                            
+//SYSIN DD *
+  DELETE TECN347.TRAIN.DETAILS.PS1
+/*
+
+//*DONT USE DELETE 'FILENAME' 
+//*USE DELETE FILENAME
+//*DONT USE IF ELSE STATEMENT
+//*DONT USE SYSOUT DD SYSOUT=*
+//* USE REPRO - IN FIRST LINE
+
+
+
+EXERCISE 07 : Print KSDS
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=*                   
+//SYSIN DD *                             
+  PRINT INDATASET(TECN347.TRAIN.DETAILS.KSDS)-
+  CHAR                                   
+/*
+
+
+*****************************************************************
+Access Method Services
+****************************************************************
+EXERCISE 01 : Print based on the Key
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IDCAMS                         
+//SYSPRINT DD SYSOUT=*                          
+//SYSOUT DD SYSOUT=*                            
+//SYSIN DD *                                    
+  PRINT INDATASET(TECN347.TRAIN.DETAILS.KSDS)-    
+  FROMKEY(10230)-                               
+  TOKEY(25896)-                                 
+  CHAR                                          
+/*                                              
+
+
+
+
+EXERCISE 02 : Print based on the Key
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IDCAMS                         
+//SYSPRINT DD SYSOUT=*                          
+//SYSOUT DD SYSOUT=*                            
+//SYSIN DD *                                    
+  PRINT INDATASET(TECN347.TRAIN.DETAILS.KSDS)-    
+  FROMKEY(10230)-                               
+  TOKEY(18790)-                                 
+  CHAR                                          
+/*                                              
+
+
+
+
+EXERCISE 03 : RRDS Creation
+//TECN347A JOB NOTIFY=&SYSUID    
+//STEP1 EXEC PGM=IDCAMS          
+//SYSPRINT DD SYSOUT=*           
+//SYSIN DD *                     
+  DEFINE CLUSTER ( -
+  NAME(TECN347.POLICY.RRDS)- 
+  TRACK(5,5)-                    
+  RECORDSIZE(80,80)-             
+  CONTROLINTERVALSIZE(4096)-  
+  NUMBERED-      
+  )                              
+/*    
+
+
+
+EXERCISE 04 : Load RRDS
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IDCAMS                         
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN DD *                                    
+  REPRO -
+  INDATASET(TECN347.POLICY.PS1)-       
+  OUTDATASET(TECN347.POLICY.RRDS)     
+/*                                          
+//STEP2 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN DD *
+  DELETE 'TECN347.POLICY.PS1'
+/*
+
+
+
+EXERCISE 05 : Print RRDS
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=*                   
+//SYSIN DD *                             
+  PRINT INDATASET(TECN347.POLICY.RRDS)-
+  CHAR                                   
+/*       
+
+
+
+
+EXERCISE 06 : Print only the specific records of RRDS
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=* 
+//SYSOUT DD SYSOUT=*
+//SYSIN DD *                             
+  PRINT INDATASET(TECN347.POLICY.RRDS)-
+  FROMNUMBER(8)-
+  TONUMBER(9)-
+  CHAR 
+/* 
+
+
+
+
+EXERCISE 07 : List information
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1     EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSIN DD *
+  LISTCAT ENT('TECN347.PRODUCT.ESDS') ALL
+/*
+
+
+
+EXERCISE 08 : List information
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1     EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSIN DD *
+  LISTCAT ENT('TECN347.TRAIN.DETAILS.KSDS') ALL
+/*
+
+
+
+
+EXERCISE 09 : List information
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1     EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSIN DD *
+  LISTCAT ENT('TECN347.POLICY.RRDS') ALL
+/*
+
+
+
+
+
+EXERCISE 10 : Alter
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSIN DD *
+  ALTER TECN347.TRAIN.DETAILS.KSDS.DATA  -
+    FREESPACE(12 12))
+/*
+
+
+
+
+EXERCISE 11 : Backup and Restore
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//DD1      DD DSN=TECN347.TRAIN.DETAILS.KSDSBKP,
+//            DISP=(NEW,CATLG,DELETE),
+//            LIKE=TECN347.TRAIN.DETAILS.KSDS
+//SYSIN DD *
+  EXPORT TECN347.TRAIN.DETAILS.KSDS -
+  OUTFILE(DD1) -
+  PERMANENT
+/*
+//STEP2 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  DELETE TECN347.TRAIN.DETAILS.KSDS
+/*
+//*USE LIKE WITH DISP
+
+
+
+
+EXERCISE 12 : Backup ESDS
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//DD1      DD DSN=TECN347.PRODUCT.ESDS.BCKUP,
+//            DISP=(NEW,CATLG,DELETE),
+//            LIKE=TECN347.PRODUCT.ESDS
+//SYSIN DD *
+  EXPORT TECN347.PRODUCT.ESDS -
+  OUTFILE(DD1) -
+  TEMPORARY
+/*
+//STEP2 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  DELETE TECN347.PRODUCT.ESDS
+/*
+
+
+
+
+
+EXERCISE 13 : Restore the KSDS
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//BACKUP   DD DSN=TECN347.TRAIN.DETAILS.KSDSBKP,DISP=SHR
+//SYSIN    DD *                                        
+     IMPORT                                 -
+     INFILE(BACKUP)                         -
+     OUTDATASET(TECN347.TRAIN.DETAILS.KSDS) -
+     INTOEMPTY
+/*
+
+
+
+
+EXERCISE 14 : Restore the ESDS
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//BACKUP   DD DSN=TECN347.PRODUCT.ESDS.BCKUP,DISP=SHR
+//SYSIN    DD *                                        
+     IMPORT                                 -
+     INFILE(BACKUP)                         -
+     OUTDATASET(TECN347.PRODUCT.ESDS) -
+     INTOEMPTY
+/*
+
+
+*********************************************************************
+Alternate Index
+*********************************************************************
+
+
+EXERCISE 01 : AIX Creation
+
+//TECN347A JOB NOTIFY=&SYSUID       
+//STEP1 EXEC PGM=IDCAMS             
+//SYSPRINT DD SYSOUT=*              
+//SYSOUT DD SYSOUT=*                
+//SYSIN DD *                        
+  DEFINE AIX ( -                    
+  NAME(TECN347.TRAIN.DETAILS.AIX)-          
+  RELATE(TECN347.TRAIN.DETAILS.KSDS)- 
+  TRACK(2,2)-                       
+  RECORDSIZE(80,80)-                
+  CONTROLINTERVALSIZE(512)-         
+  VOLUME(ZAPRD6)-                   
+  FREESPACE(10,10)-                 
+  KEYS(15,6)-                       
+  NONUNIQUEKEY -              
+  )                           
+/*                           
+
+
+
+
+EXERCISE 02 : Build AIX
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=*                   
+//SYSOUT DD SYSOUT=*                     
+//SYSIN DD *                             
+  BLDINDEX -                             
+  INDATASET(TECN347.TRAIN.DETAILS.KSDS)-   
+  OUTDATASET(TECN347.TRAIN.DETAILS.AIX)          
+/*                                       
+
+
+
+
+
+EXERCISE 03 : Path
+
+//TECN347A JOB NOTIFY=&SYSUID      
+//STEP1 EXEC PGM=IDCAMS            
+//SYSPRINT DD SYSOUT=*             
+//SYSOUT DD SYSOUT=*               
+//SYSIN DD *                       
+  DEFINE PATH(-                    
+  NAME(TECN347.TRAIN.DETAILS.KSDSAIX)-
+  PATHENTRY(TECN347.TRAIN.DETAILS.AIX)     
+/*                                 
+
+
+
+
+
+EXERCISE 04: Print
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  PRINT INDATASET(TECN347.TRAIN.DETAILS.AIX) -
+  CHAR
+/*
+//* DONT USE PRINT - ON FIRST LINE
+
+
+
+
+EXERCISE 05 : AIX for ESDS
+//TECN347A JOB NOTIFY=&SYSUID       
+//STEP1 EXEC PGM=IDCAMS             
+//SYSPRINT DD SYSOUT=*              
+//SYSOUT DD SYSOUT=*                
+//SYSIN DD *                        
+  DEFINE AIX ( -                    
+  NAME(TECN347.PRODUCT.AIX)-          
+  RELATE(TECN347.PRODUCT.ESDS)- 
+  TRACK(2,2)-                       
+  RECORDSIZE(80,80)-                
+  CONTROLINTERVALSIZE(512)-         
+  VOLUME(ZAPRD6)-                   
+  FREESPACE(10,10)-                 
+  KEYS(5,0)-                       
+  NONUNIQUEKEY -              
+  )                           
+/*                           
+
+
+
+EXERCISE 06 : Build
+//TECN347A JOB NOTIFY=&SYSUID            
+//STEP1 EXEC PGM=IDCAMS                  
+//SYSPRINT DD SYSOUT=*                   
+//SYSOUT DD SYSOUT=*                     
+//SYSIN DD *                             
+  BLDINDEX -                             
+  INDATASET(TECN347.PRODUCT.ESDS)-   
+  OUTDATASET(TECN347.PRODUCT.AIX)          
+/*                                       
+
+
+
+
+EXERCISE 07 : Path
+//TECN347A JOB NOTIFY=&SYSUID      
+//STEP1 EXEC PGM=IDCAMS            
+//SYSPRINT DD SYSOUT=*
+//SYSOUT DD SYSOUT=*
+//SYSIN DD *                       
+  DEFINE PATH(-
+  NAME(TECN347.PRODUCT.DETAILS.EKSDSAIX)-
+  PATHENTRY(TECN347.PRODUCT.AIX)-
+  )
+/*
+//* mistakeUSERID.PRODUCTS.ESDS
+
