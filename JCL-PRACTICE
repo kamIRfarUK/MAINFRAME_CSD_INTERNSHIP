@@ -1,0 +1,773 @@
+*************************************************************
+JCL_STATEMENTS AND PARAMETERS
+************************************************************
+
+Exercise 01: JOB ParametersCoding exercise
+//TECN347A JOB 'DEV,KAMIR FARUK',CLASS=A,                             
+//             MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID                
+
+
+Exercise 02 : Using IEFBR14 Utility
+//TECN347A JOB 'DEV,KAMIR FARUK',CLASS=A,                             
+//             MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID                
+//STEP01 EXEC PGM=IEFBR14                                        
+
+
+Exercise 03 : Allocate a Sequential Datasets
+//TECN347A JOB NOTIFY=&SYSUID                             
+//STEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=TECN347.MYDATA.PS1,                   
+//        DISP=(NEW,CATLG,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)    
+
+
+Exercise 04 : Allocate Partitioned Dataset
+//TECN347A JOB NOTIFY=&SYSUID                         
+//STEP1   EXEC PGM=IEFBR14                            
+//DD1     DD DSN=TECN347.MYDATA.PDS1,               
+//        DISP=(NEW,CATLG,DELETE),                    
+//        SPACE=(TRK,(1,1,5)),                          
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+
+
+Exercise 05 : Allocate a Sequential & Partitioned dataset in a single JOB
+//TECN347A JOB NOTIFY=&SYSUID                             
+//STEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=TECN347.MYDATA.PS2,                   
+//        DISP=(NEW,CATLG,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)    
+//STEP2   EXEC PGM=IEFBR14                            
+//DD1     DD DSN=TECN347.MYDATA.PDS2,               
+//        DISP=(NEW,CATLG,DELETE),                    
+//        SPACE=(TRK,(1,1,5)),                          
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+
+
+Exercise 06 : Delete a Sequential Dataset
+//TECN347A JOB NOTIFY=&SYSUID                             
+//STEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=TECN347.MYDATA.PS2,                   
+//        DISP=(OLD,DELETE)                      
+
+
+Exercise 07 : Create a Temporary Dataset
+//TECN347A JOB NOTIFY=&SYSUID                             
+//STEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=&&TEMP,                   
+//        DISP=(NEW,PASS,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//STEP2   EXEC PGM=IEFBR14
+//DD1     DD DSN=&&TEMP,                   
+//        DISP=(OLD,DELETE,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+
+
+Exercise 08 : Check the Syntax of JCL
+//TECN347A JOB TYPRUN=SCAN,NOTIFY=&SYSUID                             
+//STEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=TECN347.MYDATA.PS1,                   
+//        DISP=(NEW,CATLG,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+
+
+Exercise 09 : SET Parameters to Assign Values for Dataset name and Space Units
+//TECN347A JOB NOTIFY=&SYSUID                      
+//STEP1 EXEC PGM=IEFBR14 
+// SET NAME=TECN347.TEST.PS,U=TRK,P=1,S=1,D=0  
+//DD1 DD DSN=&NAME,                            
+//    DISP=(NEW,CATLG,DELETE),                            
+//    SPACE=(&U,(&P,&S,&D)),
+//    VOLUME=SER=ZAPRD6,
+//    DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+//STEP2 EXEC PGM=IEFBR14 
+// SET NAME=TECN347.TEST.PDS,U=TRK,P=1,S=1,D=1  
+//DD1 DD DSN=&NAME,                           
+//    DISP=(NEW,CATLG,DELETE),                            
+//    SPACE=(&U,(&P,&S,&D)), 
+//    VOLUME=SER=ZAPRD6,
+//    DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+
+
+Exercise 10 : Changing the Disposition Parameters & SPACE Units
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IEFBR14
+//DD1 DD DSN=TECN347.TEST.PS,
+//    DISP=(OLD,CATLG,DELETE),
+//    SPACE=(TRK,(3,3)),
+//    DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+
+
+
+**************************************************************
+JCL_GDG'S_CONDITION-CODES_CONTROL-STALEMENTS_ABEND-HANDLING
+*************************************************************
+
+
+Exercise 01 : GDG Creation
+//TECN347A JOB NOTIFY=&SYSUID         
+//STEP1 EXEC PGM=IDCAMS               
+//SYSPRINT DD SYSOUT=*                
+//SYSIN    DD *                       
+  DEFINE   GDG (NAME(TECN347.TEST.BCK.GDG1)-  
+           LIMIT(5)-                   
+           NOEMPTY-
+           SCRATCH)                                 
+/*                                    
+
+
+Exercise 02 : Repro to Load the content of the Source Dataset to the New Generation
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//INDD DD DSN=TECN347.EMPDET.PS1,
+//        DISP=SHR
+//OUTDD DD DSN=TECN347.TEST.BCK.GDG1(+1),
+//         DISP=(NEW,CATLG,DELETE),
+//         VOLUME=SER=ZAPRD4,
+//         SPACE=(TRK,(1,1)),
+//         DCB=(LRECL=130,RECFM=FB,BLKSIZE=260)
+//SYSIN DD *
+  REPRO INFILE(INDD) OUTFILE(OUTDD)
+/*
+//*USE INFILE INSTEAD OF INDATASET
+
+
+Exercise 03 : Print the Current Generation of the GDG in SPOOL
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//INDD DD DSN=TECN347.TEST.BCK.GDG1(0),
+//        DISP=OLD
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  PRINT INFILE(INDD) CHAR
+/*
+//*USE INFILE INSTEAD OF INDATASET
+
+
+Exercise 04 : Alter GDG
+//TECN347A JOB NOTIFY=&SYSUID         
+//STEP1 EXEC PGM=IDCAMS               
+//SYSPRINT DD SYSOUT=*                
+//SYSIN    DD *                       
+  ALTER -
+  TECN347.TEST.BCK.GDG1-  
+  LIMIT(3)   
+/*                                    
+
+
+
+Exercise 05 : Deletion of GDG and its Generation.
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IEFBR14
+//DD1 DD DSN=TECN347.TEST.BCK.GDG1(0),DISP=(OLD,DELETE,DELETE),
+// SPACE=(TRK,(1,1)),DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+// IF ( STEP1.RC EQ 0 ) THEN
+//STEP2 EXEC PGM=IDCAMS 
+//SYSPRINT DD SYSOUT=*
+//SYSOUT DD SYSOUT=*
+//SYSIN DD *
+  DELETE TECN347.TEST.BCK.GDG1
+/*
+// ENDIF
+
+
+
+
+Exercise 06 : Define GDG, to CREATE and LOAD generations and PRINT the Current Generations
+//TECN347A JOB NOTIFY=&SYSUID         
+//STEP1 EXEC PGM=IDCAMS               
+//SYSPRINT DD SYSOUT=*                
+//SYSIN    DD *                       
+  DEFINE   GDG (NAME(TECN347.TEST1.BCK.GDG)-  
+           LIMIT(2)-                   
+           NOEMPTY-
+           NOSCRATCH)                                 
+/* 
+//STEP2 EXEC PGM=IDCAMS,COND=(0,LT,STEP1)
+//INDD DD DSN=TECN347.EMPDET.PS1,
+//        DISP=SHR
+//OUTDD DD DSN=TECN347.TEST1.BCK.GDG(+1),
+//         DISP=(NEW,CATLG,DELETE),
+//         SPACE=(TRK,(1,1),RLSE),
+//         DCB=(RECFM=FB,LRECL=130,BLKSIZE=1300)
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  REPRO INFIE(INDD) OUTFILE(OUTDD) 
+/*
+//STEP3 EXEC PGM=IDCAMS,COND=(0,LT,STEP2)
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  PRINT INFILE(TECN347.TEST1.BCK.GDG(0)) CHAR
+/*
+
+
+
+Exercise 01 : Handling the Abend
+//TECN347A JOB 001,CLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID              
+//STEP1    EXEC PGM=IEFBR14                                            
+//DD1      DD DSN=TEKUSR0.SAMPL.PS,DISP=(NEW,CATLG,DELETE),            
+//            SPACE=(TRK,(1,1)),DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//SYSABEND DD SYSOUT=A
+
+
+
+Exercise 02 : JCL ABEND
+//JCLEX02 JOB NOTIFY=&SYSUID
+//STEP1    EXEC PGM=IEFBR14
+//SYSABEND DD SYSOUT=*
+//DD1      DD DSN=JCLEX02.MYLIB.TEST.JCL1,
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(TRK,(1,1,1)),
+//            DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//STEP2    EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//DD1      DD DSN=JCLEX02.MYLIB.JCL3,DISP=SHR
+//DD2      DD DSN=JCLEX02.TEST.JCL1,DISP=SHR
+//SYSIN    DD *
+    REPRO INFILE(DD1) OUTFILE(DD2)
+/*
+
+
+****************************************************************
+JCL _PROC_SYMBOLS_OTHERS
+****************************************************************
+
+Exercise 01 : Instream Procedure
+//TECN347A JOB NOTIFY=&SYSUID
+//PROC1 PROC
+//PSTEP1   EXEC PGM=IEFBR14                                
+//DD1     DD DSN=TECN347.SAMPLE.TEST.PS1,                   
+//        DISP=(NEW,CATLG,DELETE),                        
+//        SPACE=(TRK,(1,1)),                              
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)    
+//        PEND
+//JSTEP1 EXEC PROC=PROC1
+//JSTEP2 EXEC PROC=PROC1
+//PSTEP1.DD1 DD DSN=TECN347.SAMPLE.TEST.PS2
+//JSTEP3 EXEC PROC=PROC1
+//PSTEP1.DD1 DD DSN=TECN347.SAMPLE.TEST.PS3
+//JSTEP4 EXEC PROC=PROC1
+//PSTEP1.DD1 DD DSN=TECN347.SAMPLE.TEST.PS4
+
+
+Exercise 02 : Cataloged Procedure
+//TECN347A JOB NOTIFY=&SYSUID
+//         JCLLIB ORDER=TECN347.MYPROC.JCL
+//JSTEP1   EXEC PROC=DSCRT,NAME=TECN347.SAMPLE.TEST.PSA
+
+//DSCRT PROC
+//PSTEP1  EXEC PGM=IEFBR14
+//DD1     DD DSN=&NAME,
+//        DISP=(NEW,CATLG,DELETE),
+//        SPACE=(TRK,(1,1)),
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//        PEND
+
+
+
+Exercise 03 : Cataloged Procedure to Copy the dataset using IEBCOPY
+//TECN347A JOB NOTIFY=&SYSUID
+//         JCLLIB ORDER=TECN347.MYPROC.JCL
+//STEP1 EXEC PROC=DSCOPY,INP=TECN347.MYLIB.JCL1,
+//           OUT=TECN347.MYSAMP.PDS1
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+    COPY INDD=DDIN,OUTDD=DDOUT
+    SELECT MEMBER=(JCLEX01,JCLEX02)
+//STEP2 EXEC PROC=DSCOPY,INP=TECN347.MYLIB.JCL1,
+//           OUT=TECN347.MYSAMP.PDS2
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+    COPY INDD=DDIN,OUTDD=DDOUT
+    EXCLUDE MEMBER=(JCLEX01,JCLEX02)
+/*
+
+//DSCOPY  PROC
+//STEP1  EXEC PGM=IEBCOPY
+//DDIN   DD DSN=&INP,DISP=SHR
+//DDOUT  DD DSN=&OUT,DISP=OLD
+
+
+
+Exercise 04 : Nested Procedure
+//TECN347A JOB NOTIFY=&SYSUID
+//         JCLLIB ORDER=TECN347.MYPROC.JCL
+//DSCRT    PROC
+//STEP1   EXEC PGM=IEFBR14
+//DD1      DD DSN=TECN347.EMPLOY.BCKUP.PS,
+//            DISP=&DISP1,
+//            SPACE=(TRK,(1,1)),
+//            LIKE=(TECN347.EMPDET.PS3)
+//         PEND
+//STEP2   EXEC PROC=DSCRT,DISP1=(NEW,CATLG,DELETE)
+//STEP3   EXEC PROC=PSCOPY,INP=TECN347.EMPDET.PS3,OUT=TECN347.EMPLOY.BCKUP.PS
+//STEP4   EXEC PROC=DSCRT,DISP1=(OLD,DELETE,DELETE)
+//SYSPRINT  DD SYSOUT=*
+
+//PSCOPY   PROC
+//PSTEP1    EXEC PGM=IEBGENER
+//SYSPRINT DD  SYSOUT=*
+//SYSUT1   DD  DSN=&INP,DISP=SHR
+//SYSUT2   DD  DSN=&OUT,DISP=OLD
+//SYSIN    DD  DUMMY
+//         PEND
+
+
+
+Exercise 05 : Condition Code
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+  SET MAXCC=4
+/*
+//STEP2    EXEC PGM=IEBGENER,COND=(4,LT,STEP1)
+//SYSUT1   DD *                        
+  'STEP2 EXECUTION IS SUCCESSFUL'                             
+/*  
+//SYSUT2  DD SYSOUT=*                  
+//SYSPRINT DD SYSOUT=*                 
+//SYSIN    DD *
+/*
+
+
+
+Exercise 07 : Condition Processing using EVEN Statement.
+//TECN347A JOB NOTIFY=&SYSUID                
+//STEP1 EXEC PGM=IEFBR14                     
+//DD1 DD DSN=TECN347.SAMP.TEST.PS,           
+//       DISP=(NEW,CATLG,DELETE),            
+//       SPACE=(TRK,(1,1)),                  
+//       VOLUME=SER=ZAPRD4,                  
+//       DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+//STEP2 EXEC PGM=IEBGENER,COND=EVEN          
+//SYSUT1   DD *                              
+  THIS JOB IS TO TEST ABEND.                 
+/*                                           
+//SYSUT2  DD SYSOUT=*                        
+//SYSPRINT DD SYSOUT=*                       
+//SYSIN    DD *                              
+/*                                           
+
+
+
+Exercise 08 : Condition Processing using ONLY Statement.
+//TECN347A JOB NOTIFY=&SYSUID                
+//STEP1 EXEC PGM=IEFBR14                     
+//DD1 DD DSN=TECN347.SAMP.TEST.PS1,           
+//       DISP=(NEW,CATLG,DELETE),            
+//       SPACE=(TRK,(1,1)),                  
+//       VOLUME=SER=ZAPRD4,                  
+//       DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+//STEP2 EXEC PGM=IEBGENER,COND=ONLY          
+//SYSUT1   DD *                              
+  THIS JOB IS TO TEST ABEND.                 
+/*                                           
+//SYSUT2  DD SYSOUT=*                        
+//SYSPRINT DD SYSOUT=*                       
+//SYSIN    DD *                              
+/*                                           
+
+
+****************************************************************
+IBM-UTILITIES-I
+****************************************************************
+
+
+Exercise 01 : IEBGENER Utility
+//TECN347A JOB NOTIFY=&SYSUID 
+//STEP1 EXEC PGM=IEFBR14
+//DD1 DD   DSN=TECN347.EMPDET.COPY.PS1,
+//         DISP=(NEW,CATLG,DELETE),                        
+//         SPACE=(TRK,(1,1)),                              
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+//STEP2    EXEC PGM=IEBGENER
+//SYSUT1   DD DSN=TECN347.EMPDET.PS3,
+//         DISP=SHR     
+//SYSUT2   DD DSN=TECN347.EMPDET.COPY.PS1,
+//         DISP=OLD
+//SYSPRINT DD SYSOUT=*                                   
+//SYSIN    DD *                                          
+/* 
+
+
+
+Exercise 02 : Use IEBGENER Utility and Pass the input to the source dataset
+//TECN347A JOB NOTIFY=&SYSUID     
+//STEP1    EXEC PGM=IEBGENER      
+//SYSUT1   DD *                   
+  WELCOME TO MAINFRAME
+  IEBGENER UTILITY EXAMPLE                        
+/*                                
+//SYSUT2  DD DSN=TECN347.MYDATA.PS1,
+//        DISP=(NEW,CATLG,DELETE),
+//        SPACE=(TRK,(1,1)),
+//        DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//SYSPRINT DD SYSOUT=*            
+//SYSIN    DD *                   
+/*                                
+
+
+
+Exercise 03 : Concatenation of the datasetsCoding exercise
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP2    EXEC PGM=IEBGENER
+//SYSPRINT DD  SYSOUT=*
+//SYSUT1   DD  DSN=TECN347.EMPDET.COPY.PS1,DISP=SHR
+//         DD  DSN=TECN347.MYDATA.PS1,DISP=SHR
+//SYSUT2   DD  DSN=TECN347.EMPDET.ALL.PS1,
+//         SPACE=(TRK,(1,1)),
+//         DISP=(NEW,CATLG,DELETE),
+//         DCB=(RECFM=FB,LRECL=80,DSORG=PS)
+//SYSIN    DD  *
+/*
+
+
+
+
+Exercise 04 : IEBCOPY Utility
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IEBCOPY                        
+//SYSUT1 DD DSN=TECN347.MYLIB.JCL1,                
+//          DISP=SHR                            
+//SYSUT2 DD DSN=TECN347.BACKUP.JCL1,            
+//          DISP=(NEW,CATLG,DELETE),            
+//          SPACE=(TRK,(5,5,5)),                
+//          DCB=(LRECL=80,RECFM=FB,BLKSIZE=800) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN DD *                                    
+  COPY OUTDD=SYSUT2,INDD=SYSUT1                 
+  SELECT MEMBER=(JCLEX01,JCLEX03,JCLEX05,JCLEX07)               
+/*                                              
+
+
+Exercise 05 : IEBCOPY - Backup, Compress, Clean Up
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP1    EXEC PGM=IEBCOPY
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD DSN=TECN347.MYLIB.JCL1,DISP=SHR
+//SYSUT2   DD DSN=TECN347.MYLIB.BACKUP.JCL1,
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(TRK,(1,1,5),RLSE),
+//            DCB=(DSORG=PO,RECFM=FB,LRECL=80)
+//SYSIN    DD *
+   COPY INDD=SYSUT1,OUTDD=SYSUT2
+/*
+//STEP2    EXEC PGM=IEBCOPY
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD DSN=TECN347.MYLIB.JCL1,DISP=SHR
+//SYSUT2   DD DSN=TECN347.MYLIB.JCL1,DISP=OLD
+//SYSIN    DD *
+  COPY OUTDD=SYSUT2,INDD=SYSUT1
+/*
+//STEP3    EXEC PGM=IEFBR14
+//SYSUT1   DD DSN=TECN347.MYLIB.BACKUP.JCL1,DISP=(MOD,DELETE,DELETE)
+//SYSIN    DD *
+/*
+//*
+
+
+
+Exercise 06 : IEBCOMPR Utility
+//TECN347A JOB CLASS=A,
+//             MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID                   
+//STEP1 EXEC PGM=IEBCOMPR 
+//SYSPRINT DD SYSOUT=*
+//SYSUT1 DD DSN=TECN347.EMPDET.COPY.PS1,                
+//          DISP=SHR                            
+//SYSUT2 DD DSN=TECN347.EMPDET.PS3,            
+//          DISP=SHR
+//SYSIN DD *   
+  COMPARE TYPORG=PS
+/*                                              
+
+
+Exercise 07 : IDCAMS Utility to perform the Copy operation.
+//TECN347A JOB NOTIFY=&SYSUID
+//STEP EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+   REPRO-
+   INDATASET(TECN347.EMPDET.PS1)-
+   OUTDATASET(TECN347.EMPLOY.DETAILS.PS1)-
+   COUNT(3)
+/*
+//* CAN USE DD STATEMENT OR CAN DIRECTLY USE DATASET NAME
+
+
+
+Exercise 08 : IDCAMS Utility and PRINT the records in character format into the SPOOL.
+//TECN347A JOB NOTIFY=&SYSUID                               
+//STEP1 EXEC PGM=IDCAMS                                     
+//SYSPRINT DD SYSOUT=*                                      
+//SYSIN DD *                                                
+           PRINT INDATASET(TECN347.EMPLOY.DETAILS.PS1) -         
+           CHAR -                                           
+           COUNT(1) 
+/*
+//* NO DD STATEMENTS IN IDCAMS
+
+
+
+Exercise 09 : Skip the first 4 records, copy the next 5 records, and print the records into the SPOOL.
+//TECN347A JOB CLASS=A,
+//             MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID  
+//STEP1 EXEC PGM=IDCAMS
+//DD1 DD DSN=TECN347.EMPDET.PS1,DISP=SHR
+//DD2 DD DSN=TECN347.EMPLOY.DETAILS.PS2,DISP=OLD
+//SYSPRINT DD SYSOUT=*                                      
+//SYSIN DD *                                        
+        REPRO -
+        INFILE(DD1) -
+        OUTFILE(DD2) -
+        SKIP(4) -                                 
+        COUNT(5)
+/*
+//STEP2 EXEC PGM=IDCAMS
+//DD3 DD DSN=TECN347.EMPLOY.DETAILS.PS2,DISP=OLD
+//SYSPRINT DD SYSOUT=*                                      
+//SYSIN DD *                                        
+           PRINT INFILE(DD3) - 
+           CHAR                                  
+/*                                                  
+
+
+
+****************************************************************
+IBM UTILITIES II
+***************************************************************
+
+
+Exercise 01 : Sort the Records Based on EMPNO & Department
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP01 EXEC PGM=SORT 
+//SORTIN DD DSN=TECN347.EMPREC.PS1,          
+//          DISP=SHR
+//SORTOUT DD DSN=TECN347.EMPREC.SORT.PS1,
+//           DISP=SHR
+//SYSOUT DD SYSOUT=*
+//SYSIN     DD *                                 
+  SORT FIELDS=(1,6,CH,A,20,2,CH,A)    
+/*                                              
+
+00010  ALLEN       CS 025000 INDIA             
+00020  KANE        EC 020000 NEW ZEALAND       
+00030  CHRISTINE   IT 025000 INDIA             
+00040  SALLY       IT 023000 SOUTH AFRICA      
+00050  RONALDO     EC 021000 NEW ZEALAND       
+00060  MESSI       CS 022000 ENGLAND           
+00080  ROGER       CS 020000 SOUTH AFRICA      
+00080  DAVID       CS 025000 SINGAPORE         
+00090  MICHAEL     IT 022000 MALAYSIA          
+00100  USAIN       EC 022000 SINGAPORE         
+00110  TONY        IT 021000 ENGLAND           
+00120  JAMES       EC 025000 SINGAPORE         
+00120  JAMES       EC 025000 SINGAPORE         
+00130  WILLIAMS    IT 020000 ENGLAND           
+00130  WILLIAMS    IT 020000 ENGLAND           
+00140  IAN         CS 018000 ENGLAND           
+00140  IAN         CS 018000 ENGLAND   
+00150  HENNA       IT 018000 MALAYSIA  
+00150  HENNA       IT 018000 MALAYSIA
+
+
+Exercise 02 : Split the Employee records into 3 files using SORT Utility based on Department ID
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP01 EXEC PGM=SORT 
+//SORTIN DD DSN=TECN347.EMPREC.PS1,          
+//          DISP=SHR
+//SORTOF1 DD DSN=TECN347.EMPREC.CS.PS1,
+//         DISP=(NEW,CATLG),                        
+//         LIKE=(TECN347.EMPREC.PS1)
+//SORTOF2 DD DSN=TECN347.EMPREC.IT.PS1,
+//         DISP=(NEW,CATLG),                        
+//         LIKE=(TECN347.EMPREC.PS1)
+//SORTOF3 DD DSN=TECN347.EMPREC.EC.PS1,
+//         DISP=(NEW,CATLG),                        
+//         LIKE=(TECN347.EMPREC.PS1) 
+//SYSPRINT DD SYSOUT=*
+//SYSOUT DD SYSOUT=*
+//SYSIN     DD *                                 
+  SORT FIELDS=COPY
+  OUTFIL FILES=1,INCLUDE=(20,2,CH,EQ,C'CS')
+  OUTFIL FILES=2,INCLUDE=(20,2,CH,EQ,C'IT')
+  OUTFIL FILES=3,INCLUDE=(20,2,CH,EQ,C'EC')
+/*                                              
+//*EMPCS
+00010  ALLEN       CS 025000 INDIA             
+00060  MESSI       CS 022000 ENGLAND           
+00080  ROGER       CS 020000 SOUTH AFRICA      
+00080  DAVID       CS 025000 SINGAPORE         
+00140  IAN         CS 018000 ENGLAND           
+00140  IAN         CS 018000 ENGLAND   
+//*EMPIT
+00030  CHRISTINE   IT 025000 INDIA             
+00040  SALLY       IT 023000 SOUTH AFRICA      
+00090  MICHAEL     IT 022000 MALAYSIA          
+00110  TONY        IT 021000 ENGLAND           
+00130  WILLIAMS    IT 020000 ENGLAND           
+00130  WILLIAMS    IT 020000 ENGLAND           
+00150  HENNA       IT 018000 MALAYSIA  
+00150  HENNA       IT 018000 MALAYSIA
+//*EMPEC
+00020  KANE        EC 020000 NEW ZEALAND       
+00050  RONALDO     EC 021000 NEW ZEALAND       
+00100  USAIN       EC 022000 SINGAPORE         
+00120  JAMES       EC 025000 SINGAPORE         
+00120  JAMES       EC 025000 SINGAPORE         
+
+
+
+Exercise 03 : Merge the Dataset
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP01 EXEC PGM=SORT 
+//SORTIN01 DD DSN=TECN347.EMPREC.CS.PS1,          
+//          DISP=SHR
+//SORTIN02 DD DSN=TECN347.EMPREC.IT.PS1,          
+//          DISP=SHR
+//SORTOUT DD DSN=TECN347.MERGE.PS1,
+//         DISP=(NEW,CATLG),                        
+//         LIKE=(TECN347.EMPREC.PS1)
+//SYSOUT DD SYSOUT=*
+//SYSIN     DD *                                 
+  MERGE FIELDS=(1,6,CH,A),EQUALS
+/*                                              
+
+
+
+Exercise 04 : Calculate the Total Salary in Department Wise
+//TECN347A JOB NOTIFY=&SYSUID                         
+//STEP01 EXEC PGM=SORT                                
+//SORTIN DD DSN=TECN347.EMPREC.PS1,                  
+//          DISP=SHR                                  
+//SORTOUT DD DSN=TECN347.EMPREC.TOTAL.PS1,            
+//           DISP=(NEW,CATLG,DELETE),                 
+//           SPACE=(TRK,(1,1)),                       
+//           VOLUME=SER=ZAPRD4,                       
+//           DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)      
+//SYSPRINT DD SYSOUT=*                                
+//SYSOUT DD SYSOUT=*                                  
+//SYSIN     DD *                                      
+  SORT FIELDS=(20,2,CH,A)                             
+  SUM FIELDS=(23,6,ZD)
+/*                                         
+
+
+
+Exercise 05 : Sort the Employee Records in Descending Order
+//TECN347A JOB NOTIFY=&SYSUID                         
+//STEP01 EXEC PGM=SORT                                
+//SORTIN DD DSN=TECN347.EMPREC.PS1,                  
+//          DISP=SHR                                  
+//SORTOUT DD DSN=TECN347.EMPREC.ASIA.PS1,            
+//           DISP=(NEW,CATLG,DELETE),                 
+//           SPACE=(TRK,(1,1)),                       
+//           VOLUME=SER=ZAPRD4,                       
+//           DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)      
+//SYSPRINT DD SYSOUT=*                                
+//SYSOUT DD SYSOUT=*                                  
+//SYSIN     DD *                                      
+  SORT FIELDS=(1,6,CH,D)                              
+  INCLUDE COND=(30,15,CH,EQ,C'INDIA',
+               OR,30,15,CH,EQ,C'MALAYSIA', 
+               OR,30,15,CH,EQ,C'SINGAPORE')
+/*                                         
+//*ASIA
+00010  ALLEN       CS 025000 INDIA             
+00020  KANE        EC 020000 NEW ZEALAND       
+00030  CHRISTINE   IT 025000 INDIA             
+00040  SALLY       IT 023000 SOUTH AFRICA      
+00050  RONALDO     EC 021000 NEW ZEALAND       
+00060  MESSI       CS 022000 ENGLAND           
+00080  ROGER       CS 020000 SOUTH AFRICA      
+00080  DAVID       CS 025000 SINGAPORE         
+00090  MICHAEL     IT 022000 MALAYSIA          
+00100  USAIN       EC 022000 SINGAPORE         
+00110  TONY        IT 021000 ENGLAND           
+00120  JAMES       EC 025000 SINGAPORE         
+00120  JAMES       EC 025000 SINGAPORE         
+00130  WILLIAMS    IT 020000 ENGLAND           
+00130  WILLIAMS    IT 020000 ENGLAND           
+00140  IAN         CS 018000 ENGLAND           
+00140  IAN         CS 018000 ENGLAND   
+00150  HENNA       IT 018000 MALAYSIA  
+00150  HENNA       IT 018000 MALAYSIA
+
+
+
+
+Exercise 06 : Sort the Records to group the duplicate records into one record by summing the salary field
+//TECN347A  JOB NOTIFY=&SYSUID
+//STEP1     EXEC PGM=SORT
+//SYSPRINT  DD SYSOUT=*
+//SYSOUT    DD SYSOUT=*
+//SORTIN    DD DSN=TECN347.EMPREC.PS1,DISP=SHR
+//SORTOUT   DD DSN=TECN347.SORTREC.OUT.PS6,
+//          DISP=(NEW,CATLG,DELETE),
+//          LIKE=TECN347.EMPREC.PS1
+//SYSIN     DD *
+   SORT FIELDS=(1,6,CH,D)
+   SUM FIELDS=(23,6,ZD)
+   SUM FIELDS=NONE
+/*
+
+
+
+Exercise 07 : Sort the Employee Records in Ascending Order whose Salary is lesser than 20000.
+//TECN347A JOB NOTIFY=&SYSUID                   
+//STEP01 EXEC PGM=SORT 
+//SORTIN DD DSN=TECN347.EMPREC.PS1,          
+//          DISP=SHR
+//SORTOUT DD DSN=TECN347.SORTREC.OUT.PS7,
+//         DISP=(NEW,CATLG,DELETE),                        
+//         LIKE=(TECN347.EMPREC.PS1)
+//SYSPRINT DD SYSOUT=*
+//SYSOUT DD SYSOUT=*
+//SYSIN     DD *                                 
+  SORT FIELDS=(1,6,CH,A)
+  SUM FIELDS=NONE
+  INCLUDE COND=(23,6,ZD,LT,020000)
+/*                                              
+
+
+
+Exercise 08 : Create a Report based on the SORT Utility
+//TECN347A JOB NOTIFY=&SYSUID                         
+//STEP01 EXEC PGM=SORT                                
+//SORTIN DD DSN=TECN347.EMPREC.PS1,                  
+//          DISP=SHR                               
+//SORTOUT DD DSN=TECN347.EMP.DET.REPORT,            
+//           DISP=(NEW,CATLG,DELETE),
+//       SPACE=(TRK,(1,1)),
+//       DCB=(RECFM=FB,LRECL=80,BLKSIZE=800),
+//       VOL=SER=ZAPRD4 
+//SYSPRINT DD SYSOUT=*                                
+//SYSOUT DD SYSOUT=*                                  
+//SYSIN     DD * 
+  SORT FIELDS=(20,2,CH,A)
+  OUTFIL REMOVECC,
+  HEADER1=(26:C'EMPLOYEE DETAILS',39X),
+  HEADER2=(80C'*'),
+  TRAILER2=(80C'*'),
+  TRAILER1=(2:C'TOTAL SALARY:',24:TOT=(23,6,ZD,LENGTH=7))
+/* 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
