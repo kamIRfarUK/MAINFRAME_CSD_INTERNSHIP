@@ -1,0 +1,278 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. LIBMNGT.                                             00020018
+       ENVIRONMENT DIVISION.                                            00030001
+       INPUT-OUTPUT SECTION.                                            00040001
+       FILE-CONTROL.                                                    00050001
+           SELECT TI001-PS                                              00060001
+               ASSIGN TO DD1                                            00070001
+               ORGANIZATION IS SEQUENTIAL                               00080001
+               ACCESS IS SEQUENTIAL                                     00090001
+               FILE STATUS WS-FST-TI001.                                00100001
+           SELECT TO001-PS                                              00110001
+               ASSIGN TO DD2                                            00120001
+               ORGANIZATION IS SEQUENTIAL                               00130001
+               ACCESS IS SEQUENTIAL                                     00140001
+               FILE STATUS WS-FST-TO001.                                00150001
+       DATA DIVISION.                                                   00160001
+       FILE SECTION.                                                    00170001
+       FD TI001-PS.                                                     00180001
+       01 TI001-PS-REC.                                                 00190010
+           05 TI001-CUSTMR                PIC X(15).                    00200010
+           05 F                           PIC X(01).                    00210001
+           05 TI001-BKNAME                PIC X(30).                    00220010
+           05 F                           PIC X(01).                    00230001
+           05 TI001-BKID                  PIC X(03).                    00240010
+           05 F                           PIC X(01).                    00250001
+           05 TI001-TOTBK                 PIC 9(05).                    00260030
+           05 F                           PIC X(01).                    00270001
+           05 TI001-TOTBK-WTD             PIC 9(05).                    00280030
+           05 F                           PIC X(01).                    00290002
+           05 TI001-WTD-DATE              PIC X(10).                    00300003
+           05 F                           PIC X(47).                    00310010
+       FD TO001-PS.                                                     00320033
+       01 TO001-PS-REC PIC X(120).                                      00322033
+       WORKING-STORAGE SECTION.                                         00500002
+       01 WS-VARS.                                                      00510026
+                05 WS-TITLE.                                            00540005
+                    10 F              PIC X(01) VALUE SPACES.           00541007
+                    10 CUSTOMER       PIC X(15) VALUE 'CUSTOMER NAME'.  00542007
+                    10 F              PIC X(01) VALUE SPACES.           00550007
+                    10 BOOK-NAME      PIC X(30) VALUE 'BOOK NAME'.      00560007
+                    10 F              PIC X(01) VALUE SPACES.           00570007
+                    10 BOOK-ID        PIC X(08) VALUE 'BOOK NO.'.       00571027
+                    10 F              PIC X(01) VALUE SPACES.           00572007
+                    10 TOT-BOOKS      PIC X(08) VALUE 'TOTALBKS'.       00580027
+                    10 F              PIC X(01) VALUE SPACES.           00590007
+                    10 BOOKS-WTD      PIC X(09) VALUE 'TOTBKSWTD'.      00600027
+                    10 F              PIC X(01) VALUE SPACES.           00610007
+                    10 WTD-DATE       PIC X(18) VALUE 'WTD DATE'.       00620027
+                    10 F              PIC X(01) VALUE SPACES.           00630007
+                    10 BOOKS-PST-WTD  PIC X(09) VALUE 'BKSPSTWTD'.      00640027
+                    10 F              PIC X(01) VALUE SPACES.           00650007
+                    10 BOOKS-ON-WTD   PIC X(10) VALUE 'BKSWTDDATE'.     00660007
+                    10 F              PIC X(05) VALUE SPACES.           00661027
+                05 WS-PIC-TITLE.                                        00670007
+                    10 F              PIC X(01) VALUE SPACES.           00671010
+                    10 CUSTOMER       PIC X(15) VALUE 'X(15)'.          00672007
+                    10 F              PIC X(01) VALUE SPACES.           00673007
+                    10 BOOK-NAME      PIC X(30) VALUE 'X(30)'.          00674007
+                    10 F              PIC X(01) VALUE SPACES.           00675007
+                    10 BOOK-ID        PIC X(05) VALUE 'X(3)'.           00676029
+                    10 F              PIC X(01) VALUE SPACES.           00677007
+                    10 TOT-BOOKS      PIC X(05) VALUE '9(05)'.          00678008
+                    10 F              PIC X(01) VALUE SPACES.           00679007
+                    10 BOOKS-WTD      PIC X(05) VALUE '9(05)'.          00679108
+                    10 F              PIC X(01) VALUE SPACES.           00679208
+                    10 WTD-DATE       PIC X(10) VALUE 'X(10)'.          00679308
+                    10 F              PIC X(01) VALUE SPACES.           00679408
+                    10 BOOKS-PST-WTD  PIC X(10) VALUE 'X(10)'.          00679508
+                    10 F              PIC X(01) VALUE SPACES.           00679608
+                    10 BOOKS-ON-WTD   PIC X(10) VALUE 'X(10)'.          00679708
+                    10 F              PIC X(23) VALUE SPACES.           00679829
+                05 WS-LINE            PIC X(120) VALUE ALL '-'.         00680010
+                05 WS-RECORD.                                           00681008
+                    10 TO001-CUSTMR                PIC X(15).           00681110
+                    10 F                           PIC X(01).           00681210
+                    10 TO001-BKNAME                PIC X(30).           00681310
+                    10 F                           PIC X(01).           00681410
+                    10 TO001-BKID                  PIC X(03).           00681510
+                    10 F                           PIC X(01).           00681610
+                    10 TO001-TOTBK                PIC 9(05).            00681730
+                    10 F                           PIC X(01).           00681810
+                    10 TO001-TOTBK-WTD            PIC 9(05).            00681930
+                    10 F                           PIC X(01).           00682010
+                    10 TO001-WTD-DATE              PIC X(10).           00682110
+                    10 F                           PIC X(01).           00682210
+                    10 TO001-TOTBK-PSWTD         PIC 9(10).             00682330
+                    10 F                           PIC X(01).           00682410
+                    10 TO001-TOTBK-ONWTD          PIC 9(10).            00682530
+                    10 F                           PIC X(25).           00682610
+                05 WS-FOOTER.                                           00682908
+                    10 FOOT-TITLE         PIC X(74) VALUE 'TOTAL'.      00683046
+                    10 FOOT-TOTBK        PIC 9(10).                     00683130
+                    10 F                  PIC X(01).                    00683246
+                    10 FOOT-TOTWTD        PIC 9(10).                    00683310
+                    10 F                  PIC X(25).                    00684046
+                05 WS-FST-TO001           PIC 9(02).                    00685010
+                05 WS-FST-TI001           PIC 9(02).                    00686010
+                05 WS-READCOUNT           PIC 9(02) VALUE 1.            00687045
+                05 WS-FT-COUNT            PIC 9(02).                    00688010
+                05 WS-PSWTD              PIC 9(10).                     00688130
+                05 WS-ONWTD               PIC 9(10).                    00688215
+                05 WS-TOTBK-PSWTD         PIC 9(10).                    00689010
+                05 WS-TOTBK-ONWTD         PIC 9(10).                    00689110
+                05 WS-DATE                PIC X(10).                    00689212
+       PROCEDURE DIVISION.                                              00690003
+       0000-MAIN-PARA.                                                  00700003
+           PERFORM 1000-INIT-PARA                                       00710003
+                THRU 1000-INIT-PARA-EXIT                                00720003
+           PERFORM 3000-PROC-PARA                                       00730003
+                THRU 3000-PROC-PARA-EXIT                                00740003
+           PERFORM 9000-TERM-PARA                                       00750003
+                THRU 9000-TERM-PARA-EXIT                                00760003
+           .                                                            00770003
+       1000-INIT-PARA.                                                  00780003
+           CONTINUE                                                     00790003
+           .                                                            00800003
+       1000-INIT-PARA-EXIT.                                             00810003
+           EXIT                                                         00820003
+           .                                                            00830003
+       9000-TERM-PARA.                                                  00840003
+           STOP RUN                                                     00850003
+           .                                                            00860003
+       9000-TERM-PARA-EXIT.                                             00861021
+           EXIT                                                         00862021
+           .                                                            00863021
+       3000-PROC-PARA.                                                  00870003
+           PERFORM 3100-OPEN-PARA                                       00880003
+              THRU 3100-OPEN-PARA-EXIT                                  00890003
+           PERFORM 4100-HEAD-PARA                                       00891045
+              THRU 4100-HEAD-PARA-EXIT                                  00892045
+           PERFORM 3200-READ-PARA                                       00900003
+              THRU 3200-READ-PARA-EXIT                                  00910003
+                UNTIL WS-FST-TI001 = 10                                 00920003
+           PERFORM 3300-CLOSE-PARA                                      00930003
+                THRU 3300-CLOSE-PARA-EXIT                               00940003
+           .                                                            00950003
+       3000-PROC-PARA-EXIT.                                             00960003
+           EXIT                                                         00970003
+           .                                                            00980003
+       3100-OPEN-PARA.                                                  00990003
+           OPEN INPUT TI001-PS                                          01000003
+           EVALUATE TRUE                                                01010003
+           WHEN WS-FST-TI001 = 00                                       01020003
+                DISPLAY 'TI001 OPENED SUCCESS'                          01030010
+           WHEN OTHER                                                   01040003
+                DISPLAY 'TI001 OPENED FAILED'                           01050010
+                PERFORM 9000-TERM-PARA                                  01070003
+           END-EVALUATE                                                 01080003
+           OPEN OUTPUT TO001-PS                                         01090003
+           EVALUATE TRUE                                                01100003
+           WHEN WS-FST-TO001 = 00                                       01110003
+                DISPLAY 'TO001 OPENED SUCCESS'                          01120010
+           WHEN OTHER                                                   01130003
+                DISPLAY 'TO001 OPEN FAILED'                             01140003
+                DISPLAY 'STATUS:' WS-FST-TO001                          01150003
+                PERFORM 9000-TERM-PARA                                  01160003
+           END-EVALUATE                                                 01170003
+           .                                                            01180003
+       3100-OPEN-PARA-EXIT.                                             01190003
+           EXIT                                                         01200003
+           .                                                            01210003
+       3200-READ-PARA.                                                  01220003
+           MOVE SPACES TO TI001-PS-REC TO001-PS-REC WS-RECORD           01230044
+           READ TI001-PS                                                01240003
+           DISPLAY  ' RECORD   :' TI001-PS-REC                          01241040
+           EVALUATE TRUE                                                01250003
+           WHEN WS-FST-TI001 = 00                                       01260003
+           DISPLAY 'TI001 READ SUCCESS'                                 01260137
+                EVALUATE TRUE                                           01260236
+      * CONTROL BREAK LOGIC                                             01260340
+                WHEN WS-READCOUNT = 1                                   01260436
+                    WRITE TO001-PS-REC                                  01271039
+                    ADD 1 TO WS-READCOUNT                               01272037
+                    PERFORM 3210-CALC-PARA                              01280036
+                       THRU 3210-CALC-PARA-EXIT                         01290036
+                    MOVE TI001-WTD-DATE TO WS-DATE                      01290136
+                WHEN OTHER                                              01290236
+                    IF TI001-WTD-DATE = WS-DATE                         01290336
+                         ADD 1 TO WS-READCOUNT                          01290437
+                         PERFORM 3210-CALC-PARA                         01290636
+                            THRU 3210-CALC-PARA-EXIT                    01290736
+                    ELSE                                                01290836
+                       PERFORM 5000-FOOTER-PARA                         01290936
+                          THRU 5000-FOOTER-PARA-EXIT                    01291036
+                       MOVE 0 TO WS-TOTBK-PSWTD                         01291136
+                       MOVE 0 TO WS-TOTBK-ONWTD                         01291236
+                       PERFORM 3210-CALC-PARA                           01291340
+                          THRU 3210-CALC-PARA-EXIT                      01291440
+                       MOVE TI001-WTD-DATE TO WS-DATE                   01291536
+                    END-IF                                              01291636
+                END-EVALUATE                                            01292036
+           WHEN WS-FST-TI001 = 10                                       01300003
+                IF WS-READCOUNT = 0                                     01310010
+                   DISPLAY 'EMPTY INPUT FILE'                           01320040
+                ELSE                                                    01330003
+                   DISPLAY 'END OF FILE: ALL MEMBERS READ'              01340040
+                   EVALUATE TRUE                                        01341040
+                   WHEN WS-FT-COUNT = 0                                 01342040
+                       PERFORM 5000-FOOTER-PARA                         01343040
+                          THRU 5000-FOOTER-PARA-EXIT                    01344040
+                   END-EVALUATE                                         01345040
+                END-IF                                                  01350003
+           WHEN OTHER                                                   01360003
+                DISPLAY 'TI001 READ FAILED'                             01370003
+                DISPLAY 'STATUS:' WS-FST-TI001                          01380003
+           END-EVALUATE                                                 01390003
+           .                                                            01400003
+       3200-READ-PARA-EXIT.                                             01410003
+           EXIT                                                         01420003
+           .                                                            01430003
+       3300-CLOSE-PARA.                                                 01431028
+           CLOSE TI001-PS                                               01432010
+           CLOSE TO001-PS                                               01433010
+           .                                                            01434010
+       3300-CLOSE-PARA-EXIT.                                            01435010
+           EXIT                                                         01436010
+           .                                                            01437010
+       3210-CALC-PARA.                                                  01440010
+           ADD 1 TO WS-FT-COUNT                                         01481040
+           MOVE 0 TO  WS-PSWTD                                          01482041
+           MOVE 0 TO  WS-ONWTD                                          01482141
+           COMPUTE WS-PSWTD = TI001-TOTBK - TI001-TOTBK-WTD             01482240
+           MOVE    TI001-TOTBK-WTD TO WS-ONWTD                          01483042
+           PERFORM 3211-WRITE-PARA                                      01483138
+              THRU 3211-WRITE-PARA-EXIT                                 01483238
+           COMPUTE WS-TOTBK-PSWTD = WS-TOTBK-PSWTD + WS-PSWTD           01484038
+           COMPUTE WS-TOTBK-ONWTD = WS-TOTBK-ONWTD + WS-ONWTD           01485038
+           MOVE TI001-WTD-DATE TO WS-DATE                               01486038
+           .                                                            01489017
+       3210-CALC-PARA-EXIT.                                             01489122
+           EXIT                                                         01489222
+           .                                                            01489322
+       3211-WRITE-PARA.                                                 01490010
+           MOVE TI001-CUSTMR     TO TO001-CUSTMR                        01500040
+           MOVE TI001-BKNAME     TO TO001-BKNAME                        01501040
+           MOVE TI001-BKID       TO TO001-BKID                          01502040
+           MOVE TI001-TOTBK      TO TO001-TOTBK                         01503040
+           MOVE TI001-TOTBK-WTD  TO TO001-TOTBK-WTD                     01504040
+           MOVE TI001-WTD-DATE   TO TO001-WTD-DATE                      01510040
+           MOVE WS-PSWTD         TO TO001-TOTBK-PSWTD                   01512042
+           MOVE TI001-TOTBK-WTD  TO TO001-TOTBK-ONWTD                   01513042
+           MOVE WS-RECORD TO TO001-PS-REC                               01520144
+           DISPLAY 'BEFORE WRITING '  TO001-PS-REC                      01520244
+           WRITE TO001-PS-REC                                           01520344
+           EVALUATE TRUE                                                01521040
+           WHEN WS-FST-TO001 = 0                                        01522040
+               DISPLAY ' RECORD WRITTEN'                                01523040
+           WHEN OTHER                                                   01524040
+                DISPLAY ' RECORD WRITE FAILED  :' WS-FST-TO001          01525040
+           END-EVALUATE                                                 01526040
+           .                                                            01530010
+        3211-WRITE-PARA-EXIT.                                           01540010
+           EXIT                                                         01550010
+           .                                                            01560010
+        4100-HEAD-PARA.                                                 01570010
+           MOVE WS-TITLE TO TO001-PS-REC.                               01580010
+           WRITE TO001-PS-REC                                           01580127
+           MOVE WS-PIC-TITLE TO TO001-PS-REC.                           01581020
+           WRITE TO001-PS-REC                                           01590010
+           MOVE WS-LINE TO TO001-PS-REC                                 01600010
+           WRITE TO001-PS-REC                                           01610010
+           .                                                            01620010
+        4100-HEAD-PARA-EXIT.                                            01630010
+           EXIT                                                         01640010
+           .                                                            01650010
+       5000-FOOTER-PARA.                                                01660010
+           MOVE WS-TOTBK-PSWTD TO FOOT-TOTBK                            01670030
+           MOVE WS-TOTBK-ONWTD  TO FOOT-TOTWTD                          01671013
+           MOVE WS-FOOTER TO TO001-PS-REC                               01680013
+           WRITE TO001-PS-REC                                           01690013
+           MOVE 1 TO WS-FT-COUNT                                        01700013
+           MOVE WS-LINE TO TO001-PS-REC                                 01710013
+           WRITE TO001-PS-REC                                           01720013
+           .                                                            01730013
+       5000-FOOTER-PARA-EXIT.                                           01740011
+           EXIT                                                         01750011
+           .                                                            01760011
+
