@@ -1,0 +1,2338 @@
+******************************************************************
+Program Structure
+*****************************************************************
+
+
+Exercise 1.1 : COBOL Program Layout
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       AUTHOR. MFDEVELOPER.
+       DATE-WRITTEN. 01/01/2021.
+       DATE-COMPILED. 01/01/2021.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. TEST-ZOS.
+       OBJECT-COMPUTER. DEV-ZOS.
+
+
+
+
+
+
+Exercise 1.2 : COBOL Program Layout
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX02.
+       AUTHOR. MFDEVELOPER01.
+       DATE-WRITTEN. 01/01/2020.
+       DATE-COMPILED. 01/01/2020.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. TEST-ZOS.
+       OBJECT-COMPUTER. DEV-ZOS.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 WS-A PIC X(10).
+       PROCEDURE DIVISION.
+       000-PARA-MAIN.    
+           STOP RUN.
+
+
+
+
+**************************************************************
+Program Control - 1
+***************************************************************
+
+
+Exercise 1.1 : Program Control1 - Display and MOVE Verb
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *INPUT VARIABLES FOR TRAIN DETAILS
+       01 WS-TRAIN-DETAILS.
+           05 TRAIN-NUMBER          PIC 9(6).
+           05 TRAIN-NAME            PIC X(20).
+           05 TRAIN-TYPE            PIC X(2).
+           05 DEPARTURE-STATION     PIC A(20).
+           05 DEPARTURE-TIME        PIC X(5).
+           05 ARRIVAL-STATION       PIC A(20).
+           05 ARRIVAL-TIME          PIC X(5).
+           05 FARE                  PIC 9(4).
+       PROCEDURE DIVISION.
+           MOVE 106510 TO TRAIN-NUMBER.
+           MOVE 'KANYAKUMARI EXPRESS' TO TRAIN-NAME.
+           MOVE 'SF' TO TRAIN-TYPE.
+           MOVE 'KANYAKUMARI' TO DEPARTURE-STATION.
+           MOVE '10:00' TO DEPARTURE-TIME.
+           MOVE 'NEW DELHI' TO ARRIVAL-STATION.
+           MOVE '20:00' TO ARRIVAL-TIME.
+           MOVE 500 TO FARE.
+           DISPLAY 'TRAIN NUMBER   :'TRAIN-NUMBER.
+           DISPLAY 'TRAIN NAME     :'TRAIN-NAME.
+           DISPLAY 'TRAIN-TYPE     :'TRAIN-TYPE.
+           DISPLAY 'DEPARTURE STN  :'DEPARTURE-STATION.
+           DISPLAY 'DEPARTURE TIME :'DEPARTURE-TIME.
+           DISPLAY 'ARRIVAL-STN    :'ARRIVAL-STATION.
+           DISPLAY 'ARRIVAL-TIME   :'ARRIVAL-TIME.
+           DISPLAY 'TRAIN FARE     :'FARE.
+           STOP RUN.
+//*RUNJCL
+//TECN347C JOB NOTIFY=&SYSUID                                          
+//RUN EXEC PGM=COBEX01                                 --> MEMBER NAME 
+//STEPLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR  --> LOADLIB NAME
+//SYSPRINT DD SYSOUT=*                                                 
+//*DD1 DD DSN=TXSAD01.VSAM.RRDS,DISP=SHR                               
+//*DD2 DD DSN=TXSAD01.SEQ.FILE1,DISP=SHR                               
+//SYSIN DD DUMMY                                                       
+
+
+
+Exercise 1.2 : Program Control1 - Arithmetic Operation
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX02.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-CLASS-01.
+       05 WS-MARK-01 PIC 9(3).
+           05 WS-MARK-02 PIC 9(3).
+           05 WS-MARK-03 PIC 9(3).
+           05 WS-MARK-04 PIC 9(3).
+           05 WS-MARK-05 PIC 9(3).
+       01 WS-CLASS-02.
+           05 WS-MARK-01 PIC 9(3).
+           05 WS-MARK-02 PIC 9(3).
+           05 WS-MARK-03 PIC 9(3).
+           05 WS-MARK-04 PIC 9(3).
+           05 WS-MARK-05 PIC 9(3).
+       01 WS-SUB-DIFF PIC 9(3).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-CLASS-01 WS-CLASS-02.
+       2000-PROCESS-PARA.
+           ACCEPT WS-CLASS-01.
+           MOVE 080060075050095 TO WS-CLASS-02.
+           SUBTRACT WS-MARK-03 OF WS-CLASS-01 
+           FROM WS-MARK-03 OF WS-CLASS-02 
+           GIVING WS-SUB-DIFF.
+           ADD CORR WS-CLASS-01 TO WS-CLASS-02
+           ON SIZE ERROR DISPLAY "OVERFLOW OCCURED".
+           DISPLAY "CONTENT OF WS-CLASS-02:" WS-CLASS-02.
+           DISPLAY "CONTENT OF WS-MARK-03:" WS-MARK-03 OF WS-CLASS-02.
+           DISPLAY "MARK-03 DIFFERENCE BETWEEN CLASSES:" WS-SUB-DIFF.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        
+//TECN347A EXEC PGM=COBEX02
+//SYSOUT   DD SYSOUT=*                                                  
+//SYSPRINT DD SYSOUT=*                                                  
+//SYSIN DD *                                                            
+075080085060056
+/*
+
+
+
+
+Exercise 1.3 : Program Control1- Compute
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-TRAIN-DETAILS.
+           05 TRAIN-NUMBER       PIC 9(6).
+           05 TRAIN-NAME         PIC X(20).
+           05 TRAIN-TYPE         PIC X(2).
+           05 DEPARTURE-STATION  PIC A(20).
+           05 DEPARTURE-TIME     PIC X(5).
+           05 ARRIVAL-STATION    PIC A(20).
+           05 ARRIVAL-TIME       PIC X(5).
+           05 FARE               PIC 9(4).
+       01 WS-DEP-TIME  PIC 99. 
+       01 WS-ARR-TIME  PIC 99.
+       01 WS-JOURN-TIME  PIC 99.
+       01 WS-TRAIN-FARE-SENIOR  PIC 9(3).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+       1000-INITIALIZE-PARA.
+           MOVE 106510 TO TRAIN-NUMBER.
+           MOVE 'KANYAKUMARI EXPRESS' TO TRAIN-NAME.
+           MOVE 'SF' TO TRAIN-TYPE.
+           MOVE 'KANYAKUMARI' TO DEPARTURE-STATION.
+           MOVE '10:00' TO DEPARTURE-TIME.
+           MOVE 'NEW DELHI' TO ARRIVAL-STATION.
+           MOVE '20:00' TO ARRIVAL-TIME.
+           MOVE 500 TO FARE.
+       2000-PROCESS-PARA.
+           MOVE DEPARTURE-TIME(1:2) TO WS-DEP-TIME.
+           MOVE ARRIVAL-TIME(1:2) TO WS-ARR-TIME.
+           SUBTRACT WS-DEP-TIME FROM WS-ARR-TIME GIVING WS-JOURN-TIME.
+           COMPUTE WS-TRAIN-FARE-SENIOR = FARE - ( ( FARE / 100 ) * 5).
+           DISPLAY "JOURNEY DURATION FROM KANYAKUMARI TO NEW-DELHI IS:"
+           WS-JOURN-TIME ':00 HRS'.
+           DISPLAY "FARE FOR SENIOR CITIZEN (KANYAKUMARI EXPRESS) IS: " 
+           WS-TRAIN-FARE-SENIOR.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID                                           00010002
+//RUN EXEC PGM=COBEX03                       --> MEMBER NAME            00040005
+//STEPLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR  --> LOADLIB NAME       00050005
+//SYSPRINT DD SYSOUT=*                                                  00060000
+//*DD1 DD DSN=TECN347.VSAM.RRDS,DISP=SHR                                00080000
+//*DD2 DD DSN=TECN347.SEQ.FILE1,DISP=SHR                                00090000
+//SYSIN DD DUMMY                                                        00100000
+
+
+
+
+
+Exercise 1.4 : Program Control 1 – String Manipulation
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * INPUT VARIABLES
+       77 WS-QUOTE PIC A(200).
+       77 WS-AUTHOR PIC A(6).
+      * OUTPUT VARIABLES
+       77 WS-STRING-LEN PIC 9(3).
+       77 WS-STRING-QUOTE-LEN PIC 9(3).
+       77 WS-NON-SPACE PIC 9(3).
+       77 WS-NEW-QUOTE PIC A(200).
+       77 WS-QUOTE-CASE PIC A(200).
+       77 WS-AUTHOR-REV PIC A(20).
+       77 WS-TRAIL-SPACE PIC 9(3).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           INITIALIZE WS-QUOTE WS-AUTHOR.
+           MOVE '"Learn this from Water - Loud splashes the brook but th
+      -         'e oceans depth are calm"- Buddha(26-May).' TO WS-QUOTE.
+           MOVE "Buddha" TO WS-AUTHOR.
+           INSPECT FUNCTION REVERSE(WS-QUOTE) TALLYING WS-STRING-LEN FOR
+           LEADING SPACES.
+           COMPUTE WS-STRING-LEN = LENGTH OF WS-QUOTE - WS-STRING-LEN.
+           DISPLAY "LENGTH OF THE ENTIRE STRING : " WS-STRING-LEN.
+           INSPECT WS-QUOTE TALLYING WS-STRING-QUOTE-LEN FOR CHARACTERS
+           BEFORE INITIAL '- B'.
+           DISPLAY "LENGTH OF STRING INSIDE QUOTES : " WS-STRING-QUOTE-L
+      -    EN.
+           INSPECT WS-QUOTE TALLYING WS-TRAIL-SPACE FOR ALL SPACE BEFORE
+           INITIAL '.'.
+           COMPUTE WS-NON-SPACE = WS-STRING-LEN - WS-TRAIL-SPACE.
+           DISPLAY "NON SPACE CHARACTERS IN QUOTES : " WS-NON-SPACE.
+           MOVE WS-QUOTE TO WS-NEW-QUOTE.
+           INSPECT WS-NEW-QUOTE CONVERTING '"-' TO "':".
+           DISPLAY "QUOTES AFTER REPLACED : " WS-NEW-QUOTE.
+           MOVE WS-NEW-QUOTE TO WS-QUOTE-CASE.
+           INSPECT WS-QUOTE-CASE CONVERTING "abcdefghijklmnopqrstuvwxyz"
+           TO "ABCDEFGHIJKLMNOPQRSTUVWXYZ".
+           DISPLAY "CONVERTED UPPER CASE OF QUOTES : " WS-QUOTE-CASE.
+           MOVE FUNCTION REVERSE(WS-AUTHOR) TO WS-AUTHOR-REV.
+           DISPLAY "REVERSED CONTENT : " WS-AUTHOR-REV.
+       9000-TERM-PAR.
+           STOP RUN.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1 EXEC PGM=COBEX04
+//SYSIN DD *
+/*
+
+
+
+
+
+Exercise 1.5 : Program Control1 - MOVE ,EDIT, COMPUTE
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. COBEX05.
+        ENVIRONMENT DIVISION.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WS-PASSENGER-DETAILS.
+            05 WS-PASSENGER-NAME PIC A(20).
+            05 WS-AADHAR-NUMBER  PIC X(12).
+            05 WS-DOB            PIC 9(8).
+            05 WS-TRAIN-FARE     PIC 9(5)V9(2).
+        01 WS-PASSENGER-DETAILS-PRINT.
+            05 WS-PASSENGER-NAME-PRINT    PIC A(20).
+            05 WS-AGE-PRINT               PIC 9(2).
+            05 WS-AADHAR-NUMBER-PRINT     PIC X(4)/X(4)/X(4).
+            05 WS-TRAIN-FARE-PRINT        PIC Z(4)9.
+            05 WS-DOB-PRINT               PIC 9(2)/9(2)/9(4).
+            05 WS-TRAIN-FARE-DOLLARS-PRINT PIC $9(3).
+        01 T PIC 9 VALUE ZEROES.
+        01 WS-POINTER PIC 99 VALUE 03.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+            PERFORM 1000-INITIALIZE-PARA THRU 1000-INITIALIZE-PARA-EXIT.
+            PERFORM 2000-PROCESS-PARA THRU 2000-PROCESS-PARA-EXIT.
+            PERFORM 9000-TERMINATION-PARA THRU 
+            9000-TERMINATION-PARA-EXIT.
+            STOP RUN.
+        0000-MAIN-PARA-EXIT.
+            EXIT.
+        1000-INITIALIZE-PARA.
+            INITIALIZE WS-PASSENGER-DETAILS-PRINT.
+        1000-INITIALIZE-PARA-EXIT.
+            EXIT.
+        2000-PROCESS-PARA.
+            MOVE "RAHUL KANNAM" TO WS-PASSENGER-NAME.
+            MOVE "750012342345" TO WS-AADHAR-NUMBER.
+            MOVE 20101990 TO WS-DOB.
+            MOVE 0780 TO WS-TRAIN-FARE.
+            MOVE WS-AADHAR-NUMBER TO WS-AADHAR-NUMBER-PRINT.
+            MOVE WS-DOB TO WS-DOB-PRINT.
+            MOVE 32 TO WS-AGE-PRINT.
+            INSPECT WS-PASSENGER-NAME
+            TALLYING T FOR CHARACTERS BEFORE INITIAL SPACE.
+            STRING 
+                  WS-PASSENGER-NAME DELIMITED BY " "
+            INTO  WS-PASSENGER-NAME-PRINT
+            WITH POINTER WS-POINTER.
+            ADD 2 TO T.
+            MOVE WS-PASSENGER-NAME(T:1) TO WS-PASSENGER-NAME-PRINT(1:1)
+            MOVE "." TO WS-PASSENGER-NAME-PRINT(2:1).
+            MOVE WS-TRAIN-FARE TO WS-TRAIN-FARE-PRINT.
+            COMPUTE WS-TRAIN-FARE-DOLLARS-PRINT 
+            ROUNDED = ( WS-TRAIN-FARE / 76 ).
+            DISPLAY "PASSENGER NAME : " WS-PASSENGER-NAME-PRINT.
+            DISPLAY "PASSENGER AGE  : " WS-AGE-PRINT.
+            DISPLAY "PASSENGER DOB  : " WS-DOB-PRINT.
+            DISPLAY "PASSENGER AADHAR NUMBER : " WS-AADHAR-NUMBER-PRINT.
+            DISPLAY "TRAIN FARE     : " WS-TRAIN-FARE-DOLLARS-PRINT.
+        2000-PROCESS-PARA-EXIT.
+            EXIT.
+        9000-TERMINATION-PARA.
+        9000-TERMINATION-PARA-EXIT.
+            EXIT.
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1 EXEC PGM=COBEX05
+//SYSIN DD *
+/*
+
+**************************************************************************
+Program Control - 2
+************************************************************************
+
+
+
+Exercise 2.1 Program Control-2 - EDITING CLAUSE
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *INPUT VARIABLES.
+       77 WS-A    PIC 9(5)      VALUE 45.
+       77 WS-B    PIC 9(5)      VALUE 55.
+       77 WS-C    PIC S9(5)     VALUE -67.
+       77 WS-D    PIC 9(4)V9(2) VALUE 45.55.
+       77 WS-E    PIC 9(6)      VALUE 251356.
+       77 WS-F    PIC S9(4)     VALUE -77.
+       77 WS-G    PIC 9(4)      VALUE 77.
+       77 WS-H    PIC 9(5)V9(2) VALUE 11123.
+       77 WS-DATE PIC 9(8).
+      *OUTPUT VARIABLES.
+       77 WS-A-EDITED      PIC ZZZZZ.
+       77 WS-B-EDITED      PIC *****.
+       77 WS-C-EDITED      PIC 9(3)DB.
+       77 WS-D-EDITED      PIC ZZZZ.ZZ.
+       77 WS-E-EDITED      PIC 99,99,99.
+       77 WS-DATE-EDITED   PIC 99/99/9999.
+       77 WS-F-EDITED      PIC -9(4).
+       77 WS-G-EDITED      PIC +9(4).
+       77 WS-H-EDITED      PIC 9(5).9(2).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           MOVE 45 TO WS-A-EDITED.
+           MOVE 55 TO WS-B-EDITED.
+           MOVE -67 TO WS-C-EDITED.
+           MOVE 45.55 TO WS-D-EDITED.
+           MOVE 251356 TO WS-E-EDITED.
+           MOVE -77 TO WS-F-EDITED.
+           MOVE 77 TO WS-G-EDITED.
+           MOVE 11123 TO WS-H-EDITED.
+           ACCEPT WS-DATE FROM DATE YYYYMMDD.
+           MOVE WS-DATE(1:4) TO WS-DATE-EDITED(7:4).
+           MOVE '/' TO WS-DATE-EDITED(3:1).
+           MOVE WS-DATE(5:2) TO WS-DATE-EDITED(4:2).
+           MOVE '/' TO WS-DATE-EDITED(6:1).
+           MOVE WS-DATE(7:2) TO WS-DATE-EDITED(1:2).
+           DISPLAY "EDITED OUTPUT OF WS-A : " WS-A-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-B : " WS-B-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-C : " WS-C-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-D : " WS-D-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-E : " WS-E-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-DATE : " WS-DATE-EDITED.
+       0000-TERM-PARA.
+           STOP RUN.
+
+
+
+
+
+Exercise 2.2 Program Control 2 - IF CONDITIONAL EXPRSSION
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. COBEX01.                                            00020000
+        DATA DIVISION.                                                  00030000
+      * INPUT VARIABLES FOR EMPLOYEE DETAILS                            00031001
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WS-EMPLOYEE-DETAILS.                                         00050000
+           05 WS-EMPLOYEE-NAME          PIC   A(20).                    00060000
+           05 WS-EMPLOYEE-AGE           PIC   9(02).                    00070000
+           05 WS-EMPLOYEE-SALARY        PIC   9(07)V9(02).              00080003
+           05 WS-EMPLOYEE-DESIGNATION   PIC   A(10).                    00090000
+           05 WS-EMPLOYEE-DEPT-ID       PIC   X(05).                    00100000
+        01 WS-EMPLOYEE-UPDATED-SALARY   PIC  S9(07)V9(02).              00101019
+        01 WS-EMPLOYEE-UPD-SAL          PIC  ZZ9(05).9(02).             00102020
+        PROCEDURE DIVISION.                                             00110000
+        0000-MAIN-PARA.                                                 00120000
+              PERFORM 1000-INITIALIZE-PARA THRU                         00130000
+                 1000-INITIALIZE-PARA-EXIT.                             00140000
+              PERFORM EMPLOYEE-DETAILS-PARA.                            00150001
+              PERFORM CHECK-EMPLOYEE-DETAILS-PARA.                      00160000
+              PERFORM CHECK-EMPLOYEE-AGE-PARA.                          00161001
+              PERFORM CHECK-EMPLOYEE-SALARY-PARA.                       00162001
+              PERFORM CHECK-EMPLOYEE-DESIGN-PARA.                       00163003
+              PERFORM CHECK-EMPLOYEE-DEPTID-PARA.                       00164001
+              PERFORM TAX-DEDUCTION-PARA.                               00165001
+              STOP RUN.                                                 00170001
+        0000-MAIN-PARA-EXIT.                                            00180000
+        1000-INITIALIZE-PARA.                                           00190001
+               INITIALIZE WS-EMPLOYEE-NAME, WS-EMPLOYEE-AGE,            00200000
+               WS-EMPLOYEE-SALARY, WS-EMPLOYEE-DESIGNATION,             00210000
+               WS-EMPLOYEE-DEPT-ID.                                     00220000
+        1000-INITIALIZE-PARA-EXIT.                                      00230000
+        EMPLOYEE-DETAILS-PARA.                                          00240000
+               ACCEPT WS-EMPLOYEE-NAME.                                 00250000
+               ACCEPT WS-EMPLOYEE-AGE.                                  00260000
+               ACCEPT WS-EMPLOYEE-SALARY.                               00270000
+               ACCEPT WS-EMPLOYEE-DESIGNATION.                          00280004
+               ACCEPT WS-EMPLOYEE-DEPT-ID.                              00290000
+        CHECK-EMPLOYEE-DETAILS-PARA.                                    00310000
+               IF WS-EMPLOYEE-NAME IS ALPHABETIC THEN                   00320000
+               DISPLAY 'EMPLOYEE-NAME IS : ' WS-EMPLOYEE-NAME           00330000
+               ELSE                                                     00340000
+               DISPLAY 'EMPLOYEE-NAME IS INVALID'                       00350000
+               END-IF.                                                  00360000
+         CHECK-EMPLOYEE-AGE-PARA.                                       00370000
+               IF WS-EMPLOYEE-AGE IS NUMERIC THEN                       00380000
+               DISPLAY 'EMPLOYEE-AGE IS : ' WS-EMPLOYEE-AGE             00390000
+               ELSE                                                     00400000
+               DISPLAY 'EMPLOYEE-AGE IS INVALID'                        00410000
+               END-IF.                                                  00420000
+         CHECK-EMPLOYEE-SALARY-PARA.                                    00430000
+               IF WS-EMPLOYEE-SALARY IS NUMERIC THEN                    00440007
+               MOVE WS-EMPLOYEE-SALARY TO WS-EMPLOYEE-UPD-SAL           00441022
+               DISPLAY 'EMPLOYEE-SALARY IS : ' WS-EMPLOYEE-UPD-SAL      00450022
+               ELSE                                                     00460000
+               DISPLAY 'EMPLOYEE-SALARY IS INVALID'                     00460221
+               END-IF.                                                  00480000
+         CHECK-EMPLOYEE-DESIGN-PARA.                                    00490002
+               IF WS-EMPLOYEE-DESIGNATION IS ALPHABETIC THEN            00500000
+               DISPLAY 'EMPLOYEE-DESIGNATION IS : '                     00510000
+               WS-EMPLOYEE-DESIGNATION                                  00520000
+               ELSE                                                     00530000
+               DISPLAY 'EMPLOYEE-DESIGNATION IS INVALID'                00540000
+               END-IF.                                                  00550000
+          CHECK-EMPLOYEE-DEPTID-PARA.                                   00560000
+               IF WS-EMPLOYEE-DEPT-ID IS ALPHABETIC                     00570002
+               OR WS-EMPLOYEE-DEPT-ID IS NUMERIC THEN                   00571002
+               DISPLAY 'EMPLOYEE-DEPT-ID IS INVALID'                    00580015
+               ELSE                                                     00590000
+               DISPLAY 'EMPLOYEE-DEPTID IS : ' WS-EMPLOYEE-DEPT-ID      00600015
+               END-IF.                                                  00610000
+          TAX-DEDUCTION-PARA.                                           00620000
+               COMPUTE WS-EMPLOYEE-UPDATED-SALARY = WS-EMPLOYEE-SALARY  00630009
+               - 35000.                                                 00640009
+               MOVE WS-EMPLOYEE-UPDATED-SALARY TO WS-EMPLOYEE-UPD-SAL.  00641017
+               IF WS-EMPLOYEE-UPDATED-SALARY IS POSITIVE OR             00650000
+               WS-EMPLOYEE-UPDATED-SALARY IS ZERO THEN                  00660000
+               DISPLAY 'TAX DEDUCTED FOR THE NEXT MONTH IS 0'           00670000
+               ELSE IF WS-EMPLOYEE-UPDATED-SALARY IS NEGATIVE THEN      00680000
+               DISPLAY 'TAX DEDUCTED FOR THE NEXT MONTH IS : '          00690000
+               WS-EMPLOYEE-UPD-SAL                                      00700017
+               END-IF.                                                  00710000
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A, 00010001
+// MSGCLASS=X,MSGLEVEL=(1,1) 00020000
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR 00030001
+//TRNS001U EXEC PGM=COBEX01
+//SYSOUT DD SYSOUT=* 00090000
+//SYSPRINT DD SYSOUT=* 00100000
+//SYSIN DD * 00110002
+ARUN KUMAR
+35
+002500050
+MANAGER
+CS123
+/*
+
+
+
+
+
+Exercise 2.3 Program Control 2 - SIMPLE PERFORM
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX02.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 WS-INP       PIC 9(3).
+       77 WS-REM       PIC 9(3).
+       77 WS-REV       PIC 9(3).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-INP WS-REM WS-REV.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           ACCEPT WS-INP.
+           DISPLAY "INPUT NUMBER IS : " WS-INP.
+           PERFORM 3000-REVERSED-PARA 3 TIMES.
+           DISPLAY "REVERSED NUMBER IS : " WS-REV.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-REVERSED-PARA.
+           DIVIDE WS-INP BY 10 GIVING WS-INP REMAINDER WS-REM.
+           COMPUTE WS-REV = WS-REV * 10 + WS-REM.
+       3000-REVERSED-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1 EXEC PGM=COBEX02
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+567
+/*
+
+
+
+Exercise 2.4 Program Control 2 - PERFORM VARYING
+
+
+
+Exercise 2.5 Program Control 2 - EVALUATE
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01    WS-A        PIC       9(2).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+            PERFORM 1000-INITIALIZE-PARA THRU
+                    1000-INITIALIZE-PARA-EXIT
+            PERFORM 2000-PROCESS-PARA THRU
+                    2000-PROCESS-PARA-EXIT
+            PERFORM 9000-TERMINATION-PARA THRU
+                    9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+            EXIT.
+       1000-INITIALIZE-PARA.
+            INITIALIZE WS-A.
+       1000-INITIALIZE-PARA-EXIT.
+            EXIT.
+       2000-PROCESS-PARA.
+            ACCEPT WS-A.
+            DISPLAY "POSSIBEL MONTHS WITH " WS-A " DAYS ARE".
+       2000-PROCESS-PARA-EXIT.
+            EXIT.
+       9000-TERMINATION-PARA.
+            EVALUATE WS-A
+              WHEN 01 THRU 27
+               DISPLAY "JAN/FEB/MAR/APR/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC"
+              WHEN  29
+               DISPLAY "JAN/MAR/ARP/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC"
+              WHEN  31
+               DISPLAY "JAN/MAR/MAY/JUL/SEP/NOV"
+              WHEN  30
+                  DISPLAY "APR/JUN/SEP/NOV"
+               WHEN  28
+                  DISPLAY "FEB"
+               WHEN OTHER
+                  DISPLAY "VALID DATES SHOULD BE 28/29/30/31 "
+               END-EVALUATE.
+               STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+               EXIT.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1 EXEC PGM=COBEX04
+//SYSIN DD *
+31
+/*
+
+
+
+
+
+Exercise 2.6 Program Control 2 - PERFORM VARYING STATEMENTS
+
+
+
+
+
+
+
+
+
+Exercise 2.7 Program Control 2 - CONDITIONAL STATEMENTS
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX06.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       DATA DIVISION.                                                   00040000
+       WORKING-STORAGE SECTION.                                         00050000
+       01 WS-PAY.                                                       00060001
+          05 WS-FIXED.                                                  00070001
+             10 WS-BASIC PIC 9(5)V99.                                   00080001
+             10 WS-DA PIC 9(5)V99.                                      00090001
+          05 WS-ADDITIONAL.                                             00100001
+             10 WS-HRA PIC 9(5)V99.                                     00110001
+          05 WS-INCENTIVE PIC 9(5)V99.                                  00111001
+          05 WS-DEDUCTION.                                              00112001
+             10 WS-PF PIC 9(5)V99.                                      00113001
+             10 WS-IT PIC 9(5)V99.                                      00114001
+             10 WS-OTHER PIC 9(5)V99.                                   00115001
+        66 WS-PAYOTHER RENAMES WS-DA THRU WS-INCENTIVE.                 00116001
+        66 WS-ITPF RENAMES WS-PF THRU WS-IT.                            00117001
+        77 WS-NET-PAY PIC 9(6)V99.                                      00118002
+        77 WS-NET-PAY-EDIT PIC Z(6).99.                                 00118113
+        77 WS-BASIC-EDIT PIC Z(5).99.                                   00118213
+        77 WS-SLAB PIC 9(5)V99.                                         00119001
+           88 SLAB-A VALUES 0 THRU 100.                                 00119103
+           88 SLAB-B VALUES 101 THRU 500.                               00119203
+           88 SLAB-C VALUES 501 THRU 1000.                              00119305
+       PROCEDURE DIVISION.                                              00120000
+       0000-MAIN-PARA.                                                  00130000
+            PERFORM 1000-INITIALIZATION-PARA                            00140000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00150000
+            PERFORM 2000-PROCESS-PARA                                   00160000
+              THRU 2000-PROCESS-PARA-EXIT.                              00170000
+            PERFORM 9000-TERMINATION-PARA                               00180000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00190000
+       0000-MAIN-PARA-EXIT.                                             00200000
+             EXIT.                                                      00210000
+       1000-INITIALIZATION-PARA.                                        00220000
+             INITIALIZE WS-PAY WS-NET-PAY WS-SLAB.                      00221002
+       1000-INITIALIZATION-PARA-EXIT.                                   00240000
+            EXIT.                                                       00250000
+       2000-PROCESS-PARA.                                               00260000
+            PERFORM 2100-ACCEPT-PARA                                    00270000
+            THRU 2100-ACCEPT-PARA-EXIT.                                 00280000
+            PERFORM 2200-CALCULATE-PARA                                 00290001
+            THRU 2200-CALCULATE-PARA-EXIT.                              00300001
+            PERFORM 2300-CALCULATE-SLAB-PARA                            00310001
+            THRU 2300-CALCULATE-SLAB-PARA-EXIT.                         00320001
+       2000-PROCESS-PARA-EXIT.                                          00330000
+            EXIT.                                                       00340000
+       2100-ACCEPT-PARA.                                                00350000
+            ACCEPT WS-BASIC.                                            00360006
+            ACCEPT WS-DA.                                               00361006
+            ACCEPT WS-HRA.                                              00362006
+            ACCEPT WS-INCENTIVE.                                        00363006
+            ACCEPT WS-PF.                                               00364006
+            ACCEPT WS-IT.                                               00365006
+            ACCEPT WS-OTHER.                                            00366006
+       2100-ACCEPT-PARA-EXIT.                                           00370000
+            EXIT.                                                       00380000
+       2200-CALCULATE-PARA.                                             00390001
+            COMPUTE WS-NET-PAY = ( WS-BASIC + WS-DA + WS-HRA +          00400001
+            WS-INCENTIVE - WS-PF - WS-IT - WS-OTHER ).                  00410001
+            MOVE WS-NET-PAY TO WS-NET-PAY-EDIT.                         00420012
+            MOVE WS-BASIC TO WS-BASIC-EDIT.                             00430012
+       2200-CALCULATE-PARA-EXIT.                                        00540001
+            EXIT.                                                       00550000
+       2300-CALCULATE-SLAB-PARA.                                        00551001
+            COMPUTE WS-SLAB  = ( 0.05 * WS-IT )                         00552009
+            IF SLAB-A                                                   00553004
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553110
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00553210
+             DISPLAY 'SLAB IS      : SLAB A '.                          00553301
+            IF SLAB-B                                                   00553404
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553510
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00553610
+             DISPLAY 'SLAB IS      : SLAB B '.                          00553701
+            IF SLAB-C                                                   00553804
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553910
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00554010
+             DISPLAY 'SLAB IS      : SLAB C '.                          00554101
+       2300-CALCULATE-SLAB-PARA-EXIT.                                   00554201
+            EXIT.                                                       00555001
+       9000-TERMINATION-PARA.                                           00560000
+             STOP RUN.                                                  00570000
+       9000-TERMINATION-PARA-EXIT.                                      00580000
+             EXIT.                                                      00590000
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//SET SET EX=COBEX06
+//STEP01 EXEC IGYWCL
+//SYSPRINT DD SYSOUT=*
+//COBOL.SYSIN DD DSN=TECN347.MYLIB.COB04(&EX),DISP=SHR
+//LKED.SYSLMOD DD DSN=TECN347.MYLIB.LOADLIB(&EX),DISP=SHR
+//STEP02 EXEC PGM=&EX
+//STEPLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//SYSIN DD *
+6000000
+1000000
+4550000
+0500000
+1300000
+0500000
+0100000
+/*
+
+
+*************************************************************************
+FileHandling
+*************************************************************************
+
+
+Exercise 3.1 File Handling
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX01.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INCUSPS                         00080011
+              ORGANIZATION IS SEQUENTIAL                                00090000
+              ACCESS MODE IS SEQUENTIAL                                 00100000
+              FILE STATUS IS WS-FILE-STATUS1.                           00110000
+      *OUTPUT FILE                                                      00120000
+           SELECT TO001-OUTPUT ASSIGN TO OUTCUSPS                       00130011
+              ORGANIZATION IS SEQUENTIAL                                00140000
+              ACCESS MODE IS SEQUENTIAL                                 00150000
+              FILE STATUS IS WS-FILE-STATUS2.                           00160000
+       DATA DIVISION.                                                   00170000
+       FILE SECTION.                                                    00180000
+       FD TI001-INPUT.                                                  00190001
+       01 TI001-INPUT-RECORD.                                           00200000
+          05 TI001-ACC-NUM PIC X(10).                                   00210000
+          05 FILLER PIC X(01).                                          00220000
+          05 TI001-ACC-NAME PIC X(20).                                  00230000
+          05 FILLER PIC X(01).                                          00240000
+          05 TI001-ACC-TYPE PIC X(10).                                  00250000
+          05 FILLER PIC X(01).                                          00260000
+          05 TI001-CREDIT-SCORE PIC 9(1).                               00270000
+          05 FILLER PIC X(01).                                          00280000
+          05 TI001-LOAN-AMOUNT PIC 9(5).9(2).                           00290000
+          05 FILLER PIC X(01).                                          00300000
+          05 TI001-CURR-BAL PIC 9(6).9(2).                              00310000
+          05 FILLER PIC X(17).                                          00320010
+       FD TO001-OUTPUT.                                                 00330001
+       01 TO001-OUTPUT-RECORD.                                          00340000
+          05 TO001-ACC-NUM PIC X(10).                                   00350000
+          05 FILLER PIC X(01).                                          00360000
+          05 TO001-ACC-NAME PIC X(20).                                  00370000
+          05 FILLER PIC X(01).                                          00380000
+          05 TO001-ACC-TYPE PIC X(10).                                  00390000
+          05 FILLER PIC X(01).                                          00400000
+          05 TO001-CREDIT-REPORT PIC A(10).                             00410000
+          05 FILLER PIC X(01).                                          00420000
+          05 TO001-LOAN-AMOUNT PIC 9(5).9(2).                           00430000
+          05 FILLER PIC X(18).                                          00440000
+       WORKING-STORAGE SECTION.                                         00470000
+       01 WS-G-FILE-STATUS.                                             00480000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00490000
+             88 WFS1-SUCCESS VALUE '00'.                                00500000
+             88 WFS1-EOF     VALUE '10'.                                00510000
+          05 WS-FILE-STATUS2 PIC X(02).                                 00520000
+             88 WFS2-SUCCESS VALUE '00'.                                00530000
+             88 WFS2-EOF     VALUE '10'.                                00540000
+       77 WS-CREDIT-REPORT PIC X(10).                                   00541001
+       PROCEDURE DIVISION.                                              00550000
+       0000-MAIN-PARA.                                                  00560000
+            PERFORM 1000-INITIALIZATION-PARA                            00570000
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00580000
+            PERFORM 2000-PROCESS-PARA                                   00590000
+              THRU 2000-PROCESS-PARA-EXIT                               00600000
+            PERFORM 9000-TERMINATION-PARA                               00610000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00620000
+       0000-MAIN-PARA-EXIT.                                             00630001
+             EXIT.                                                      00640000
+       1000-INITIALIZATION-PARA.                                        00650001
+            DISPLAY 'INTIALIZATION PARA'.                               00660014
+       1000-INITIALIZATION-PARA-EXIT.                                   00661001
+            EXIT.                                                       00670000
+       2000-PROCESS-PARA.                                               00680001
+            PERFORM 2100-FILE-OPEN-PARA                                 00690000
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00700000
+            IF WFS1-SUCCESS                                             00710002
+              PERFORM 2200-READ-PARA                                    00720003
+                THRU 2200-READ-PARA-EXIT                                00730000
+            UNTIL WFS1-EOF                                              00740000
+            END-IF.                                                     00750000
+       2000-PROCESS-PARA-EXIT.                                          00760001
+            EXIT.                                                       00770000
+       2100-FILE-OPEN-PARA.                                             00780001
+            OPEN INPUT TI001-INPUT                                      00790000
+            EVALUATE TRUE                                               00800000
+              WHEN WFS1-SUCCESS                                         00810000
+               CONTINUE                                                 00820000
+              WHEN OTHER                                                00830000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00850000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00860000
+            END-EVALUATE                                                00870000
+            OPEN OUTPUT TO001-OUTPUT                                    00880000
+            EVALUATE TRUE                                               00890000
+              WHEN WFS2-SUCCESS                                         00900000
+               CONTINUE                                                 00910000
+              WHEN OTHER                                                00920000
+                DISPLAY "OUTPUT FILE OPEN FAILED"                       00940000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00950000
+            END-EVALUATE.                                               00960002
+       2100-FILE-OPEN-PARA-EXIT.                                        00970000
+            EXIT.                                                       00980000
+       2200-READ-PARA.                                                  00990000
+            READ TI001-INPUT                                            01000000
+            EVALUATE TRUE                                               01010000
+              WHEN WFS1-SUCCESS                                         01020003
+              PERFORM 2300-VALIDATION-PARA                              01030000
+               THRU 2300-VALIDATION-PARA-EXIT                           01040000
+              WHEN WFS1-EOF                                             01050000
+              CONTINUE                                                  01060000
+              WHEN                                                      01061000
+               OTHER                                                    01062000
+                DISPLAY "INPUT  FILE READ FAILED"                       01063000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   01064000
+              PERFORM 9000-TERMINATION-PARA                             01070000
+               THRU 9000-TERMINATION-PARA                               01080000
+              END-EVALUATE.                                             01090000
+       2200-READ-PARA-EXIT.                                             01100000
+            EXIT.                                                       01110000
+       2300-VALIDATION-PARA.                                            01120000
+            IF TI001-ACC-NUM IS GREATER THAN SPACES                     01130000
+            AND                                                         01160029
+              TI001-ACC-NAME IS ALPHABETIC                              01170029
+            AND                                                         01180030
+              TI001-ACC-TYPE IS EQUAL TO 'SAVINGS' OR 'CURRENT'         01190034
+               PERFORM 2400-CREDIT-REPORT-PARA                          01200004
+                THRU 2400-CREDIT-REPORT-PARA-EXIT                       01210004
+            END-IF.                                                     01220000
+       2300-VALIDATION-PARA-EXIT.                                       01230002
+            EXIT.                                                       01240000
+       2400-CREDIT-REPORT-PARA.                                         01250004
+            IF TI001-CREDIT-SCORE >= 8                                  01260000
+            MOVE 'GOOD' TO  WS-CREDIT-REPORT                            01270005
+            ELSE IF TI001-CREDIT-SCORE >= 5 AND TI001-CREDIT-SCORE < 8  01280005
+             MOVE 'AVERAGE' TO WS-CREDIT-REPORT                         01290005
+             ELSE IF TI001-CREDIT-SCORE < 5                             01291005
+               MOVE 'LOW' TO WS-CREDIT-REPORT                           01310036
+            END-IF.                                                     01320005
+            PERFORM 2500-WRITE-PARA                                     01330004
+             THRU 2500-WRITE-PARA-EXIT.                                 01340004
+       2400-CREDIT-REPORT-PARA-EXIT.                                    01350006
+             EXIT.                                                      01360000
+       2500-WRITE-PARA.                                                 01370001
+             MOVE TI001-ACC-NUM TO TO001-ACC-NUM                        01380000
+             MOVE TI001-ACC-NAME TO TO001-ACC-NAME                      01390000
+             MOVE TI001-ACC-TYPE TO TO001-ACC-TYPE                      01400000
+             MOVE WS-CREDIT-REPORT TO TO001-CREDIT-REPORT               01410000
+             MOVE TI001-LOAN-AMOUNT TO TO001-LOAN-AMOUNT                01420000
+             WRITE TO001-OUTPUT-RECORD.                                 01440000
+       2500-WRITE-PARA-EXIT.                                            01450005
+             EXIT.                                                      01460000
+       9000-TERMINATION-PARA.                                           01470001
+             PERFORM 9100-CLOSE-PARA                                    01480000
+              THRU 9100-CLOSE-PARA-EXIT.                                01490000
+             STOP RUN.                                                  01500000
+       9000-TERMINATION-PARA-EXIT.                                      01510003
+             EXIT.                                                      01520000
+       9100-CLOSE-PARA.                                                 01530001
+             CLOSE TI001-INPUT                                          01540000
+               EVALUATE TRUE                                            01550000
+                WHEN WFS1-SUCCESS                                       01560000
+                 DISPLAY 'INPUT FILE CLOSED'                            01570000
+                WHEN OTHER                                              01580000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01590000
+                 DISPLAY WS-FILE-STATUS1                                01600003
+               END-EVALUATE.                                            01610000
+             CLOSE TO001-OUTPUT                                         01620003
+               EVALUATE TRUE                                            01630000
+                WHEN WFS2-SUCCESS                                       01640000
+                 DISPLAY 'OUTPUT FILE CLOSED'                           01650000
+                WHEN OTHER                                              01660000
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01670000
+                 DISPLAY WS-FILE-STATUS2                                01680003
+               END-EVALUATE.                                            01690000
+       9100-CLOSE-PARA-EXIT.                                            01700001
+             EXIT.                                                      01710000
+
+
+//*COBES01INP
+TTB1234567 KANNAN               SAVINGS 9 10000.00 005000.00
+TTB1234568 RAVI SHANKAR         CURRENT 8 15000.00 010000.00
+TTB1234569 TEEJA SHREE          CURRENT 9 10000.00 060000.00
+TTB1234570 GOKUL RAJ            SAVINGS 7 30000.00 100000.00
+           SANGEETHA            SAVINGS 7 10000.00 100000.00
+TTB1234572 MOHAMAD ERASATH      CURRENT 6 40000.00 030000.00
+TTB1234573 MUBRAK               CURRENT 8 10000.00 010000.00
+           ANGALINE             SAVINGS 6 50000.00 060000.00
+TTB1234575 KANNAN               CURRENT 5 10000.00 045000.00
+TTB1234576 RAHUL K RAJ          SAVINGS 7 60000.00 100000.00
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX01
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INCUSPS DD DSN=TECN347.MYDATA.COB05.PS1A,DISP=SHR
+//OUTCUSPS DD DSN=TECN347.MYDATA.OUTPUT.PS2AA,DISP=(NEW,CATLG,DELETE),
+//        SPACE=(TRK,(5,5)),DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)
+//SYSIN DD *
+/*
+
+
+
+
+
+
+Exercise 3.2 FileHandling
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX02.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INCUSPS                         00080000
+              ORGANIZATION IS SEQUENTIAL                                00090000
+              ACCESS MODE IS SEQUENTIAL                                 00100000
+              FILE STATUS IS WS-FILE-STATUS1.                           00110000
+      *OUTPUT FILE                                                      00120000
+           SELECT TO001-OUTPUT ASSIGN TO AS-OUTESDS                     00130012
+              ORGANIZATION IS SEQUENTIAL                                00140000
+              ACCESS MODE IS SEQUENTIAL                                 00150000
+              FILE STATUS IS WS-FILE-STATUS2.                           00160000
+       DATA DIVISION.                                                   00170000
+       FILE SECTION.                                                    00180000
+       FD TI001-INPUT.                                                  00330001
+       01 TI001-INPUT-RECORD.                                           00340001
+          05 TI001-ACC-NUM PIC X(10).                                   00350002
+          05 FILLER PIC X(01).                                          00360000
+          05 TI001-ACC-NAME PIC X(20).                                  00370002
+          05 FILLER PIC X(01).                                          00380000
+          05 TI001-ACC-TYPE PIC X(10).                                  00390002
+          05 FILLER PIC X(01).                                          00400000
+          05 TI001-CREDIT-REPORT PIC A(10).                             00410002
+          05 FILLER PIC X(01).                                          00420000
+          05 TI001-LOAN-AMOUNT PIC 9(5).                                00430014
+          05 FILLER PIC X(01).                                          00440000
+          05 TI001-CURR-BAL PIC 9(6).                                   00450014
+          05 FILLER PIC X(14).                                          00460014
+       FD TO001-OUTPUT.                                                 00461000
+       01 TO001-OUTPUT-RECORD.                                          00462000
+          05 TO001-ACC-NUM PIC X(10).                                   00463000
+          05 FILLER PIC X(01).                                          00464000
+          05 TO001-ACC-NAME PIC X(20).                                  00465000
+          05 FILLER PIC X(01).                                          00466000
+          05 TO001-LOAN-STATUS PIC A(10).                               00469000
+          05 FILLER PIC X(01).                                          00469100
+          05 TO001-LOAN-APPROVED PIC 9(5).                              00469214
+          05 FILLER PIC X(32).                                          00469514
+       WORKING-STORAGE SECTION.                                         00470000
+       01 WS-G-FILE-STATUS.                                             00480000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00490000
+             88 WFS1-SUCCESS VALUE '00'.                                00500000
+             88 WFS1-EOF     VALUE '10'.                                00510000
+          05 WS-FILE-STATUS2 PIC X(02).                                 00520000
+             88 WFS2-SUCCESS VALUE '00'.                                00530000
+             88 WFS2-EOF     VALUE '10'.                                00540000
+       77 WS-LOAN-STATUS PIC X(10).                                     00550000
+       77 WS-LOAN-AMOUNT PIC 9(5).                                      00551014
+       PROCEDURE DIVISION.                                              00560000
+       0000-MAIN-PARA.                                                  00570000
+            PERFORM 1000-INITIALIZATION-PARA                            00580000
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00590000
+            PERFORM 2000-PROCESS-PARA                                   00600000
+              THRU 2000-PROCESS-PARA-EXIT                               00610000
+            PERFORM 9000-TERMINATION-PARA                               00620000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00630000
+       0000-MAIN-PARA-EXIT.                                             00640000
+             EXIT.                                                      00650000
+       1000-INITIALIZATION-PARA.                                        00660000
+            DISPLAY 'INTIALIZATION PARA'.                               00670000
+       1000-INITIALIZATION-PARA-EXIT.                                   00680000
+            EXIT.                                                       00690000
+       2000-PROCESS-PARA.                                               00700000
+            PERFORM 2100-FILE-OPEN-PARA                                 00710000
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00720000
+            IF WFS1-SUCCESS                                             00730000
+              PERFORM 2200-READ-PARA                                    00740000
+                THRU 2200-READ-PARA-EXIT                                00750000
+            UNTIL WFS1-EOF                                              00760000
+            END-IF.                                                     00770000
+       2000-PROCESS-PARA-EXIT.                                          00780000
+            EXIT.                                                       00790000
+       2100-FILE-OPEN-PARA.                                             00800000
+            OPEN INPUT TI001-INPUT                                      00810000
+            EVALUATE TRUE                                               00820000
+              WHEN WFS1-SUCCESS                                         00830000
+               CONTINUE                                                 00840000
+              WHEN OTHER                                                00850000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00860000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00870000
+            END-EVALUATE                                                00880000
+            OPEN OUTPUT TO001-OUTPUT                                    00890010
+            EVALUATE TRUE                                               00900000
+              WHEN WFS2-SUCCESS                                         00910000
+               CONTINUE                                                 00920000
+              WHEN OTHER                                                00930000
+                DISPLAY "OUTPUT FILE OPEN FAILED"                       00940000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00950000
+            END-EVALUATE.                                               00960000
+       2100-FILE-OPEN-PARA-EXIT.                                        00970000
+            EXIT.                                                       00980000
+       2200-READ-PARA.                                                  00990000
+            READ TI001-INPUT                                            01000000
+            EVALUATE TRUE                                               01010000
+              WHEN WFS1-SUCCESS                                         01020000
+             PERFORM 2300-LOANSTATUS-PARA                               01030000
+              THRU 2300-LOANSTATUS-PARA-EXIT                            01040000
+              WHEN WFS1-EOF                                             01050000
+              CONTINUE                                                  01060000
+              WHEN                                                      01070000
+               OTHER                                                    01080000
+                DISPLAY "INPUT  FILE READ FAILED"                       01090000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   01100000
+              PERFORM 9000-TERMINATION-PARA                             01110000
+               THRU 9000-TERMINATION-PARA                               01120000
+              END-EVALUATE.                                             01130000
+       2200-READ-PARA-EXIT.                                             01140000
+            EXIT.                                                       01150000
+       2300-LOANSTATUS-PARA.                                            01270000
+            IF TI001-CREDIT-REPORT = 'LOW'                              01280000
+             MOVE 'REJECTED'  TO  WS-LOAN-STATUS                        01290000
+             COMPUTE WS-LOAN-AMOUNT = 0                                 01291013
+             ELSE IF TI001-CREDIT-REPORT = 'AVERAGE'                    01300000
+             MOVE 'APPROVED'  TO  WS-LOAN-STATUS                        01301000
+             COMPUTE WS-LOAN-AMOUNT = ( TI001-LOAN-AMOUNT / 2 )         01302013
+             ELSE IF TI001-CREDIT-REPORT = 'GOOD'                       01303000
+             MOVE 'APPROVED'  TO  WS-LOAN-STATUS                        01304000
+             COMPUTE WS-LOAN-AMOUNT = TI001-LOAN-AMOUNT                 01305000
+            END-IF.                                                     01340000
+            PERFORM 2400-WRITE-PARA                                     01350000
+             THRU 2400-WRITE-PARA-EXIT.                                 01360000
+       2300-LOANSTATUS-PARA-EXIT.                                       01370000
+             EXIT.                                                      01380000
+       2400-WRITE-PARA.                                                 01390000
+             MOVE TI001-ACC-NUM  TO TO001-ACC-NUM                       01400004
+             MOVE TI001-ACC-NAME TO TO001-ACC-NAME                      01410000
+             MOVE WS-LOAN-STATUS TO TO001-LOAN-STATUS                   01430004
+             MOVE WS-LOAN-AMOUNT TO TO001-LOAN-APPROVED                 01440004
+             WRITE TO001-OUTPUT-RECORD.                                 01460000
+       2400-WRITE-PARA-EXIT.                                            01470000
+             EXIT.                                                      01480000
+       9000-TERMINATION-PARA.                                           01490000
+             PERFORM 9100-CLOSE-PARA                                    01500000
+              THRU 9100-CLOSE-PARA-EXIT.                                01510000
+             STOP RUN.                                                  01520000
+       9000-TERMINATION-PARA-EXIT.                                      01530000
+             EXIT.                                                      01540000
+       9100-CLOSE-PARA.                                                 01550000
+             CLOSE TI001-INPUT                                          01560000
+               EVALUATE TRUE                                            01570000
+                WHEN WFS1-SUCCESS                                       01580000
+                 DISPLAY 'INPUT FILE CLOSED'                            01590000
+                WHEN OTHER                                              01600000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01610000
+                 DISPLAY WS-FILE-STATUS1                                01620000
+               END-EVALUATE.                                            01630000
+             CLOSE TO001-OUTPUT                                         01640000
+               EVALUATE TRUE                                            01650000
+                WHEN WFS2-SUCCESS                                       01660000
+                 DISPLAY 'OUTPUT FILE CLOSED'                           01670000
+                WHEN OTHER                                              01680000
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01690000
+                 DISPLAY WS-FILE-STATUS2                                01700000
+               END-EVALUATE.                                            01710000
+       9100-CLOSE-PARA-EXIT.                                            01720000
+             EXIT.                                                      01730000
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX02
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INCUSPS DD DSN=TECN347.MYDATA.COB05.PS1B,DISP=SHR
+//OUTESDS DD DSN=TECN347.MYDATA.OUTPUT.ESDS,DISP=OLD
+
+
+
+
+
+Exercise 3.3 FileHandling
+
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX03.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INCUSPS                         00080000
+              ORGANIZATION IS SEQUENTIAL                                00090000
+              ACCESS MODE IS SEQUENTIAL                                 00100000
+              FILE STATUS IS WS-FILE-STATUS1.                           00110000
+      *OUTPUT FILE                                                      00120000
+           SELECT TO001-OUTPUT ASSIGN TO OUTKSDS                        00130000
+              ORGANIZATION IS INDEXED                                   00140000
+              ACCESS MODE IS DYNAMIC                                    00150000
+              RECORD KEY IS TO001-ACC-NUM                               00151000
+              FILE STATUS IS WS-FILE-STATUS2.                           00160000
+       DATA DIVISION.                                                   00170000
+       FILE SECTION.                                                    00180000
+       FD TI001-INPUT.                                                  00190000
+       01 TI001-INPUT-RECORD.                                           00200000
+          05 TI001-ACC-NUM PIC X(10).                                   00210000
+          05 FILLER PIC X(01).                                          00220000
+          05 TI001-ACC-NAME PIC X(20).                                  00230000
+          05 FILLER PIC X(01).                                          00240000
+          05 TI001-ACC-TYPE PIC X(10).                                  00250000
+          05 FILLER PIC X(01).                                          00260000
+          05 TI001-CREDIT-REPORT PIC A(10).                             00270000
+          05 FILLER PIC X(01).                                          00280000
+          05 TI001-LOAN-AMOUNT PIC 9(5).                                00290000
+          05 FILLER PIC X(01).                                          00300000
+          05 TI001-CURR-BAL PIC 9(6).                                   00310000
+          05 FILLER PIC X(14).                                          00320000
+       FD TO001-OUTPUT.                                                 00321000
+       01 TO001-OUTPUT-RECORD.                                          00322002
+          05 TO001-ACC-NUM PIC X(10).                                   00323003
+          05 FILLER PIC X(01).                                          00324000
+          05 TO001-ACC-NAME PIC X(20).                                  00325000
+          05 FILLER PIC X(01).                                          00326000
+          05 TO001-ACC-TYPE PIC X(10).                                  00327000
+          05 FILLER PIC X(01).                                          00328000
+          05 TO001-CREDIT-REPORT PIC A(10).                             00329000
+          05 FILLER PIC X(01).                                          00329100
+          05 TO001-LOAN-AMOUNT PIC 9(5).                                00329200
+          05 FILLER PIC X(01).                                          00329300
+          05 TO001-CURR-BAL PIC 9(6).                                   00329400
+          05 FILLER PIC X(14).                                          00329500
+       WORKING-STORAGE SECTION.                                         00430000
+       01 WS-G-FILE-STATUS.                                             00440000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00450000
+             88 WFS1-SUCCESS VALUE '00'.                                00460000
+             88 WFS1-EOF     VALUE '10'.                                00470000
+          05 WS-FILE-STATUS2 PIC X(02).                                 00480000
+             88 WFS2-SUCCESS VALUE '00'.                                00490000
+             88 WFS2-EOF     VALUE '10'.                                00500000
+       PROCEDURE DIVISION.                                              00530000
+       0000-MAIN-PARA.                                                  00540000
+            PERFORM 1000-INITIALIZATION-PARA                            00550000
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00560000
+            PERFORM 2000-PROCESS-PARA                                   00570000
+              THRU 2000-PROCESS-PARA-EXIT                               00580000
+            PERFORM 9000-TERMINATION-PARA                               00590000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00600000
+       0000-MAIN-PARA-EXIT.                                             00610000
+             EXIT.                                                      00620000
+       1000-INITIALIZATION-PARA.                                        00630000
+            DISPLAY 'INTIALIZATION PARA'.                               00640000
+       1000-INITIALIZATION-PARA-EXIT.                                   00650000
+            EXIT.                                                       00660000
+       2000-PROCESS-PARA.                                               00670000
+            PERFORM 2100-FILE-OPEN-PARA                                 00680000
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00690000
+            IF WFS1-SUCCESS                                             00700000
+              PERFORM 2200-READ-PARA                                    00710000
+                THRU 2200-READ-PARA-EXIT                                00720000
+            UNTIL WFS1-EOF                                              00730000
+            END-IF.                                                     00740000
+       2000-PROCESS-PARA-EXIT.                                          00750000
+            EXIT.                                                       00760000
+       2100-FILE-OPEN-PARA.                                             00770000
+            OPEN INPUT TI001-INPUT                                      00780000
+            EVALUATE TRUE                                               00790000
+              WHEN WFS1-SUCCESS                                         00800000
+               CONTINUE                                                 00810000
+              WHEN OTHER                                                00820000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00830000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00840000
+            END-EVALUATE                                                00850000
+            OPEN OUTPUT TO001-OUTPUT                                    00860000
+            EVALUATE TRUE                                               00870000
+              WHEN WFS2-SUCCESS                                         00880000
+               CONTINUE                                                 00890000
+              WHEN OTHER                                                00900000
+                DISPLAY "OUTPUT FILE OPEN FAILED"                       00910000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00920000
+            END-EVALUATE.                                               00930000
+       2100-FILE-OPEN-PARA-EXIT.                                        00940000
+            EXIT.                                                       00950000
+       2200-READ-PARA.                                                  00960000
+            READ TI001-INPUT                                            00970000
+            EVALUATE TRUE                                               00980000
+              WHEN WFS1-SUCCESS                                         00990000
+             PERFORM 2300-WRITE-PARA                                    01000000
+              THRU 2300-WRITE-PARA-EXIT                                 01010000
+              WHEN WFS1-EOF                                             01020000
+              CONTINUE                                                  01030000
+              WHEN                                                      01040000
+               OTHER                                                    01050000
+                DISPLAY "INPUT  FILE READ FAILED"                       01060000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   01070000
+              PERFORM 9000-TERMINATION-PARA                             01080000
+               THRU 9000-TERMINATION-PARA                               01090000
+              END-EVALUATE.                                             01100000
+       2200-READ-PARA-EXIT.                                             01110000
+            EXIT.                                                       01120000
+       2300-WRITE-PARA.                                                 01280000
+             MOVE TI001-ACC-NUM  TO TO001-ACC-NUM                       01290000
+             MOVE TI001-ACC-NAME TO TO001-ACC-NAME                      01300000
+             MOVE TI001-ACC-TYPE TO TO001-ACC-TYPE                      01301001
+             MOVE TI001-CREDIT-REPORT TO TO001-CREDIT-REPORT            01302001
+             MOVE TI001-LOAN-AMOUNT TO TO001-LOAN-AMOUNT                01303001
+             MOVE TI001-CURR-BAL TO TO001-CURR-BAL                      01304001
+             WRITE TO001-OUTPUT-RECORD.                                 01330000
+       2300-WRITE-PARA-EXIT.                                            01340000
+             EXIT.                                                      01350000
+       9000-TERMINATION-PARA.                                           01360000
+             PERFORM 9100-CLOSE-PARA                                    01370000
+              THRU 9100-CLOSE-PARA-EXIT.                                01380000
+             STOP RUN.                                                  01390000
+       9000-TERMINATION-PARA-EXIT.                                      01400000
+             EXIT.                                                      01410000
+       9100-CLOSE-PARA.                                                 01420000
+             CLOSE TI001-INPUT                                          01430000
+               EVALUATE TRUE                                            01440000
+                WHEN WFS1-SUCCESS                                       01450000
+                 DISPLAY 'INPUT FILE CLOSED'                            01460000
+                WHEN OTHER                                              01470000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01480000
+                 DISPLAY WS-FILE-STATUS1                                01490000
+               END-EVALUATE.                                            01500000
+             CLOSE TO001-OUTPUT                                         01510000
+               EVALUATE TRUE                                            01520000
+                WHEN WFS2-SUCCESS                                       01530000
+                 DISPLAY 'OUTPUT FILE CLOSED'                           01540000
+                WHEN OTHER                                              01550000
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01560000
+                 DISPLAY WS-FILE-STATUS2                                01570000
+               END-EVALUATE.                                            01580000
+       9100-CLOSE-PARA-EXIT.                                            01590000
+             EXIT.                                                      01600000
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX03
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INCUSPS DD DSN=TECN347.MYDATA.COB05.PS1C,DISP=SHR 
+//OUTKSDS DD DSN=TECN347.MYDATA.OUTPUT.KSDS,DISP=OLD
+//SYSIN DD DUMMY                                                        00110002
+
+
+
+
+
+
+Exercise 3.4 FileHandling
+
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX04.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INPKSDS                         00130001
+              ORGANIZATION IS INDEXED                                   00140000
+              ACCESS MODE IS DYNAMIC                                    00150011
+              RECORD KEY IS TI001-ACC-NUM                               00160002
+              FILE STATUS IS WS-FILE-STATUS1.                           00170000
+       DATA DIVISION.                                                   00180000
+       FILE SECTION.                                                    00190000
+       FD TI001-INPUT.                                                  00200000
+       01 TI001-INPUT-RECORD.                                           00210000
+          05 TI001-ACC-NUM PIC X(10).                                   00220000
+          05 FILLER PIC X(01).                                          00230000
+          05 TI001-ACC-NAME PIC X(20).                                  00240000
+          05 FILLER PIC X(01).                                          00250000
+          05 TI001-ACC-TYPE PIC X(10).                                  00260000
+          05 FILLER PIC X(01).                                          00270000
+          05 TI001-CREDIT-REPORT PIC A(10).                             00280000
+          05 FILLER PIC X(01).                                          00290000
+          05 TI001-LOAN-AMOUNT PIC 9(5).                                00300000
+          05 FILLER PIC X(01).                                          00310000
+          05 TI001-CURR-BAL PIC 9(6).                                   00320000
+          05 FILLER PIC X(14).                                          00330000
+       WORKING-STORAGE SECTION.                                         00480000
+       01 WS-G-FILE-STATUS.                                             00490000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00500000
+             88 WFS1-SUCCESS VALUE '00'.                                00510000
+             88 WFS1-EOF     VALUE '10'.                                00520000
+          05 WS-FILE-STATUS2 PIC X(02).                                 00530000
+             88 WFS2-SUCCESS VALUE '00'.                                00540000
+             88 WFS2-EOF     VALUE '10'.                                00550000
+       77 TI001-EOF PIC 9.                                              00551011
+       77 WS-ACC-NUM PIC X(10).                                         00552016
+       PROCEDURE DIVISION.                                              00560000
+       0000-MAIN-PARA.                                                  00570000
+            PERFORM 1000-INITIALIZATION-PARA                            00580000
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00590000
+            PERFORM 2000-PROCESS-PARA                                   00600000
+              THRU 2000-PROCESS-PARA-EXIT                               00610000
+            PERFORM 9000-TERMINATION-PARA                               00620000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00630000
+       0000-MAIN-PARA-EXIT.                                             00640000
+             EXIT.                                                      00650000
+       1000-INITIALIZATION-PARA.                                        00660000
+      *     DISPLAY 'INTIALIZATION PARA'.                               00670025
+       1000-INITIALIZATION-PARA-EXIT.                                   00680000
+            EXIT.                                                       00690000
+       2000-PROCESS-PARA.                                               00700000
+            PERFORM 2100-FILE-OPEN-PARA                                 00710000
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00720000
+            IF WFS1-SUCCESS                                             00730000
+              PERFORM 2200-READ-PARA-SEQ                                00740011
+                THRU 2200-READ-PARA-SEQ-EXIT                            00750011
+      *     UNTIL WFS1-EOF                                              00760017
+              PERFORM 2210-READ-PARA-RAN                                00761014
+                THRU 2210-READ-PARA-RAN-EXIT                            00762016
+              PERFORM 2220-READ-PARA-SKIP-SEQ                           00763023
+                THRU 2220-READ-PARA-SKIP-SEQ-EXIT                       00764023
+            END-IF.                                                     00770000
+       2000-PROCESS-PARA-EXIT.                                          00780000
+            EXIT.                                                       00790000
+       2100-FILE-OPEN-PARA.                                             00800000
+            OPEN INPUT TI001-INPUT                                      00810000
+            EVALUATE TRUE                                               00820000
+              WHEN WFS1-SUCCESS                                         00830000
+               CONTINUE                                                 00840000
+              WHEN OTHER                                                00850000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00860000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00870000
+            END-EVALUATE.                                               00880001
+       2100-FILE-OPEN-PARA-EXIT.                                        00970000
+            EXIT.                                                       00980000
+       2200-READ-PARA-SEQ.                                              00990011
+            DISPLAY "DISPLAYING ALL RECORDS IN THE FILE"                00991025
+            READ TI001-INPUT NEXT AT END MOVE 1 TO TI001-EOF.           01000012
+            PERFORM UNTIL TI001-EOF = 1                                 01001011
+            PERFORM 2300-DISPLAY-PARA                                   01010011
+            THRU 2300-DISPLAY-PARA-EXIT                                 01020013
+            READ TI001-INPUT NEXT AT END MOVE 1 TO TI001-EOF            01021012
+            END-READ                                                    01030011
+            END-PERFORM.                                                01040011
+       2200-READ-PARA-SEQ-EXIT.                                         01140012
+            EXIT.                                                       01150000
+       2210-READ-PARA-RAN.                                              01151014
+            DISPLAY 'DISPLAYING 2ND RECORDS IN THE FILE'                01151125
+            MOVE 'TTB1234568' TO TI001-ACC-NUM.                         01151219
+            READ TI001-INPUT INVALID KEY DISPLAY 'RECORD NOT FOUND'.    01152015
+            PERFORM 2300-DISPLAY-PARA                                   01153015
+            THRU 2300-DISPLAY-PARA-EXIT.                                01155015
+            DISPLAY 'DISPLAYING 4TH RECORDS IN THE FILE'                01156025
+            MOVE 'TTB1234570' TO TI001-ACC-NUM.                         01156121
+            READ TI001-INPUT INVALID KEY DISPLAY 'RECORD NOT FOUND'.    01156215
+            PERFORM 2300-DISPLAY-PARA                                   01156315
+            THRU 2300-DISPLAY-PARA-EXIT.                                01156415
+       2210-READ-PARA-RAN-EXIT.                                         01159014
+            EXIT.                                                       01159114
+       2220-READ-PARA-SKIP-SEQ.                                         01159223
+            DISPLAY 'DISPLAYING RECORDS FOR 5 TO 8 IN THE FILE'         01159325
+            MOVE 'TTB1234572' TO TI001-ACC-NUM.                         01159424
+            MOVE 0 TO TI001-EOF.                                        01159523
+            START TI001-INPUT KEY IS EQUAL TO TI001-ACC-NUM             01159623
+            INVALID KEY                                                 01159724
+            PERFORM 9000-TERMINATION-PARA                               01159824
+            THRU 9000-TERMINATION-PARA-EXIT.                            01159924
+            READ TI001-INPUT NEXT AT END MOVE 1 TO TI001-EOF.           01160023
+            PERFORM UNTIL TI001-EOF = 1                                 01160123
+            PERFORM 2300-DISPLAY-PARA                                   01160223
+            THRU 2300-DISPLAY-PARA-EXIT                                 01160323
+            READ TI001-INPUT NEXT AT END MOVE 1 TO TI001-EOF            01160423
+            END-READ                                                    01160523
+            END-PERFORM.                                                01160623
+       2220-READ-PARA-SKIP-SEQ-EXIT.                                    01160723
+            EXIT.                                                       01161023
+       2300-DISPLAY-PARA.                                               01170011
+             DISPLAY  TI001-INPUT-RECORD.                               01230000
+       2300-DISPLAY-PARA-EXIT.                                          01240011
+             EXIT.                                                      01250000
+       9000-TERMINATION-PARA.                                           01260000
+             PERFORM 9100-CLOSE-PARA                                    01270000
+              THRU 9100-CLOSE-PARA-EXIT.                                01280000
+             STOP RUN.                                                  01290000
+       9000-TERMINATION-PARA-EXIT.                                      01300000
+             EXIT.                                                      01310000
+       9100-CLOSE-PARA.                                                 01320000
+             CLOSE TI001-INPUT                                          01330000
+               EVALUATE TRUE                                            01340000
+                WHEN WFS1-SUCCESS                                       01350000
+                CONTINUE                                                01360026
+                WHEN OTHER                                              01370000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01380000
+                 DISPLAY WS-FILE-STATUS1                                01390000
+               END-EVALUATE.                                            01400000
+       9100-CLOSE-PARA-EXIT.                                            01490000
+             EXIT.                                                      01500000
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX04
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INPKSDS DD DSN=TECN347.MYDATA.OUTPUT.KSDS,DISP=SHR
+//SYSIN DD DUMMY                                                        00110002
+
+
+
+
+
+
+Exercise 3.5 FileHandling
+
+
+
+
+
+
+
+Exercise 3.6 FileHandling
+       IDENTIFICATION DIVISION.                                         00001001
+       PROGRAM-ID. COBEX06.                                             00002001
+       AUTHOR.  TEKMFDEV.                                               00003001
+       ENVIRONMENT DIVISION.                                            00004001
+       INPUT-OUTPUT SECTION.                                            00005001
+       FILE-CONTROL.                                                    00006001
+      *INPUT FILE                                                       00007001
+           SELECT TI001-INPUT ASSIGN TO INPRRDS                         00008001
+              ORGANIZATION IS RELATIVE                                  00009001
+              ACCESS MODE IS DYNAMIC                                    00009101
+              RELATIVE KEY IS WS-RRN-NUM                                00009202
+              FILE STATUS IS WS-FILE-STATUS1.                           00009401
+       DATA DIVISION.                                                   00009501
+       FILE SECTION.                                                    00009601
+       FD TI001-INPUT.                                                  00009801
+       01 TI001-INPUT-RECORD.                                           00009901
+          05 TI001-POLICY-NUM PIC X(05).                                00010001
+          05 FILLER PIC X(01).                                          00010101
+          05 TI001-POLICY-TYPE PIC X(20).                               00010201
+          05 FILLER PIC X(01).                                          00010301
+          05 TI001-POLICY-TERM PIC X(02).                               00010402
+          05 FILLER PIC X(01).                                          00010501
+          05 TI001-POLICY-STATUS PIC A(10).                             00010601
+          05 FILLER PIC X(40).                                          00010701
+       WORKING-STORAGE SECTION.                                         00010901
+       01 WS-G-FILE-STATUS.                                             00011001
+          05 WS-FILE-STATUS1 PIC X(02).                                 00011101
+             88 WFS1-SUCCESS VALUE '00'.                                00011201
+             88 WFS1-EOF     VALUE '10'.                                00011301
+             88 WFS1-FILE-NOT-FND    VALUE '23'.                        00011401
+             88 WFS1-DUP-KEY    VALUE '22'.                             00011501
+             88 WFS1-INVAIID-REC-LGT VALUE '04'.                        00011601
+       77 WS-RRN-NUM PIC 9(3).                                          00011703
+       PROCEDURE DIVISION.                                              00013901
+       0000-MAIN-PARA.                                                  00014001
+            PERFORM 1000-INITIALIZATION-PARA                            00014101
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00014201
+            PERFORM 2000-PROCESS-PARA                                   00014301
+              THRU 2000-PROCESS-PARA-EXIT                               00014401
+            PERFORM 9000-TERMINATION-PARA                               00014501
+              THRU 9000-TERMINATION-PARA-EXIT.                          00014601
+       0000-MAIN-PARA-EXIT.                                             00014701
+             EXIT.                                                      00014801
+       1000-INITIALIZATION-PARA.                                        00014901
+      *     DISPLAY 'INTIALIZATION PARA'.                               00015001
+       1000-INITIALIZATION-PARA-EXIT.                                   00015101
+            EXIT.                                                       00015201
+       2000-PROCESS-PARA.                                               00015301
+            PERFORM 2100-FILE-OPEN-PARA                                 00015401
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00015501
+            IF WFS1-SUCCESS                                             00015601
+              PERFORM 2200-READ-PARA-RAN                                00015701
+                THRU 2200-READ-PARA-RAN-EXIT                            00015801
+            END-IF.                                                     00015901
+       2000-PROCESS-PARA-EXIT.                                          00016001
+            EXIT.                                                       00016101
+       2100-FILE-OPEN-PARA.                                             00016201
+            OPEN I-O TI001-INPUT                                        00016301
+            EVALUATE TRUE                                               00016501
+              WHEN WFS1-SUCCESS                                         00016601
+               CONTINUE                                                 00016701
+              WHEN OTHER                                                00016801
+                DISPLAY "INPUT FILE OPEN FAILED"                        00016901
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00017001
+            END-EVALUATE.                                               00017101
+       2100-FILE-OPEN-PARA-EXIT.                                        00017201
+            EXIT.                                                       00017301
+       2200-READ-PARA-RAN.                                              00017401
+            MOVE '007' TO WS-RRN-NUM                                    00017506
+            READ TI001-INPUT  INVALID KEY                               00017701
+            DISPLAY 'RECORD NOT FOUND'                                  00017801
+            PERFORM 9000-TERMINATION-PARA                               00017901
+            THRU 9000-TERMINATION-PARA-EXIT.                            00018001
+            PERFORM 2300-DELETE-PARA                                    00018101
+            THRU 2300-DELETE-PARA-EXIT.                                 00018201
+       2200-READ-PARA-RAN-EXIT.                                         00018301
+            EXIT.                                                       00018401
+       2300-DELETE-PARA.                                                00018501
+             DELETE  TI001-INPUT RECORD NOT INVALID KEY                 00018604
+             DISPLAY 'RECORD DELETED'                                   00018704
+             END-DELETE.                                                00018804
+       2300-DELETE-PARA-EXIT.                                           00018901
+             EXIT.                                                      00019001
+       9000-TERMINATION-PARA.                                           00019101
+             PERFORM 9100-CLOSE-PARA                                    00019201
+              THRU 9100-CLOSE-PARA-EXIT.                                00019301
+             STOP RUN.                                                  00019401
+       9000-TERMINATION-PARA-EXIT.                                      00019501
+             EXIT.                                                      00019601
+       9100-CLOSE-PARA.                                                 00019701
+             CLOSE TI001-INPUT                                          00019801
+               EVALUATE TRUE                                            00019901
+                WHEN WFS1-SUCCESS                                       00020001
+                CONTINUE                                                00020101
+                WHEN OTHER                                              00020201
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        00020301
+                 DISPLAY WS-FILE-STATUS1                                00020401
+               END-EVALUATE.                                            00020501
+       9100-CLOSE-PARA-EXIT.                                            00021001
+             EXIT.                                                      00030001
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX06
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INPRRDS DD DSN=TECN347.POLICY.RRDS,DISP=OLD 
+//SYSIN DD DUMMY                                                        00110000
+
+
+
+
+
+*****************************************************************************
+TableHandling
+***************************************************************************** 
+
+
+
+Exercise 4.1 : Table Handling - One Dimensional
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-MARKS.
+           02 WS-MARK-TABLE OCCURS 5 TIMES.
+              03 WS-MARK         PIC 9(3).
+              03 WS-CGPA         PIC 99.9.
+              03 WS-CAL          PIC 99V9.
+       77 WS-I                   PIC 9.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-I.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CGPA-PARA THRU
+                   3000-CGPA-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CGPA-PARA.
+           PERFORM VARYING WS-I FROM 1 BY 1 UNTIL WS-I > 5
+              ACCEPT WS-MARK(WS-I)
+              COMPUTE WS-CAL(WS-I) = WS-MARK(WS-I) / 9.5
+              MOVE WS-CAL(WS-I) TO WS-CGPA(WS-I)
+              DISPLAY "CGPA OF MARK " WS-MARK(WS-I) ":" WS-CGPA(WS-I)
+           END-PERFORM.
+       3000-CGPA-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1    EXEC PGM=COBEX01
+//SYSIN    DD *
+090
+080
+085
+078
+095
+/*
+
+
+
+
+
+Exercise 4.2 :Table Handling - One Dimensional
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX02.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-NUMBER.
+           02 WS-NUMBER-TABLE OCCURS 5 TIMES INDEXED BY K.
+              03 WS-NUM          PIC 9(3).
+       77 WS-I                   PIC 9.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-I.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CGPA-PARA THRU
+                   3000-CGPA-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CGPA-PARA.
+           PERFORM VARYING WS-I FROM 1 BY 1 UNTIL WS-I > 5
+              ACCEPT WS-NUM(WS-I)
+           END-PERFORM.
+           PERFORM VARYING K FROM 5 BY -1 UNTIL K < 1
+              DISPLAY WS-NUM(K)
+           END-PERFORM.
+       3000-CGPA-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1    EXEC PGM=COBEX02
+//SYSIN    DD *
+010
+020
+030
+040
+050
+/*
+
+
+
+
+
+Exercise 4.3 : TableHandling - SEARCH
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-EMP-TABLE.
+            02 WS-EMP-DETAILS OCCURS 5 TIMES INDEXED BY WS-INDEX.
+               05 WS-EMPNAME   PIC X(20).
+               05 WS-EMPNO     PIC X(05).
+               05 WS-EMPSAL    PIC 9(5).9(2).
+       01 WS-EMP-NAME           PIC X(20).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 0000-ACC-PARA VARYING WS-INDEX FROM 1 BY 1
+                         UNTIL WS-INDEX > 5.
+                   PERFORM 0000-SEARCH-PARA.
+                   STOP RUN.
+       0000-ACC-PARA.
+           ACCEPT WS-EMPNAME(WS-INDEX).
+           ACCEPT WS-EMPNO(WS-INDEX).
+           ACCEPT WS-EMPSAL(WS-INDEX).
+       0000-SEARCH-PARA.
+           ACCEPT WS-EMP-NAME.
+            SET WS-INDEX TO 1.
+           SEARCH WS-EMP-DETAILS AT END DISPLAY "RECORD NOT FOUND"
+                    WHEN WS-EMP-NAME = WS-EMPNAME(WS-INDEX)
+                         DISPLAY WS-EMPNAME(WS-INDEX)
+                         DISPLAY WS-EMPNO(WS-INDEX)
+                         DISPLAY WS-EMPSAL(WS-INDEX)
+            END-SEARCH.
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1 EXEC PGM=COBEX03
+//SYSIN DD *
+KANNAN
+EMP12
+10000.00
+RAVI SHANKAR
+EMP13
+15000.00
+TEEJA SHREE
+EMP14
+10000.00
+GOKUL RAJ
+EMP15
+30000.00
+SANGEETHA
+EMP16
+10000.00
+KANNAN
+/*
+
+
+
+
+
+Exercise 4.4 : TableHandling - SEARCH ALL
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX04.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       DATA DIVISION.                                                   00040000
+       WORKING-STORAGE SECTION.                                         00050000
+       01 WS-EMP.                                                       00060000
+          05 WS-EMP-DET  OCCURS 5 TIMES ASCENDING KEY IS                00070009
+                         WS-EMP-SALARY INDEXED BY WS-IND.               00072000
+             10 WS-EMP-NAME PIC X(20).                                  00080005
+             10 WS-EMP-NUM PIC X(5).                                    00090000
+             10 WS-EMP-SALARY PIC 9(5)V9(2).                            00100000
+       PROCEDURE DIVISION.                                              00120000
+       0000-MAIN-PARA.                                                  00130000
+            PERFORM 1000-INITIALIZATION-PARA                            00140000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00150000
+            PERFORM 2000-PROCESS-PARA                                   00160000
+              THRU 2000-PROCESS-PARA-EXIT.                              00170000
+            PERFORM 9000-TERMINATION-PARA                               00180000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00190000
+       0000-MAIN-PARA-EXIT.                                             00200000
+             EXIT.                                                      00210000
+       1000-INITIALIZATION-PARA.                                        00220000
+       1000-INITIALIZATION-PARA-EXIT.                                   00230000
+            EXIT.                                                       00240000
+       2000-PROCESS-PARA.                                               00250000
+            SET WS-IND TO 1.                                            00260000
+            PERFORM 2100-ACCEPT-PARA                                    00270000
+            THRU 2100-ACCEPT-PARA-EXIT UNTIL WS-IND > 5.                00280000
+            PERFORM 2200-SEARCH-PARA                                    00300000
+            THRU 2200-SEARCH-PARA-EXIT.                                 00310000
+       2000-PROCESS-PARA-EXIT.                                          00320000
+            EXIT.                                                       00330000
+       2100-ACCEPT-PARA.                                                00340000
+            ACCEPT WS-EMP-NAME(WS-IND).                                 00350000
+            ACCEPT WS-EMP-NUM(WS-IND).                                  00360000
+            ACCEPT WS-EMP-SALARY(WS-IND).                               00370000
+            SET WS-IND UP BY 1.                                         00380000
+       2100-ACCEPT-PARA-EXIT.                                           00390000
+            EXIT.                                                       00400000
+       2200-SEARCH-PARA.                                                00410000
+            SET WS-IND TO 1.                                            00260000
+            SEARCH ALL WS-EMP-DET AT END DISPLAY 'RECORD NOT FOUND'     00430000
+            WHEN WS-EMP-SALARY(WS-IND) = 10000                          00440009
+            DISPLAY WS-EMP-NAME(WS-IND)                                 00450000
+            DISPLAY WS-EMP-NUM(WS-IND)                                  00460000
+            DISPLAY WS-EMP-SALARY(WS-IND)                               00470007
+            END-SEARCH.                                                 00471008
+       2200-SEARCH-PARA-EXIT.                                           00480000
+            EXIT.                                                       00490000
+       9000-TERMINATION-PARA.                                           00500000
+             STOP RUN.                                                  00510000
+       9000-TERMINATION-PARA-EXIT.                                      00520000
+             EXIT.                                                      00530000
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX04
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//SYSIN DD *
+KANNAN      
+EMP12       
+1000000    
+RAVI SHANKAR
+EMP13       
+1500000    
+TEEJA SHREE
+EMP14       
+1700000    
+GOKULRAJ  
+EMP15       
+3000000    
+SANGEETHA  
+EMP16       
+2000000    
+/*
+
+
+
+
+
+
+Exercise 4.5 : TableHandling - File
+
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX05.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INCUSPS                         00080000
+              ORGANIZATION IS SEQUENTIAL                                00090000
+              ACCESS MODE IS SEQUENTIAL                                 00100000
+              FILE STATUS IS WS-FILE-STATUS1.                           00110000
+       DATA DIVISION.                                                   00170000
+       FILE SECTION.                                                    00180000
+       FD TI001-INPUT.                                                  00190000
+       01 TI001-INPUT-RECORD.                                           00200000
+          05 TI001-EMP-NAME PIC X(20).                                  00210000
+          05 FILLER PIC X(01).                                          00220000
+          05 TI001-EMP-NUM PIC X(05).                                   00230000
+          05 FILLER PIC X(01).                                          00240000
+          05 TI001-EMP-SAL PIC 9(5).9(2).                               00290000
+          05 FILLER PIC X(45).                                          00300000
+       WORKING-STORAGE SECTION.                                         00470000
+       01 WS-G-FILE-STATUS.                                             00480000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00490000
+             88 WFS1-SUCCESS VALUE '00'.                                00500000
+             88 WFS1-EOF     VALUE '10'.                                00510000
+       01 WS-EMP.                                                       00520001
+          05 WS-EMP-DET  OCCURS 5 TIMES INDEXED BY WS-IND.              00530001
+             10 WS-EMP-NAME PIC X(20).                                  00550001
+             10 WS-EMP-NUM PIC X(5).                                    00551001
+             10 WS-EMP-SAL PIC 9(5).9(2).                               00552004
+       PROCEDURE DIVISION.                                              00560000
+       0000-MAIN-PARA.                                                  00570000
+            PERFORM 1000-INITIALIZATION-PARA                            00580000
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00590000
+            PERFORM 2000-PROCESS-PARA                                   00600000
+              THRU 2000-PROCESS-PARA-EXIT                               00610000
+            PERFORM 9000-TERMINATION-PARA                               00620000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00630000
+       0000-MAIN-PARA-EXIT.                                             00640000
+             EXIT.                                                      00650000
+       1000-INITIALIZATION-PARA.                                        00660000
+       1000-INITIALIZATION-PARA-EXIT.                                   00680000
+            EXIT.                                                       00690000
+       2000-PROCESS-PARA.                                               00700000
+            SET WS-IND TO 1                                             00701008
+            PERFORM 2100-FILE-OPEN-PARA                                 00710000
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00720000
+            IF WFS1-SUCCESS                                             00730000
+              PERFORM 2200-READ-PARA                                    00740000
+                THRU 2200-READ-PARA-EXIT                                00750000
+            UNTIL WFS1-EOF                                              00760000
+            END-IF.                                                     00770000
+            SET WS-IND TO 5                                             00770107
+              PERFORM 2400-PRINT-RECORD-PARA                            00771004
+                THRU 2400-PRINT-RECORD-PARA-EXIT UNTIL WS-IND = 0.      00772005
+       2000-PROCESS-PARA-EXIT.                                          00780000
+            EXIT.                                                       00790000
+       2100-FILE-OPEN-PARA.                                             00800000
+            OPEN INPUT TI001-INPUT                                      00810000
+            EVALUATE TRUE                                               00820000
+              WHEN WFS1-SUCCESS                                         00830000
+               CONTINUE                                                 00840000
+              WHEN OTHER                                                00850000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00860000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00870000
+            END-EVALUATE.                                               00880004
+       2100-FILE-OPEN-PARA-EXIT.                                        00970000
+            EXIT.                                                       00980000
+       2200-READ-PARA.                                                  00990000
+            READ TI001-INPUT                                            01000000
+            EVALUATE TRUE                                               01010000
+              WHEN WFS1-SUCCESS                                         01020000
+              PERFORM 2300-LOAD-TABLE-PARA                              01030001
+               THRU 2300-LOAD-TABLE-PARA-EXIT                           01040001
+              WHEN WFS1-EOF                                             01050000
+              CONTINUE                                                  01060000
+              WHEN                                                      01070000
+               OTHER                                                    01080000
+                DISPLAY "INPUT  FILE READ FAILED"                       01090000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   01100000
+              PERFORM 9000-TERMINATION-PARA                             01110000
+               THRU 9000-TERMINATION-PARA                               01120000
+              END-EVALUATE.                                             01130000
+       2200-READ-PARA-EXIT.                                             01140004
+            EXIT.                                                       01150000
+       2300-LOAD-TABLE-PARA.                                            01160001
+            MOVE TI001-EMP-NAME TO WS-EMP-NAME(WS-IND)                  01170003
+            MOVE TI001-EMP-NUM TO WS-EMP-NUM(WS-IND)                    01180003
+            MOVE TI001-EMP-SAL TO WS-EMP-SAL(WS-IND)                    01190003
+            SET WS-IND UP BY 1.                                         01200004
+       2300-LOAD-TABLE-PARA-EXIT.                                       01250001
+            EXIT.                                                       01260000
+       2400-PRINT-RECORD-PARA.                                          01270001
+            DISPLAY WS-EMP-NAME(WS-IND)                                 01280003
+            DISPLAY WS-EMP-NUM(WS-IND)                                  01290003
+            DISPLAY WS-EMP-SAL(WS-IND)                                  01300003
+            SET WS-IND DOWN BY 1.                                       01310004
+       2400-PRINT-RECORD-PARA-EXIT.                                     01370001
+             EXIT.                                                      01380000
+       9000-TERMINATION-PARA.                                           01490000
+             PERFORM 9100-CLOSE-PARA                                    01500000
+              THRU 9100-CLOSE-PARA-EXIT.                                01510000
+             STOP RUN.                                                  01520000
+       9000-TERMINATION-PARA-EXIT.                                      01530000
+             EXIT.                                                      01540000
+       9100-CLOSE-PARA.                                                 01550000
+             CLOSE TI001-INPUT                                          01560000
+               EVALUATE TRUE                                            01570000
+                WHEN WFS1-SUCCESS                                       01580000
+                 CONTINUE                                               01590006
+                WHEN OTHER                                              01600000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01610000
+                 DISPLAY WS-FILE-STATUS1                                01620000
+               END-EVALUATE.                                            01630000
+       9100-CLOSE-PARA-EXIT.                                            01720000
+             EXIT.                                                      01730000
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX05
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INCUSPS DD DSN=TECN347.MYDATA.EX06.PS1,DISP=SHR
+//SYSIN DD DUMMY
+
+
+
+
+*************************************************************************
+Inter Program Communication
+************************************************************************
+
+
+Exercise 5.1: Inter Program Communication
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 WS-STRING      PIC A(1000).
+       77 WS-STRING-LEN  PIC 9(04).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-STRING WS-STRING-LEN.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           ACCEPT WS-STRING.
+           CALL 'COBEX01S' USING WS-STRING WS-STRING-LEN.
+           DISPLAY "INPUT STRING IS : " WS-STRING.
+           DISPLAY "STRING LENGTH IS : " WS-STRING-LEN.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+//*COBES01S
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01S.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       77 WS-STRING      PIC A(1000).
+       77 WS-STRING-LEN  PIC 9(04).
+       PROCEDURE DIVISION USING WS-STRING WS-STRING-LEN.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           EXIT.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CAL-PARA THRU
+                   3000-CAL-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CAL-PARA.
+           INSPECT FUNCTION REVERSE(WS-STRING) TALLYING WS-STRING-LEN
+           FOR LEADING SPACES.
+           COMPUTE WS-STRING-LEN = LENGTH OF WS-STRING - WS-STRING-LEN.
+       3000-CAL-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           GOBACK.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1    EXEC PGM=COBEX01
+//SYSIN    DD *
+WELCOME TO MAINFRAME WORLD
+/*
+
+
+
+
+Exercise 5.2: Inter Program Communication
+
+
+
+
+
+
+
+
+Exercise 5.3: Inter Program Communication
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 WS-EMP-SALARY-BASIC        PIC 9(6)V9(2).
+       77 WS-DA                      PIC 9(6)V9(2).
+       77 WS-HRA                     PIC 9(6)V9(2).
+       77 WS-MA                      PIC 9(6)V9(2).
+       77 WS-TOTAL-SALARY            PIC 9(7)V9(2).
+       77 WS-EMP-SALARY-BASIC-EDITED PIC ZZZZZZ.ZZ.
+       77 WS-TOTAL-SALARY-EDITED     PIC ZZZZZZZ.ZZ.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-EMP-SALARY-BASIC WS-DA WS-HRA WS-MA
+                      WS-TOTAL-SALARY WS-EMP-SALARY-BASIC-EDITED
+                      WS-TOTAL-SALARY-EDITED.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           ACCEPT WS-EMP-SALARY-BASIC.
+           CALL 'COBEX03S' USING WS-EMP-SALARY-BASIC WS-DA WS-HRA
+                                 WS-MA WS-TOTAL-SALARY
+                                 WS-EMP-SALARY-BASIC-EDITED
+                                 WS-TOTAL-SALARY-EDITED.
+           DISPLAY "EMPLOYEE BASIC SALARY : "
+                   WS-EMP-SALARY-BASIC-EDITED.
+           DISPLAY "EMPLOYEE TOTAL SALARY : " WS-TOTAL-SALARY-EDITED.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+//*COBES03S
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03S.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       77 LK-EMP-SALARY-BASIC        PIC 9(6)V9(2).
+       77 LK-DA                      PIC 9(6)V9(2).
+       77 LK-HRA                     PIC 9(6)V9(2).
+       77 LK-MA                      PIC 9(6)V9(2).
+       77 LK-TOTAL-SALARY            PIC 9(7)V9(2).
+       77 LK-EMP-SALARY-BASIC-EDITED PIC ZZZZZZ.ZZ.
+       77 LK-TOTAL-SALARY-EDITED     PIC ZZZZZZZ.ZZ.
+       PROCEDURE DIVISION USING LK-EMP-SALARY-BASIC LK-DA LK-HRA
+                                LK-MA LK-TOTAL-SALARY
+                                LK-EMP-SALARY-BASIC-EDITED
+                                LK-TOTAL-SALARY-EDITED.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           EXIT.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CAL-PARA THRU
+                   3000-CAL-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CAL-PARA.
+           COMPUTE LK-DA = (( LK-EMP-SALARY-BASIC * 10 ) / 100 ).
+           COMPUTE LK-HRA = (( LK-EMP-SALARY-BASIC * 15 ) / 100 ).
+           COMPUTE LK-MA = (( LK-EMP-SALARY-BASIC * 5 ) / 100 ).
+           COMPUTE LK-TOTAL-SALARY =  LK-EMP-SALARY-BASIC +
+                   LK-DA + LK-HRA + LK-MA.
+           MOVE LK-EMP-SALARY-BASIC TO LK-EMP-SALARY-BASIC-EDITED.
+           MOVE LK-TOTAL-SALARY TO LK-TOTAL-SALARY-EDITED.
+       3000-CAL-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           GOBACK.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1    EXEC PGM=COBEX03
+//SYSIN    DD *
+04000000
+/*
+
+
+
+
+
+Exercise 5.4: Inter Program Communication
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+               SELECT TI001-INPUT ASSIGN TO INCUSPS
+               ORGANIZATION IS SEQUENTIAL
+               ACCESS MODE  IS SEQUENTIAL
+               FILE STATUS WS-FILE-STATUS1.
+       DATA DIVISION.
+       FILE SECTION.
+       FD TI001-INPUT.
+       01 TI001-INPUT-RECORD.
+           02 TI001-ACC-NUMBER         PIC X(10).
+           02 F                        PIC X.
+           02 TI001-ACC-HOLDER-NAME    PIC X(20).
+           02 F                        PIC X.
+           02 TI001-ACC-TYPE           PIC X(10).
+           02                          PIC X(38).
+       WORKING-STORAGE SECTION.
+       77 WS-FILE-STATUS1     PIC 9(2).
+       77 WS-ACC-NUMBER       PIC X(10).
+       77 WS-ACC-HOLDER-NAME  PIC X(20).
+       77 WS-ACC-TYPE         PIC X(10).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-FILE-STATUS1 WS-ACC-NUMBER WS-ACC-HOLDER-NAME
+                      WS-ACC-TYPE.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 2100-OPEN-PARA THRU
+                   2100-OPEN-PARA-EXIT
+           PERFORM 2200-READ-PARA THRU
+                   2200-READ-PARA-EXIT UNTIL WS-FILE-STATUS1 = 10
+           PERFORM 2400-CLOSE-PARA THRU
+                   2400-CLOSE-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       2100-OPEN-PARA.
+           OPEN INPUT TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 00
+                CONTINUE
+              WHEN OTHER
+                DISPLAY "OPEN FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2100-OPEN-PARA-EXIT.
+           EXIT.
+       2200-READ-PARA.
+           READ TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 00
+                   MOVE TI001-ACC-NUMBER TO WS-ACC-NUMBER
+                   MOVE TI001-ACC-HOLDER-NAME TO WS-ACC-HOLDER-NAME
+                   MOVE TI001-ACC-TYPE TO WS-ACC-TYPE
+                   PERFORM 2300-CALL-PARA THRU
+                           2300-CALL-PARA-EXIT
+              WHEN WS-FILE-STATUS1 = 10
+                   CONTINUE
+              WHEN OTHER
+                   DISPLAY "READ FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2200-READ-PARA-EXIT.
+           EXIT.
+       2300-CALL-PARA.
+           CALL 'COBEX04S' USING WS-ACC-NUMBER WS-ACC-HOLDER-NAME
+                                 WS-ACC-TYPE.
+       2300-CALL-PARA-EXIT.
+           EXIT.
+       2400-CLOSE-PARA.
+           CLOSE TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 0
+                CONTINUE
+              WHEN OTHER
+                DISPLAY "FILE CLOSE FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2400-CLOSE-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+//*COBES04S
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04S.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 WS-ACC-NUMBER-LEN     PIC 9(2).
+       LINKAGE SECTION.
+       77 LK-ACC-NUMBER         PIC X(10).
+       77 LK-ACC-HOLDER-NAME    PIC X(20).
+       77 LK-ACC-TYPE           PIC X(10).
+       PROCEDURE DIVISION USING LK-ACC-NUMBER LK-ACC-HOLDER-NAME
+                                LK-ACC-TYPE.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-ACC-NUMBER-LEN.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-VAL-PARA THRU
+                   3000-VAL-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-VAL-PARA.
+           INSPECT FUNCTION REVERSE(LK-ACC-NUMBER) TALLYING
+           WS-ACC-NUMBER-LEN FOR LEADING SPACES.
+           COMPUTE WS-ACC-NUMBER-LEN = LENGTH OF LK-ACC-NUMBER -
+                   WS-ACC-NUMBER-LEN.
+           IF WS-ACC-NUMBER-LEN = 10 AND
+              ( LK-ACC-TYPE = "SAVINGS" OR LK-ACC-TYPE = "CURRENT" )
+              AND LK-ACC-HOLDER-NAME IS ALPHABETIC
+              DISPLAY LK-ACC-NUMBER LK-ACC-HOLDER-NAME LK-ACC-TYPE
+           END-IF.
+       3000-VAL-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           GOBACK.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID
+//JOBLIB   DD DSN=TECN347.MYLIB.LOADLIB,DISP=SHR
+//STEP1    EXEC PGM=COBEX04
+//INCUSPS  DD DSN=TECN347.MYLIB.COB07.EX04.PS1,DISP=SHR
+//SYSIN    DD *
+/*
+
+
+
+
+
+
+
+
+
+Exercise 5.5 : Inter Program Communication
