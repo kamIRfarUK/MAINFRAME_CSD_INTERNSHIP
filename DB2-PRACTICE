@@ -1,0 +1,3229 @@
+***************************************************************************
+SQL
+***************************************************************************
+
+
+EX 1.1 - Creating Tables - Department & Employee
+
+
+SET CURRENT SQLID='TEKUS00';                                            00000010
+CREATE TABLE GEN_DEPARTMENT                                             00000020
+      (DEPTNO CHAR(3) NOT NULL, DEPTNAME VARCHAR(40) NOT NULL,          00000030
+      MGRNO CHAR(6) ,                                                   00000040
+          ADMRDEPT CHAR(3) NOT NULL, LOCATION  CHAR(20) , PRIMARY KEY   00000050
+      (DEPTNO));                                                        00000060
+CREATE TABLE GEN_EMPLOYEE(EMPNO CHAR(6) NOT NULL,FIRSTNAME  VARCHAR(20) 00000100
+ NOT NULL,MIDINIT CHAR(1) NOT NULL,LASTNAME  VARCHAR(20) NOT NULL,      00000200
+ WORKDEPT  CHAR(3),PHONENO   CHAR(10)                                   00000400
+    CONSTRAINT PHONE_DIG CHECK                                          00000600
+       (PHONENO >= '0000000000' AND PHONENO <= '9999999999')  ,         00000700
+  DOJ DATE,JOB CHAR(8), EDLEVEL SMALLINT, SEX CHAR(1),                  00000800
+  DOB DATE, SALARY DECIMAL(9,2), BONUS DECIMAL(9,2),                    00000900
+       COMM      DECIMAL(9,2)  ,                                        00001100
+       PRIMARY KEY (EMPNO)     ,                                        00001200
+       FOREIGN KEY RED (WORKDEPT) REFERENCES GEN_DEPARTMENT             00001300
+    ON DELETE SET NULL   );                                             00001400
+
+
+
+
+
+EX 1.2 Insert Query - Department & Employee
+
+
+-- DEPT                                                                 00001001
+SET CURRENT SQLID = 'TEKUS00';                                          00002002
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00010000
+VALUES ('K00', 'ADMIN SERVICES', '000010', 'K00', 'HONGKONG');          00020000
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00030001
+VALUES ('L01', 'DEVELOPMENT CENTRE','000020', 'K00', 'NEWYORK');        00040001
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00050001
+VALUES ('M01', 'SUPPORT SERVICES', '000030', 'N11', 'BERN');            00060001
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00070001
+VALUES ('N11', 'MANUFACTURING DIV', NULL, 'N21', 'WASHINGTON');         00080001
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00090001
+VALUES ('N21', 'OPERATIONS', '000050', 'P11', 'PARIS');                 00100001
+INSERT INTO GEN_DEPARTMENT(DEPTNO,DEPTNAME,MGRNO,ADMRDEPT,LOCATION)     00110001
+VALUES ('P11', 'SOFTWARE SUPPORT', '000060', 'M01', 'BRUSSELS');        00120001
+-- EMPLOYEE                                                             00130001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00140001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00150001
+('000010','BRITNEY','J','LESMONDE','K00', '3442623265', '06/09/2019',   00160001
+ 'PRES',20,'F','02/11/1991',48422,487,7);                               00170001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00180001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00190001
+('000020', 'YOLANE','R','MAVEN','L01','4675678900','12/27/2019',        00200001
+'MGR',18, 'M','06/23/1989',56788,520,10);                               00210001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00220001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00230001
+('000030', 'FREDDIE','M','DANIEL','K00','9994760120','10/11/2018',      00240001
+'MGR',16, 'M','09/11/1980',57899,510,12);                               00250001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00260001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00270001
+('000040', 'JEDDY','A','MORISON','P11','4875978932','01/20/2019',       00280001
+'ANLST',18, 'F','11/06/1990',47467,350,9);                              00290001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00300001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00310001
+('000050', 'ANDREW','G','GASKELL','N11','2704480906','05/15/2018',      00320001
+'DSGR',20, 'M','07/15/1983',38960,410,8);                               00330001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00340001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00350001
+('000060', 'HERMINE','E','GRONW','N21','8865122030','06/27/2017',       00360001
+'OPTR',17, 'F','08/26/1981',37650,240,7);                               00370001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00380001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00390001
+('000070', 'KANE','H','WILLIAMSON','P11','5502286688','04/08/2019',     00400001
+'CLRK',16, 'M','10/21/1986',22560,320,12);                              00410001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00420001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00430001
+('000090', 'TIM','K','LANGER','P11','9895780541','03/20/2018',          00440001
+'CLRK',19, 'M','12/02/1987',23670,260,9);                               00450001
+INSERT INTO GEN_EMPLOYEE(EMPNO,FIRSTNAME,MIDINIT,LASTNAME,WORKDEPT,     00460001
+PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM) VALUES               00470001
+('000100', 'STEVE','W','GERRARD','K00','3137502978','09/13/2017',       00480001
+'DSGR',18, 'M','10/19/1982',24780,360,8);                               00490001
+
+
+
+
+
+EX 1.4 Select Query - Retrieve the Highest paid Employees
+
+SELECT FIRSTNAME, LASTNAME, SALARY FROM GEN_EMPLOYEE WHERE JOB          00010002
+NOT IN ('MGR','CLRK','ANLST') ORDER BY SALARY DESC                      00020004
+FETCH FIRST 3 ROWS ONLY;                                                00030005
+
+
+
+
+
+EX 1.5 Select Query - Retrieve the Department & Employee Names - Join
+
+SELECT  UPPER(D.DEPTNAME) AS DEPARTMENT,E.FIRSTNAME, E.LASTNAME         00010000
+FROM GEN_EMPLOYEE E, GEN_DEPARTMENT D WHERE E.WORKDEPT = D.DEPTNO       00020000
+ORDER BY D.DEPTNAME;                                                    00030000
+
+
+
+
+
+EX 1.6 Select Query - Display the Increased Salary by 3 Percentage
+
+SELECT LASTNAME, SALARY, DECIMAL(ROUND(((SALARY*3/100)+SALARY),2),8,2)   
+AS SALARY_Y_INC,DECIMAL(ROUND((((SALARY*3/100)+SALARY)/12),2),8,2) AS          
+SALARY_M_INC FROM GEN_EMPLOYEE 
+WHERE ((SALARY*3/100)+SALARY) >=40000 
+ORDER BY SALARY;         
+
+
+
+
+
+EX 1.7 Select Query - Produce a list of all Employees in the P11 Department
+       
+SELECT WORKDEPT, LASTNAME,                                              00010001
+DECIMAL(ROUND(SALARY+BONUS+(COMM*SALARY/100),2),8,2) AS INCOME FROM     00020002
+GEN_EMPLOYEE WHERE SALARY+(COMM*SALARY/100)+BONUS > 1.1*SALARY AND      00021002
+WORKDEPT = 'P11' ORDER BY INCOME DESC;                                  00030003
+
+
+
+EX 1.8 Select Query - Display the Average Salary of all Employees
+
+SELECT WORKDEPT, EMPNO, FIRSTNAME, LASTNAME                             00010000
+FROM GEN_EMPLOYEE WHERE SALARY >=(SELECT AVG(SALARY) +10000 FROM        00020000
+GEN_EMPLOYEE) ORDER BY WORKDEPT, FIRSTNAME;                             00030000
+
+
+
+
+EX 1.9 Select Query - AVG_SALARY, AVG_BONUS and COUNT
+
+SELECT WORKDEPT, SEX,  DECIMAL(ROUND(AVG(SALARY),2),8,2) AS AVG_SALARY, 00010000
+DECIMAL(ROUND(AVG(BONUS),2),8,2) AS AVG_BONUS, COUNT(*) AS COUNT  FROM  00020000
+GEN_EMPLOYEE                                                            00030000
+GROUP BY WORKDEPT, SEX HAVING COUNT(*) > 1  ORDER BY WORKDEPT, SEX;     00040000
+
+
+
+
+EX 1.10 Select Query - Display the names and Salaries of all the Employees working in the P11 Department
+
+SELECT LASTNAME, 'BEFORE HIKE' AS HIKE, SALARY                          00010000
+FROM GEN_EMPLOYEE                                                       00020000
+WHERE WORKDEPT = 'P11'                                                  00030000
+UNION ALL                                                               00040000
+SELECT LASTNAME,  'AFTER HIKE' AS HIKE, SALARY * 1.1                    00050000
+AS SALARY                                                               00060000
+FROM GEN_EMPLOYEE                                                       00070000
+WHERE WORKDEPT = 'P11'                                                  00080000
+ORDER BY LASTNAME;                                                      00090000
+
+
+
+
+EX 1.11 Select Query - List the Department name, First Name and last name of all the Employees
+
+SELECT DEPTNAME, FIRSTNAME, LASTNAME                                    00010000
+FROM GEN_DEPARTMENT, GEN_EMPLOYEE                                       00020000
+WHERE DEPTNO = WORKDEPT                                                 00030000
+AND DEPTNO NOT IN(SELECT WORKDEPT                                       00040000
+FROM GEN_EMPLOYEE                                                       00050000
+WHERE SEX = 'F')                                                        00060000
+ORDER BY DEPTNAME, FIRSTNAME;                                           00070000
+
+
+
+
+EX 1.12 Select Query - Use All in the SubQuery
+
+
+SELECT DEPTNAME, LOCATION FROM GEN_DEPARTMENT                           00010000
+WHERE DEPTNO=(SELECT WORKDEPT FROM GEN_EMPLOYEE                         00011000
+GROUP BY WORKDEPT HAVING SUM(SALARY)>=ALL                               00020000
+(SELECT SUM(SALARY) FROM GEN_EMPLOYEE GROUP BY WORKDEPT))               00030000
+
+
+
+
+EX 1.13 Select Query - Display the manager’s first name, last name and the department
+
+SELECT FIRSTNAME, LASTNAME, 'MANAGES' AS ASSIGNED, DEPTNAME             00010001
+FROM GEN_EMPLOYEE AS E, GEN_DEPARTMENT AS D                             00020001
+WHERE E.EMPNO=D.MGRNO ORDER BY DEPTNAME;                                00030001
+
+
+
+
+
+EX 1.14 Select Query - List the Employee Number, Last name and Salaries of all the Employees
+
+SELECT EMPNO, LASTNAME, SALARY FROM GEN_EMPLOYEE E                      00010000
+WHERE SALARY > (SELECT AVG(SALARY) FROM GEN_EMPLOYEE                    00020000
+WHERE WORKDEPT = E.WORKDEPT) ORDER BY LASTNAME;                         00030000
+
+
+
+
+
+EX 1.15 Select Query - Report Generated for all employees.
+
+SELECT FIRSTNAME, LASTNAME, SALARY, CASE                                00010000
+WHEN SALARY < 30000 THEN 'LOW'                                          00020000
+WHEN SALARY >= 30000 AND SALARY < 50000 THEN 'AVERAGE'                  00030000
+ELSE 'HIGH' END AS SAL_GRADE                                            00040000
+FROM GEN_EMPLOYEE ORDER BY FIRSTNAME;                                   00050000
+
+
+
+
+EX 1.16 Select Query - Report based on Date
+
+
+SELECT FIRSTNAME,DOJ, DOJ +25 YEARS + 5 MONTHS+ 12 DAYS AS DATE_PROMO   00010000
+FROM GEN_EMPLOYEE ORDER BY FIRSTNAME;                                   00020000
+
+
+
+
+
+EX 1.17 Select Query - Report Based Query
+
+SELECT DEPTNO,DEPTNAME,LOCATION, SUM_SAL FROM                           00010000
+(SELECT WORKDEPT, SUM(SALARY) AS SUM_SAL FROM GEN_EMPLOYEE              00020000
+GROUP BY WORKDEPT                                                       00021000
+HAVING COUNT(*)>2) AS SAL, GEN_DEPARTMENT AS D                          00030000
+WHERE D.DEPTNO=SAL.WORKDEPT ORDER BY DEPTNAME;                          00040000
+
+
+
+EX 1.18 Select Query - Inner Join
+
+SELECT DEPTNAME, FIRSTNAME AS MANAGER 
+FROM GEN_EMPLOYEE INNER JOIN GEN_DEPARTMENT 
+ON EMPNO=MGRNO 
+ORDER BY DEPTNAME;
+
+
+
+
+
+EX 1.19 Select Query - Total Number of Employees in the department
+
+SELECT DEPTNAME, COUNT(EMPNO) AS TOTAL_EMP from GEN_EMPLOYEE 
+INNER JOIN GEN_DEPARTMENT 
+ON WORKDEPT=DEPTNO GROUP BY DEPTNAME HAVING COUNT(EMPNO)>2;
+
+
+
+
+
+EX 1.20 Select Query - Create Password for all Employees
+
+SELECT EMPNO,CONCAT(CONCAT(CONCAT(SUBSTR(FIRSTNAME,1,3),                 
+SUBSTR(LASTNAME,1,3)), SUBSTR(DEPTNAME,1,3)), 
+SUBSTR(CHAR(DOJ,EUR),1,2)) 
+AS PASSWD FROM GEN_EMPLOYEE 
+INNER JOIN GEN_DEPARTMENT    
+ ON WORKDEPT=DEPTNO ORDER BY EMPNO;                                      
+
+
+
+
+
+****************************************************************************
+COBOL DB2 Application
+****************************************************************************
+
+
+EX2.1 - COBOL-DB2 - CREATE TABLE
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX01.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+             EXEC SQL INCLUDE SQLCA END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 DISPLAY 'INITIALIZATION PARA'.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-CREATE-PARA THRU
+                 2100-CREATE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-CREATE-PARA.
+                 EXEC SQL CREATE TABLE BANKDET (ACCNO INT,
+                 ACCNAME VARCHAR(20),ACCTYP CHAR(7),
+                 ACCAMT DECIMAL(8,2)) END-EXEC.
+				         DISPLAY SQLCODE.
+        2100-CREATE-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*RUNJCL
+//TECN347A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//********************************************************************  00002022
+//*   THIS STEP RUNS THE LOAD MODULE.                                   00030001
+//********************************************************************  00031022
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX01) PLAN(DBEX01) -                                    00140029
+      LIB('TECN347.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+/*                                                                      00200001
+
+
+
+
+EX 2.2 - DCLGEN
+
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.BANKDET)                                  *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+EX2.3 - COBOL-DB2 - INSERT TABLE
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX03.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        01 WS-BANK.
+            05 WS-ACC-NO       PIC  9(09).
+            05 WS-ACC-NAME     PIC  X(20).
+            05 WS-ACC-TYPE     PIC  X(07).
+            05 WS-ACC-AMT      PIC  9(6)V9(2).
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 INITIALIZE WS-BANK.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-ACCEPT-PARA THRU
+                 2100-ACCEPT-PARA-EXIT
+                 PERFORM 2200-MOVE-PARA THRU
+                 2200-MOVE-PARA-EXIT
+                 PERFORM 2300-INSERT-PARA THRU
+                 2300-INSERT-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-ACCEPT-PARA.
+                 ACCEPT WS-ACC-NO.
+                 ACCEPT WS-ACC-NAME.
+                 ACCEPT WS-ACC-TYPE.
+                 ACCEPT WS-ACC-AMT.
+        2100-ACCEPT-PARA-EXIT.
+                 EXIT.
+        2200-MOVE-PARA.
+                 MOVE WS-ACC-NO TO ACCNO
+                 MOVE 7 TO ACCNAME-LEN
+                 MOVE WS-ACC-NAME TO ACCNAME-TEXT
+                 MOVE WS-ACC-TYPE TO ACCTYP
+                 MOVE WS-ACC-AMT TO ACCAMT.
+        2200-MOVE-PARA-EXIT.
+                 EXIT.
+        2300-INSERT-PARA.
+                 EXEC SQL INSERT INTO BANKDET VALUES
+                 (:ACCNO, :ACCNAME, :ACCTYP, :ACCAMT)
+                 END-EXEC.
+                 DISPLAY SQLCODE.
+        2300-INSERT-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.BANKDET)                                  *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX03) PLAN(DBEX03) -                                    00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD *                                                            00180001
+000001111
+WILLIAM  
+SAVING   
+50000000
+/*                                                                      00200001
+
+
+
+
+
+
+
+EX2.4 - COBOL-DB2 - INSERT TABLE USING PS
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX04.
+        ENVIRONMENT DIVISION.
+        INPUT-OUTPUT SECTION.
+        FILE-CONTROL.
+      **INPUT FILE
+             SELECT TI001-INPUT ASSIGN TO INBKPS
+             ORGANIZATION IS SEQUENTIAL
+             ACCESS MODE IS SEQUENTIAL
+             FILE STATUS IS WS-FILE-STATUS1.
+        DATA DIVISION.
+        FILE SECTION.
+        FD TI001-INPUT.
+        01 TI001-INPUT-RECORD.
+             05 TI001-ACC-NUM    PIC  9(9).
+             05 FILLER           PIC  X(1).
+             05 TI001-ACC-NAME   PIC  X(20).
+             05 FILLER           PIC  X(1).
+             05 TI001-ACC-TYPE   PIC  X(7).
+             05 FILLER           PIC  X(1).
+             05 TI001-ACC-AMT    PIC  9(6)V9(2).
+             05 FILLER           PIC  X(33).
+        WORKING-STORAGE SECTION.
+             EXEC SQL INCLUDE SQLCA END-EXEC.
+             EXEC SQL INCLUDE DCLBANK END-EXEC.
+        01 WS-G-FILE-STATUS.
+             05 WS-FILE-STATUS1  PIC  X(2).
+                88 WFS1-SUCCESS  VALUE  '00'.
+                88 WFS1-EOF      VALUE  '10'.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA
+                 THRU 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 DISPLAY 'INITIALIZATION-PARA'.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-FILE-OPEN-PARA THRU
+                 2100-FILE-OPEN-PARA-EXIT
+                 IF WFS1-SUCCESS
+                  PERFORM 2200-READ-PARA THRU
+                  2200-READ-PARA-EXIT UNTIL WFS1-EOF
+                 END-IF.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-FILE-OPEN-PARA.
+                  OPEN INPUT TI001-INPUT
+                  EVALUATE TRUE
+                  WHEN WFS1-SUCCESS
+                  CONTINUE
+                  WHEN OTHER
+                   DISPLAY 'INPUT FILE OPEN FAILED'
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1
+                  END-EVALUATE.
+        2100-FILE-OPEN-PARA-EXIT.
+                  EXIT.
+        2200-READ-PARA.
+                  READ TI001-INPUT
+                  EVALUATE TRUE
+                  WHEN WFS1-SUCCESS
+                  PERFORM 2300-MOVE-PARA THRU 2300-MOVE-PARA
+                  WHEN WFS1-EOF
+                  CONTINUE
+                  WHEN OTHER
+                   DISPLAY 'INPUT FILE OPEN FAILED'
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1
+                   PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT
+                  END-EVALUATE.
+        2200-READ-PARA-EXIT.
+                  EXIT.
+        2300-MOVE-PARA.
+                  MOVE TI001-ACC-NUM  TO ACCNO
+                  MOVE 20 TO ACCNAME-LEN
+                  MOVE TI001-ACC-NAME TO ACCNAME-TEXT
+                  MOVE TI001-ACC-TYPE TO ACCTYP
+                  MOVE TI001-ACC-AMT TO ACCAMT
+                  PERFORM 2400-INSERT-PARA THRU
+                  2400-INSERT-PARA-EXIT.
+        2300-MOVE-PARA-EXIT.
+                  EXIT.
+        2400-INSERT-PARA.
+                  EXEC SQL INSERT INTO BANKDET VALUES
+                  (:ACCNO, :ACCNAME, :ACCTYP, :ACCAMT)
+                  END-EXEC.
+                  DISPLAY SQLCODE.
+        2400-INSERT-PARA-EXIT.
+                  EXIT.
+        9000-TERMINATION-PARA.
+                  STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                  EXIT.
+
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.BANKDET)                                  *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+//*BANKDET
+000001112 JOHN PETER           SAVING  70000000
+000001113 AMIT SHASWANTH       SAVING  60000000
+000001114 ABC ENTERPRISE       CURRENT 70000000
+000001115 MY CONSULTANCY       CURRENT 90000000
+000001116 LAXMI DEVI           SAVING  70000000
+
+
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//INBKPS  DD  DSN=TEKUS00.INPUT.BANK.PS,DISP=SHR
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX04) PLAN(DBEX04) -                                    00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+EX2.5 - COBOL-DB2 - UPDATE TABLE - ACCNAME
+
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX05.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 DISPLAY 'INITIALIZATION PARA'.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2300-UPDATE-PARA THRU
+                 2300-UPDATE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-UPDATE-PARA.
+                 MOVE 6 TO ACCNAME-LEN.
+                 MOVE 'AMIT S' TO ACCNAME-TEXT.
+                 EXEC SQL UPDATE BANKDET SET ACCNAME = :ACCNAME
+                 WHERE ACCNO = 1113
+                 END-EXEC.
+                 DISPLAY SQLCODE.
+        2300-UPDATE-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+//*DCLBANK
+
+      ******************************************************************
+      * DCLGEN TABLE(TCOM018.BANKDET)                                  *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TCOM018.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TCOM018.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX05) PLAN(DBEX05) -                                    00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+EX2.6 - COBOL-DB2 - UPDATE TABLE ACCTYP
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX06.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 DISPLAY 'INITIALIZATION PARA'.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2300-UPDATE-PARA THRU
+                 2300-UPDATE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-UPDATE-PARA.
+                 MOVE 'SAVINGS' TO ACCTYP.
+                 EXEC SQL UPDATE BANKDET SET ACCTYP = :ACCTYP
+                 WHERE ACCTYP = 'SAVING'
+                 END-EXEC.
+                 DISPLAY SQLCODE.
+        2300-UPDATE-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TCOM018.BANKDET)                                  *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TCOM018.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TCOM018.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//INBKPS  DD  DSN=TCOM018.INPUT.BANK.PS,DISP=SHR
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX06) PLAN(DBEX06) -                                    00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+EX2.7 - COBOL-DB2 - SELECT TABLE - Based on ACCNO
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX07.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        01 WS-BANK.
+            05 WS-ACC-NO       PIC  9(09).
+            05 WS-ACC-NAME     PIC  X(20).
+            05 WS-ACC-TYPE     PIC  X(07).
+            05 WS-ACC-AMT      PIC  9(6)V9(2).
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2300-SELECT-PARA THRU
+                 2300-SELECT-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-SELECT-PARA.
+                 EXEC SQL SELECT ACCNO,
+                 ACCNAME, ACCTYP, ACCAMT INTO :ACCNO, :ACCNAME,
+                 :ACCTYP, :ACCAMT FROM BANKDET
+                 WHERE ACCNO = 1115
+                 END-EXEC.
+                 PERFORM 2400-DISPLAY-PARA THRU
+                 2400-DISPLAY-PARA-EXIT.
+        2300-SELECT-PARA-EXIT.
+                 EXIT.
+        2400-DISPLAY-PARA.
+                 MOVE ACCNO TO WS-ACC-NO
+                 MOVE ACCNAME TO WS-ACC-NAME
+                 MOVE ACCTYP TO WS-ACC-TYPE
+                 MOVE ACCAMT TO WS-ACC-AMT
+                 DISPLAY WS-ACC-NO
+                 DISPLAY WS-ACC-NAME
+                 DISPLAY WS-ACC-TYPE
+                 DISPLAY WS-ACC-AMT.
+        2400-DISPLAY-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*DCLBANK
+
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.BANKDET)                                  *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX07) PLAN(DBEX07) -                                    00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+EX2.8 - COBOL-DB2 - SELECT TABLE - COUNT THE ACCNO
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX08.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        77 WS-CNT-ACCNO    PIC S9(04) USAGE COMP.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2300-SELECT-PARA THRU
+                 2300-SELECT-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-SELECT-PARA.
+                 EXEC SQL
+                 SELECT COUNT(ACCNO) INTO :WS-CNT-ACCNO
+                 FROM BANKDET
+                 END-EXEC.
+                 PERFORM 2400-DISPLAY-PARA THRU
+                 2400-DISPLAY-PARA-EXIT.
+        2300-SELECT-PARA-EXIT.
+                 EXIT.
+        2400-DISPLAY-PARA.
+             DISPLAY "TOTAL NUMBER OF ACCOUNT HOLDERS IN THE BANK IS: " 
+             WS-CNT-ACCNO.
+        2400-DISPLAY-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TCOM018.BANKDET)                                  *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TCOM018.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TCOM018.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+                                 
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX08) PLAN(DBEX08) -                                    00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        0018000
+         
+
+
+
+
+
+
+
+
+EX2.9 - COBOL-DB2 - SELECT TABLE - COUNT BASED ON ACCTYPCoding exercise
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX09.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE DCLBANK END-EXEC.
+        77 WS-CNT-SV-ACCNO    PIC S9(04) USAGE COMP.
+        77 WS-CNT-CR-ACCNO    PIC S9(04) USAGE COMP.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2300-SELECT-PARA THRU
+                 2300-SELECT-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-SELECT-PARA.
+                 EXEC SQL
+                 SELECT COUNT(ACCNO) INTO :WS-CNT-SV-ACCNO
+                 FROM BANKDET WHERE ACCTYP = 'SAVINGS'
+                 END-EXEC.
+                 EXEC SQL
+                 SELECT COUNT(ACCNO) INTO :WS-CNT-CR-ACCNO
+                 FROM BANKDET WHERE ACCTYP = 'CURRENT'
+                 END-EXEC.
+                 PERFORM 2400-DISPLAY-PARA THRU
+                 2400-DISPLAY-PARA-EXIT.
+        2300-SELECT-PARA-EXIT.
+                 EXIT.
+        2400-DISPLAY-PARA.
+                 IF WS-CNT-CR-ACCNO > WS-CNT-SV-ACCNO THEN
+                 DISPLAY 'MAJOR ACCOUNT TYPE IN THE BANK IS CURRENT'
+                 ELSE IF WS-CNT-CR-ACCNO < WS-CNT-SV-ACCNO THEN 
+                 DISPLAY 'MAJOR ACCOUNT TYPE IN THE BANK IS SAVING'
+                 ELSE IF WS-CNT-CR-ACCNO = WS-CNT-SV-ACCNO THEN 
+                 DISPLAY 'THE BANK HAS EQUAL NUMBER OF ACCOUNT TYPE'
+                 ELSE
+                 DISPLAY 'ACCOUNT TYPE IS INCORRECT'
+                 END-IF.
+        2400-DISPLAY-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TCOM018.BANKDET)                                  *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TCOM018.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TCOM018.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX09) PLAN(DBEX09) -                                    00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+EX2.10 - COBOL-DB2 - SELECT TABLE - WRITE IN PS FILE
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. DBEX10.
+        ENVIRONMENT DIVISION.
+        INPUT-OUTPUT SECTION.
+        FILE-CONTROL.
+      **INPUT FILE
+             SELECT TO001-OUTPUT ASSIGN TO OUTBKPS
+             ORGANIZATION IS SEQUENTIAL
+             ACCESS MODE IS SEQUENTIAL
+             FILE STATUS IS WS-FILE-STATUS1.
+        DATA DIVISION.
+        FILE SECTION.
+        FD TO001-OUTPUT.
+        01 TO001-OUTPUT-RECORD.
+             05 TO001-ACC-NUM    PIC  9(9).
+             05 FILLER           PIC  X(1).
+             05 TO001-ACC-NAME   PIC  X(20).
+             05 FILLER           PIC  X(1).
+             05 TO001-ACC-TYPE   PIC  X(7).
+             05 FILLER           PIC  X(1).
+             05 TO001-ACC-AMT    PIC  9(6)V9(2).
+             05 FILLER           PIC  X(33).
+        WORKING-STORAGE SECTION.
+             EXEC SQL INCLUDE SQLCA END-EXEC.
+             EXEC SQL INCLUDE DCLBANK END-EXEC.
+        01 WS-G-FILE-STATUS.
+             05 WS-FILE-STATUS1  PIC  X(2).
+                88 WFS1-SUCCESS  VALUE  '00'.
+                88 WFS1-EOF      VALUE  '10'.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA
+                 THRU 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+                 DISPLAY 'INITIALIZATION-PARA'.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-FILE-OPEN-PARA THRU
+                 2100-FILE-OPEN-PARA-EXIT
+                 IF WFS1-SUCCESS
+                  PERFORM 2200-MOVE-PARA THRU
+                  2200-MOVE-PARA-EXIT
+                 END-IF.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-FILE-OPEN-PARA.
+                  OPEN OUTPUT TO001-OUTPUT
+                  EVALUATE TRUE
+                  WHEN WFS1-SUCCESS
+                  CONTINUE
+                  WHEN OTHER
+                   DISPLAY 'OUTPUT FILE OPEN FAILED'
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1
+                  END-EVALUATE.
+        2100-FILE-OPEN-PARA-EXIT.
+                  EXIT.
+        2200-MOVE-PARA.
+                  EXEC SQL SELECT ACCNO, ACCNAME, ACCTYP,
+                  ACCAMT INTO :ACCNO, :ACCNAME, :ACCTYP,
+                  :ACCAMT FROM BANKDET WHERE ACCNO = 1116
+                  END-EXEC
+                  MOVE ACCNO TO TO001-ACC-NUM
+                  MOVE ACCNAME TO TO001-ACC-NAME
+                  MOVE ACCTYP TO TO001-ACC-TYPE
+                  MOVE ACCAMT TO TO001-ACC-AMT
+                  WRITE TO001-OUTPUT-RECORD.
+        2200-MOVE-PARA-EXIT.
+                  EXIT.
+        9000-TERMINATION-PARA.
+                  STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                  EXIT.
+
+
+//*DCLBANK
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.BANKDET)                                  *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EX01))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.BANKDET TABLE
+           ( ACCNO                          INTEGER,
+             ACCNAME                        VARCHAR(20),
+             ACCTYP                         CHAR(7),
+             ACCAMT                         DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.BANKDET                    *
+      ******************************************************************
+       01  DCLBANKDET.
+           10 ACCNO                PIC S9(9) USAGE COMP.
+           10 ACCNAME.
+              49 ACCNAME-LEN       PIC S9(4) USAGE COMP.
+              49 ACCNAME-TEXT      PIC X(20).
+           10 ACCTYP               PIC X(7).
+           10 ACCAMT               PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+//*RUNJCL
+
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//OUTBKPS DD DSN=TEKUS00.OUTPUT.BANK.PS,DISP=SHR
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(DBEX10) PLAN(DBEX10) -                                    00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+**************************************************************************
+Cursor
+**************************************************************************
+
+EX3.1 - CURSOR - Select the table
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX01.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+        01 WS-EMPNO                PIC  X(06).
+        01 WS-FIRSTNAME            PIC  X(20).
+        01 WS-MGRNO                PIC  X(06).
+        01 WS-DEPTNAME             PIC  X(40).
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL INCLUDE DEPTDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPDEP CURSOR FOR
+            SELECT EMPNO, FIRSTNAME, MGRNO, DEPTNAME FROM
+            GEN_DEPARTMENT,GEN_EMPLOYEE
+            WHERE WORKDEPT = DEPTNO AND SALARY > 40000
+            ORDER BY EMPNO
+            END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPDEP END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPDEP INTO :EMPNO,
+                 :FIRSTNAME, :MGRNO, :DEPTNAME
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 PERFORM 2300-MOVE-PARA THRU
+                 2300-MOVE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPDEP END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-MOVE-PARA.
+                 MOVE EMPNO TO WS-EMPNO
+                 MOVE FIRSTNAME-TEXT TO WS-FIRSTNAME
+                 MOVE MGRNO TO WS-MGRNO
+                 MOVE DEPTNAME-TEXT TO WS-DEPTNAME
+                 DISPLAY 'EMPNO:' WS-EMPNO
+                 DISPLAY 'FIRSTNAME:' WS-FIRSTNAME
+                 DISPLAY 'MGRNO:' WS-MGRNO
+                 DISPLAY 'DEPTNAME:' WS-DEPTNAME
+                 MOVE SPACES TO EMPNO
+                 MOVE SPACES TO FIRSTNAME-TEXT
+                 MOVE SPACES TO MGRNO
+                 MOVE SPACES TO DEPTNAME-TEXT.
+         2300-MOVE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+//*EMPDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+
+
+//*DEPTDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_DEPARTMENT)                           *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(DEPART))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_DEPARTMENT TABLE
+           ( DEPTNO                         CHAR(3) NOT NULL,
+             DEPTNAME                       VARCHAR(40) NOT NULL,
+             MGRNO                          CHAR(6),
+             ADMRDEPT                       CHAR(3) NOT NULL,
+             LOCATION                       CHAR(20)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_DEPARTMENT             *
+      ******************************************************************
+       01  DCLGEN-DEPARTMENT.
+           10 DEPTNO               PIC X(3).
+           10 DEPTNAME.
+              49 DEPTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 DEPTNAME-TEXT     PIC X(40).
+           10 MGRNO                PIC X(6).
+           10 ADMRDEPT             PIC X(3).
+           10 LOCATION             PIC X(20).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+
+
+//*RUNJCL
+
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX01) PLAN(CDBEX01) -                                  00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+EX3.2 - CURSOR - Update the table
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX02.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMP CURSOR FOR
+            SELECT EMPNO, FIRSTNAME, EDLEVEL,JOB,BONUS FROM
+            GEN_EMPLOYEE WHERE JOB IN ('CLRK','DSGR')
+            FOR UPDATE OF BONUS
+            END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMP END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR OPENED'
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMP INTO :EMPNO,
+                 :FIRSTNAME, :EDLEVEL, :JOB, :BONUS
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR FETCHED'
+                 PERFORM 2300-UPDATE-PARA THRU
+                 2300-UPDATE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMP END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR CLOSED'
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-UPDATE-PARA.
+                 EXEC SQL UPDATE GEN_EMPLOYEE
+                 SET BONUS = BONUS + 100
+                 WHERE CURRENT OF CS-TB-EMP
+                 END-EXEC.
+                 DISPLAY SQLCODE.
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG.
+         2300-UPDATE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+
+//*EMPDCL
+
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX02) PLAN(CDBEX02) -                                  00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+
+EX3.3 - CURSOR - Update & Select the Table
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX03.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+        01 WS-EMPLOY.
+            05 WS-EMPNO      PIC  X(6).
+            05 WS-FIRSTNAME  PIC  X(20).
+            05 WS-EDLEVEL    PIC  S9(4) USAGE COMP.
+            05 WS-JOB        PIC  X(8).
+            05 WS-SALARY     PIC  S9(7)V9(2) USAGE COMP-3.
+            05 WS-BONUS      PIC  S9(7)V9(2) USAGE COMP-3.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPU CURSOR FOR
+            SELECT EMPNO, FIRSTNAME, EDLEVEL,JOB,SALARY,BONUS FROM
+            GEN_EMPLOYEE WHERE EDLEVEL IN (18,20)
+            FOR UPDATE OF SALARY
+            END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPS CURSOR FOR
+            SELECT EMPNO, FIRSTNAME, EDLEVEL,JOB,SALARY,BONUS FROM
+            GEN_EMPLOYEE WHERE EDLEVEL IN (18,20)
+            ORDER BY EMPNO
+            END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+                 PERFORM 3100-OPEN-PARA THRU
+                 3100-OPEN-PARA-EXIT
+                 PERFORM 3200-FETCH-PARA THRU
+                 3200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 4000-CLOSE-PARA THRU
+                 4000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPU END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPU INTO :EMPNO,
+                 :FIRSTNAME, :EDLEVEL, :JOB, :SALARY, :BONUS
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 PERFORM 2300-UPDATE-PARA THRU
+                 2300-UPDATE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPU END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-UPDATE-PARA.
+                 IF SALARY > 40000 THEN
+                  EXEC SQL UPDATE GEN_EMPLOYEE
+                  SET SALARY = SALARY + 500
+                  WHERE CURRENT OF CS-TB-EMPU
+                  END-EXEC
+                  ELSE IF SALARY < 40000 THEN
+                  EXEC SQL UPDATE GEN_EMPLOYEE
+                  SET SALARY = SALARY + 1000
+                  WHERE CURRENT OF CS-TB-EMPU
+                  END-EXEC
+                  CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                  END-IF.
+         2300-UPDATE-PARA-EXIT.
+                  EXIT.
+        3100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        3100-OPEN-PARA-EXIT.
+                 EXIT.
+        3200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPS INTO :EMPNO,
+                 :FIRSTNAME, :EDLEVEL, :JOB, :SALARY, :BONUS
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 PERFORM 2400-MOVE-PARA THRU
+                 2400-MOVE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3200-FETCH-PARA-EXIT.
+                 EXIT.
+         4000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         4000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2400-MOVE-PARA.
+                 MOVE EMPNO TO WS-EMPNO
+                 MOVE FIRSTNAME-TEXT TO WS-FIRSTNAME
+                 MOVE EDLEVEL TO WS-EDLEVEL
+                 MOVE JOB TO WS-JOB
+                 MOVE SALARY TO WS-SALARY
+                 MOVE BONUS TO WS-BONUS
+                 DISPLAY 'EMPNO : ' WS-EMPNO.
+                 DISPLAY 'FIRSTNAME :' WS-FIRSTNAME.
+                 DISPLAY 'EDLEVEL :' WS-EDLEVEL.
+                 DISPLAY 'JOB :' WS-JOB
+                 DISPLAY 'SALARY :' WS-SALARY.
+                 DISPLAY 'BONUS :' WS-BONUS.
+         2400-MOVE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+
+//*EMPDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX03) PLAN(CDBEX03) -                                  00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+EX3.4 - CURSOR - Select the table (JOIN)
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX04.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL INCLUDE DEPTDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPDEPS CURSOR FOR
+            SELECT COUNT(EMPNO) AS EMPCOUNT, WORKDEPT,
+            MAX(SALARY) AS MAXSAL, DEPTNAME, LOCATION FROM
+            GEN_DEPARTMENT,GEN_EMPLOYEE
+            WHERE WORKDEPT = DEPTNO GROUP BY WORKDEPT,DEPTNAME,
+            LOCATION
+            ORDER BY WORKDEPT
+            END-EXEC.
+        01 WS-CNT-EMP              PIC S9(4) USAGE COMP.
+        01 WS-MAX-SAL              PIC S9(7)V9(2) USAGE COMP-3.
+        01 WS-WORKDEPT             PIC X(3).
+        01 WS-DEPTNAME             PIC X(40).
+        01 WS-LOCATION             PIC X(20).
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPDEPS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPDEPS INTO :WS-CNT-EMP,
+                 :WORKDEPT, :WS-MAX-SAL, :DEPTNAME, :LOCATION
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 PERFORM 2300-MOVE-PARA THRU
+                 2300-MOVE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPDEPS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-MOVE-PARA.
+                 MOVE WORKDEPT TO WS-WORKDEPT
+                 MOVE DEPTNAME-TEXT TO WS-DEPTNAME
+                 MOVE LOCATION TO WS-LOCATION
+                 DISPLAY 'EMP COUNT:' WS-CNT-EMP
+                 DISPLAY 'WORKDEPT :' WS-WORKDEPT
+                 DISPLAY 'MAX SALARY:' WS-MAX-SAL
+                 DISPLAY 'DEPTNAME :' WS-DEPTNAME
+                 DISPLAY 'LOCATION :' WS-LOCATION
+                 MOVE SPACES TO WS-WORKDEPT
+                 MOVE SPACES TO DEPTNAME-TEXT
+                 MOVE SPACES TO LOCATION.
+         2300-MOVE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+
+//*EMPDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+
+//*DEPTDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_DEPARTMENT)                           *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(DEPART))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_DEPARTMENT TABLE
+           ( DEPTNO                         CHAR(3) NOT NULL,
+             DEPTNAME                       VARCHAR(40) NOT NULL,
+             MGRNO                          CHAR(6),
+             ADMRDEPT                       CHAR(3) NOT NULL,
+             LOCATION                       CHAR(20)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_DEPARTMENT             *
+      ******************************************************************
+       01  DCLGEN-DEPARTMENT.
+           10 DEPTNO               PIC X(3).
+           10 DEPTNAME.
+              49 DEPTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 DEPTNAME-TEXT     PIC X(40).
+           10 MGRNO                PIC X(6).
+           10 ADMRDEPT             PIC X(3).
+           10 LOCATION             PIC X(20).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX04) PLAN(CDBEX04) -                                  00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+
+EX3.5 - CURSOR - Select the table - Write in PS
+
+
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX05.
+        ENVIRONMENT DIVISION.
+        INPUT-OUTPUT SECTION.
+        FILE-CONTROL.
+             SELECT TO001-OUTPUT ASSIGN TO OUTEMPPS
+             ORGANIZATION IS SEQUENTIAL
+             ACCESS MODE IS SEQUENTIAL
+             FILE STATUS IS WS-FILE-STATUS1.
+        DATA DIVISION.
+        FILE SECTION.
+        FD TO001-OUTPUT.
+        01 TO001-OUTPUT-RECORD.
+             05 TO001-EMP-NUM      PIC X(6).
+             05 FILLER             PIC X.
+             05 TO001-EMP-NAME     PIC X(40).
+             05 FILLER             PIC X.
+             05 TO001-WORK-DEPT    PIC X(3).
+             05 FILLER             PIC X.
+             05 TO001-JOB          PIC X(8).
+             05 FILLER             PIC X.
+             05 TO001-DOB          PIC X(10).
+             05 FILLER             PIC X(9).
+        WORKING-STORAGE SECTION.
+        01 WS-G-FILE-STATUS.
+             05 WS-FILE-STATUS1  PIC  X(2).
+                88 WFS1-SUCCESS  VALUE  '00'.
+                88 WFS1-EOF      VALUE  '10'.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPLS CURSOR FOR
+            SELECT EMPNO, FIRSTNAME, LASTNAME, WORKDEPT, JOB,
+            DOB FROM GEN_EMPLOYEE
+            ORDER BY EMPNO
+            END-EXEC.
+        01 WS-FIRST-NAME PIC X(20).
+        01 WS-LAST-NAME  PIC X(20).
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPLS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 IF WS-SUCCESS
+                 DISPLAY 'CURSOR OPEN SUCCESS' WSS-SQLCODE
+                 OPEN OUTPUT TO001-OUTPUT
+                 IF WFS1-SUCCESS
+                  DISPLAY 'OUT1 FILE SUCCESS' WS-FILE-STATUS1
+                  ELSE
+                  DISPLAY 'OUT1 FILE UNSUCCESS' WS-FILE-STATUS1
+                 END-IF
+                 ELSE
+                 DISPLAY 'CURSOR OPEN UNSUCCESS' WSS-SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-IF.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPLS INTO :EMPNO,
+                 :FIRSTNAME, :LASTNAME, :WORKDEPT,
+                 :JOB, :DOB
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 PERFORM 2300-MOVE-PARA THRU
+                 2300-MOVE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPLS END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 IF WS-SUCCESS
+                 DISPLAY 'CURSOR CLOSED' WSS-SQLCODE
+                 CLOSE TO001-OUTPUT
+                 IF WFS1-SUCCESS
+                  DISPLAY 'CLOSE FILE SUCCESS' WS-FILE-STATUS1
+                  ELSE
+                  DISPLAY 'CLOSE FILE UNSUCCESS' WS-FILE-STATUS1
+                 END-IF
+                 ELSE
+                 DISPLAY 'CURSOR NOT CLOSED' WSS-SQLCODE
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-IF.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-MOVE-PARA.
+                 MOVE EMPNO TO TO001-EMP-NUM
+                 MOVE FIRSTNAME-TEXT TO WS-FIRST-NAME
+                 MOVE LASTNAME-TEXT TO WS-LAST-NAME
+                 STRING WS-FIRST-NAME DELIMITED BY SPACE
+                 WS-LAST-NAME DELIMITED BY SPACE
+                 INTO TO001-EMP-NAME
+                 END-STRING
+                 MOVE WORKDEPT TO TO001-WORK-DEPT
+                 MOVE JOB TO TO001-JOB
+                 MOVE DOB TO TO001-DOB
+                 WRITE TO001-OUTPUT-RECORD
+                 IF WFS1-SUCCESS
+                  DISPLAY 'WRITE FILE SUCCESS' WS-FILE-STATUS1
+                  ELSE
+                  DISPLAY 'WRITE FILE UNSUCCESS' WS-FILE-STATUS1
+                 END-IF
+                 MOVE SPACES TO EMPNO
+                 MOVE SPACES TO FIRSTNAME
+                 MOVE SPACES TO LASTNAME
+                 MOVE SPACES TO WORKDEPT
+                 MOVE SPACES TO JOB
+                 MOVE SPACES TO DOB.
+         2300-MOVE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*EMPDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//OUTEMPPS DD DSN=TCOM018.OUTPUT.EMPLOY.PS,DISP=SHR
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX05) PLAN(CDBEX05) -                                  00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+
+EX3.6 - CURSOR - Delete the table
+
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. CDBEX06.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE EMPDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-EMPLD CURSOR FOR
+            SELECT EMPNO, FIRSTNAME,MIDINIT, LASTNAME,WORKDEPT,
+            PHONENO,DOJ,JOB,EDLEVEL,SEX,DOB,SALARY,BONUS,COMM FROM
+            GEN_EMPLOYEE WHERE DOB < '01/01/1985'
+            FOR UPDATE OF DOB
+            END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-EMPLD END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR OPENED'
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-EMPLD INTO :EMPNO,
+                 :FIRSTNAME, :MIDINIT, :LASTNAME,:WORKDEPT,:PHONENO,
+                 :DOJ, :JOB, :EDLEVEL, :SEX, :DOB, :SALARY,
+                 :BONUS, :COMM
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR FETCHED'
+                 PERFORM 2300-DELETE-PARA THRU
+                 2300-DELETE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-EMPLD END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 DISPLAY 'CURSOR CLOSED'
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-DELETE-PARA.
+                 EXEC SQL DELETE FROM IBMUSER.GEN_EMPLOYEE
+                 WHERE CURRENT OF CS-TB-EMPLD
+                 END-EXEC.
+                 DISPLAY SQLCODE.
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG.
+         2300-DELETE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+
+
+
+//*EMPDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.GEN_EMPLOYEE)                             *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(EMPLOY))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.GEN_EMPLOYEE TABLE
+           ( EMPNO                          CHAR(6) NOT NULL,
+             FIRSTNAME                      VARCHAR(20) NOT NULL,
+             MIDINIT                        CHAR(1) NOT NULL,
+             LASTNAME                       VARCHAR(20) NOT NULL,
+             WORKDEPT                       CHAR(3),
+             PHONENO                        CHAR(10),
+             DOJ                            DATE,
+             JOB                            CHAR(8),
+             EDLEVEL                        SMALLINT,
+             SEX                            CHAR(1),
+             DOB                            DATE,
+             SALARY                         DECIMAL(9, 2),
+             BONUS                          DECIMAL(9, 2),
+             COMM                           DECIMAL(9, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.GEN_EMPLOYEE               *
+      ******************************************************************
+       01  DCLGEN-EMPLOYEE.
+           10 EMPNO                PIC X(6).
+           10 FIRSTNAME.
+              49 FIRSTNAME-LEN     PIC S9(4) USAGE COMP.
+              49 FIRSTNAME-TEXT    PIC X(20).
+           10 MIDINIT              PIC X(1).
+           10 LASTNAME.
+              49 LASTNAME-LEN      PIC S9(4) USAGE COMP.
+              49 LASTNAME-TEXT     PIC X(20).
+           10 WORKDEPT             PIC X(3).
+           10 PHONENO              PIC X(10).
+           10 DOJ                  PIC X(10).
+           10 JOB                  PIC X(8).
+           10 EDLEVEL              PIC S9(4) USAGE COMP.
+           10 SEX                  PIC X(1).
+           10 DOB                  PIC X(10).
+           10 SALARY               PIC S9(7)V9(2) USAGE COMP-3.
+           10 BONUS                PIC S9(7)V9(2) USAGE COMP-3.
+           10 COMM                 PIC S9(7)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 14      *
+      ******************************************************************
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CDBEX06) PLAN(CDBEX06) -                                  00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+**********************************************************************************
+Handling NULL and VARCHAR
+*********************************************************************************
+
+
+
+EX 4.1 - Handling NULL and VARCHAR - Embedded SQL Program
+
+
+//*HDBEX01
+CREATE TABLE PRODUCT_INF(PRODUCT_CODE CHAR(5) NOT NULL PRIMARY KEY,     00000100
+PRODUCT_NAME VARCHAR(20), PRODUCT_QTY INTEGER NOT NULL,                 00000200
+PRODUCT_STATUS CHAR(3) NOT NULL,                                        00000300
+CONSTRAINT CHK_PRD CHECK(PRODUCT_STATUS IN ('AVL', 'NA')));             00000400
+--INSERT QUERY                                                          00000500
+INSERT INTO PRODUCT_INF VALUES('PRD11','NOKIA',500,'AVL');              00000600
+INSERT INTO PRODUCT_INF VALUES('PRD12','MOTOROLA',600,'NA');            00000700
+INSERT INTO PRODUCT_INF VALUES('PRD13','MICROSOFT',820,'AVL');          00000800
+INSERT INTO PRODUCT_INF VALUES('PRD14',NULL,180,'NA');                  00000900
+INSERT INTO PRODUCT_INF VALUES('PRD21',NULL,670,'AVL');                 00001000
+
+
+
+//*HDBEX02
+
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. HDBEX02.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE PRODDCL END-EXEC.
+        01 NULL-IND   PIC  S9(4) USAGE COMP.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 MOVE 0 TO NULL-IND.
+                 IF (NULL-IND = -1)
+                 DISPLAY 'NULL VALUE OCCURRED'
+                 CONTINUE
+                 ELSE
+                 PERFORM 2300-INSERT-PARA THRU
+                 2300-INSERT-PARA-EXIT
+                 END-IF.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2300-INSERT-PARA.
+                 MOVE 0 TO NULL-IND
+                 MOVE 'PRD15' TO PRODUCT-CODE
+                 MOVE 5 TO PRODUCT-NAME-LEN
+                 MOVE 'REDMI' TO PRODUCT-NAME-TEXT
+                 MOVE 500 TO PRODUCT-QTY
+                 MOVE 'AVL' TO PRODUCT-STATUS.
+                 EXEC SQL INSERT INTO PRODUCT_INF VALUES
+                 (:PRODUCT-CODE, :PRODUCT-NAME :NULL-IND,
+                 :PRODUCT-QTY, :PRODUCT-STATUS)
+                 END-EXEC.
+                 DISPLAY 'VALUE INSERTED'
+                 DISPLAY SQLCODE.
+                 MOVE -1 TO NULL-IND.
+                 MOVE 'PRD16' TO PRODUCT-CODE.
+                 MOVE ZEROS TO PRODUCT-NAME-LEN.
+                 MOVE SPACES TO PRODUCT-NAME-TEXT.
+                 MOVE 220 TO PRODUCT-QTY.
+                 MOVE 'NA' TO PRODUCT-STATUS.
+                 EXEC SQL INSERT INTO PRODUCT_INF VALUES
+                 (:PRODUCT-CODE, :PRODUCT-NAME :NULL-IND,
+                 :PRODUCT-QTY, :PRODUCT-STATUS)
+                 END-EXEC.
+                 DISPLAY 'VALUE INSERTED'
+                 DISPLAY SQLCODE.
+        2300-INSERT-PARA-EXIT.
+                 EXIT.
+        9000-TERMINATION-PARA.
+                 STOP RUN.
+        9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+
+
+//*PRODDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.PRODUCT_INF)                              *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(PROD))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.PRODUCT_INF TABLE
+           ( PRODUCT_CODE                   CHAR(5) NOT NULL,
+             PRODUCT_NAME                   VARCHAR(20),
+             PRODUCT_QTY                    INTEGER NOT NULL,
+             PRODUCT_STATUS                 CHAR(3) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.PRODUCT_INF                *
+      ******************************************************************
+       01  DCLPRODUCT-INF.
+           10 PRODUCT-CODE         PIC X(5).
+           10 PRODUCT-NAME.
+              49 PRODUCT-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 PRODUCT-NAME-TEXT
+                 PIC X(20).
+           10 PRODUCT-QTY          PIC S9(9) USAGE COMP.
+           10 PRODUCT-STATUS       PIC X(3).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(HDBEX02) PLAN(HDBEX02) -                                  00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+EX 4.2 - Handling NULL and Varchar - Cursor Select
+
+//*HEBEX03
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. HDBEX03.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        01 WSS-ERR-MSG.
+            05 WS-ERR-MSG.
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.
+            88 WS-EOT              VALUE  +100.
+            88 WS-SUCCESS          VALUE  +000.
+        01 NULL-IND                PIC  S9(4) USAGE COMP.
+        01 WS-PRODUCT.
+            05  WS-PRODUCT-CODE    PIC  X(5).
+            05  WS-PRODUCT-NAME    PIC  X(20).
+            05  WS-PRODUCT-QTY     PIC  S9(9) USAGE COMP.
+            05  WS-PRODUCT-STATUS  PIC  X(3).
+            EXEC SQL INCLUDE SQLCA END-EXEC.
+            EXEC SQL INCLUDE PRODDCL END-EXEC.
+            EXEC SQL
+            DECLARE CS-TB-PROD CURSOR FOR
+            SELECT PRODUCT_CODE, PRODUCT_NAME, PRODUCT_QTY,
+            PRODUCT_STATUS FROM
+            PRODUCT_INF
+            ORDER BY PRODUCT_CODE
+            END-EXEC.
+        PROCEDURE DIVISION.
+        0000-MAIN-PARA.
+                 PERFORM 1000-INITIALIZATION-PARA THRU
+                 1000-INITIALIZATION-PARA-EXIT
+                 PERFORM 2000-PROCESS-PARA THRU
+                 2000-PROCESS-PARA-EXIT
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT.
+        0000-MAIN-PARA-EXIT.
+                 EXIT.
+        1000-INITIALIZATION-PARA.
+        1000-INITIALIZATION-PARA-EXIT.
+                 EXIT.
+        2000-PROCESS-PARA.
+                 PERFORM 2100-OPEN-PARA THRU
+                 2100-OPEN-PARA-EXIT
+                 PERFORM 2200-FETCH-PARA THRU
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT
+                 PERFORM 3000-CLOSE-PARA THRU
+                 3000-CLOSE-PARA-EXIT.
+        2000-PROCESS-PARA-EXIT.
+                 EXIT.
+        2100-OPEN-PARA.
+                 EXEC SQL OPEN CS-TB-PROD END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT OPENED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+        2100-OPEN-PARA-EXIT.
+                 EXIT.
+        2200-FETCH-PARA.
+                 EXEC SQL FETCH CS-TB-PROD INTO :PRODUCT-CODE,
+                 :PRODUCT-NAME :NULL-IND, :PRODUCT-QTY,
+                 :PRODUCT-STATUS
+                 END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 PERFORM 2300-MOVE-PARA THRU
+                 2300-MOVE-PARA-EXIT
+                 WHEN WS-EOT
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT FETCHED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         2200-FETCH-PARA-EXIT.
+                 EXIT.
+         3000-CLOSE-PARA.
+                 EXEC SQL CLOSE CS-TB-PROD END-EXEC.
+                 MOVE SQLCODE TO WSS-SQLCODE
+                 EVALUATE TRUE
+                 WHEN WS-SUCCESS
+                 CONTINUE
+                 WHEN OTHER
+                 DISPLAY 'CURSOR NOT CLOSED'
+                 DISPLAY 'ERROR STATUS' SQLCODE
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL
+                 DISPLAY WS-ERR-MSG
+                 PERFORM 9000-TERMINATION-PARA THRU
+                 9000-TERMINATION-PARA-EXIT
+                 END-EVALUATE.
+         3000-CLOSE-PARA-EXIT.
+                 EXIT.
+         2300-MOVE-PARA.
+                 IF (NULL-IND = -1)
+                 CONTINUE
+                 ELSE
+                 MOVE PRODUCT-CODE TO WS-PRODUCT-CODE
+                 MOVE PRODUCT-NAME-TEXT TO WS-PRODUCT-NAME
+                 MOVE PRODUCT-QTY TO WS-PRODUCT-QTY
+                 MOVE PRODUCT-STATUS TO WS-PRODUCT-STATUS
+                 DISPLAY 'PRODUCT CODE :' WS-PRODUCT-CODE
+                 DISPLAY 'PRODUCT NAME :' WS-PRODUCT-NAME
+                 DISPLAY 'PRODUCT QTY  :' WS-PRODUCT-QTY
+                 DISPLAY 'PRODUCT STATUS :' WS-PRODUCT-STATUS
+                 END-IF.
+         2300-MOVE-PARA-EXIT.
+                 EXIT.
+         9000-TERMINATION-PARA.
+                 STOP RUN.
+         9000-TERMINATION-PARA-EXIT.
+                 EXIT.
+         9100-CURSOR-CLOSE-PARA-EXIT.
+                 EXIT.
+
+
+//*PRODDCL
+      ******************************************************************
+      * DCLGEN TABLE(IBMUSER.PRODUCT_INF)                              *
+      *        LIBRARY(TCOM018.DB2.DCLGEN(PROD))                       *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE IBMUSER.PRODUCT_INF TABLE
+           ( PRODUCT_CODE                   CHAR(5) NOT NULL,
+             PRODUCT_NAME                   VARCHAR(20),
+             PRODUCT_QTY                    INTEGER NOT NULL,
+             PRODUCT_STATUS                 CHAR(3) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE IBMUSER.PRODUCT_INF                *
+      ******************************************************************
+       01  DCLPRODUCT-INF.
+           10 PRODUCT-CODE         PIC X(5).
+           10 PRODUCT-NAME.
+              49 PRODUCT-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 PRODUCT-NAME-TEXT
+                 PIC X(20).
+           10 PRODUCT-QTY          PIC S9(9) USAGE COMP.
+           10 PRODUCT-STATUS       PIC X(3).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TCOM018A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(HDBEX03) PLAN(HDBEX03) -                                  00140029
+      LIB('TCOM018.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+EX 4.3 - Handling VARCHAR - Embedded SQL Program
+
+//*HDBEX01
+CREATE TABLE MODEL_INF(ASSET_ID INTEGER NOT NULL PRIMARY KEY,           
+ASSET_NAME VARCHAR(25), BRAND_NAME VARCHAR(25),                         
+MODEL_NUMBER VARCHAR(25), MANUFACTURER_ID INTEGER,                      
+CATEGORY_ID INTEGER);
+INSERT INTO MODEL_INF VALUES(1001,'LCD MONITORY','ACER','AC1012',4,10); 
+INSERT INTO MODEL_INF VALUES(1002,'COLOR LASERJET','PENTIUM','PA2001',
+6,11); 
+INSERT INTO MODEL_INF VALUES(1004,'WEBCAM','VISTA','VI2501',7,15);      
+
+
+
+//*HDBEX02
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. HDBEX02.                                            00020000
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00050000
+            EXEC SQL INCLUDE MODDCL END-EXEC.                           00060000
+        PROCEDURE DIVISION.                                             00070000
+        0000-MAIN-PARA.                                                 00080000
+                PERFORM 1000-INITIALIZATION-PARA THRU                   00090000
+                1000-INITIALIZATION-PARA-EXIT                           00100000
+                PERFORM 2000-PROCESS-PARA THRU                          00110000
+                2000-PROCESS-PARA-EXIT                                  00120000
+                PERFORM 9000-TERMINATION-PARA THRU                      00130000
+                9000-TERMINATION-PARA-EXIT.                             00140000
+        0000-MAIN-PARA-EXIT.                                            00150000
+                 EXIT.                                                  00160000
+        1000-INITIALIZATION-PARA.                                       00170000
+        1000-INITIALIZATION-PARA-EXIT.                                  00180000
+                 EXIT.                                                  00190000
+        2000-PROCESS-PARA.                                              00200000
+                PERFORM 2300-INSERT-PARA THRU                           00210000
+                2300-INSERT-PARA-EXIT.                                  00220000
+        2000-PROCESS-PARA-EXIT.                                         00240000
+                 EXIT.                                                  00250000
+        2300-INSERT-PARA.                                               00260000
+                MOVE 1006 TO ASSET-ID.                                  00270000
+                MOVE 7 TO ASSET-NAME-LEN.                               00280000
+                MOVE 'NAS HDD' TO ASSET-NAME-TEXT.                      00290000
+                MOVE 7 TO BRAND-NAME-LEN.                               00300000
+                MOVE 'SEAGATE' TO BRAND-NAME-TEXT.                      00310000
+                MOVE 6 TO MODEL-NUMBER-LEN.                             00320000
+                MOVE 'SG1005' TO MODEL-NUMBER-TEXT.                     00330001
+                MOVE 8 TO MANUFACTURER-ID.                               0034000
+                MOVE 12 TO CATEGORY-ID.                                 00350001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00360001
+                (:ASSET-ID, :ASSET-NAME,                                00370001
+                :BRAND-NAME, :MODEL-NUMBER,                             00380001
+                :MANUFACTURER-ID, :CATEGORY-ID)                          0039000
+                END-EXEC.                                               00400001
+                DISPLAY 'VALUE INSERTED'                                00410001
+                DISPLAY SQLCODE.                                        00420001
+                MOVE 1007 TO ASSET-ID.                                  00430001
+                MOVE 6 TO ASSET-NAME-LEN.                               00440001
+                MOVE 'ROUTER' TO ASSET-NAME-TEXT.                       00450001
+                MOVE 4 TO BRAND-NAME-LEN.                               00460001
+                MOVE 'ASUS' TO BRAND-NAME-TEXT.                         00470001
+                MOVE 6 TO MODEL-NUMBER-LEN.                             00480001
+                MOVE 'AS1567' TO MODEL-NUMBER-TEXT.                     00490001
+                MOVE 9 TO MANUFACTURER-ID.                              00500001
+                MOVE 16 TO CATEGORY-ID.                                 00510001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00520001
+                (:ASSET-ID, :ASSET-NAME,                                00530001
+                :BRAND-NAME, :MODEL-NUMBER,                             00540001
+                :MANUFACTURER-ID, :CATEGORY-ID)                         00550001
+                END-EXEC.                                               00560001
+                DISPLAY 'VALUE INSERTED'                                00570001
+                DISPLAY SQLCODE.                                        00580001
+                MOVE 1008 TO ASSET-ID.                                  00590001
+                MOVE 9 TO ASSET-NAME-LEN.                               00600001
+                MOVE 'PEN DRIVE' TO ASSET-NAME-TEXT.                    00610001
+                MOVE 6 TO BRAND-NAME-LEN.                               00620001
+                MOVE 'LV2378' TO MODEL-NUMBER-TEXT.                     00630001
+                MOVE 3 TO MANUFACTURER-ID.                               0064000
+                MOVE 17 TO CATEGORY-ID.                                 00650001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00660001
+                (:ASSET-ID, :ASSET-NAME,                                00670001
+                :BRAND-NAME, :MODEL-NUMBER,                             00680001
+                :MANUFACTURER-ID, :CATEGORY-ID)                          0069000
+                END-EXEC.                                               00700001
+                DISPLAY 'VALUE INSERTED'                                00710001
+                DISPLAY SQLCODE.                                        00720001
+        2300-INSERT-PARA-EXIT.                                          00730001
+                EXIT.                                                   00740001
+        9000-TERMINATION-PARA.                                          00750001
+                 STOP RUN.                                              00760001
+        9000-TERMINATION-PARA-EXIT.                                     00770001
+                 EXIT.                                                  00780001
+
+
+//*MODDCL
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.MODEL_INF)                                *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(MODDCL))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.MODEL_INF TABLE
+           ( ASSET_ID                       INTEGER NOT NULL,
+             ASSET_NAME                     VARCHAR(25),
+             BRAND_NAME                     VARCHAR(25),
+             MODEL_NUMBER                   VARCHAR(25),
+             MANUFACTURER_ID                INTEGER,
+             CATEGORY_ID                    INTEGER
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.MODEL_INF                  *
+      ******************************************************************
+       01  DCLMODEL-INF.
+           10 ASSET-ID             PIC S9(9) USAGE COMP.
+           10 ASSET-NAME.
+              49 ASSET-NAME-LEN    PIC S9(4) USAGE COMP.
+              49 ASSET-NAME-TEXT   PIC X(25).
+           10 BRAND-NAME.
+              49 BRAND-NAME-LEN    PIC S9(4) USAGE COMP.
+              49 BRAND-NAME-TEXT   PIC X(25).
+           10 MODEL-NUMBER.
+              49 MODEL-NUMBER-LEN
+                 PIC S9(4) USAGE COMP.
+              49 MODEL-NUMBER-TEXT
+                 PIC X(25).
+           10 MANUFACTURER-ID      PIC S9(9) USAGE COMP.
+           10 CATEGORY-ID          PIC S9(9) USAGE COMP.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 6       *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TEKUS00A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(HDBEX02) PLAN(HDBEX02) -                                  00140029
+      LIB('TEKUS00.DB2.LOADLIB')                                        00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
