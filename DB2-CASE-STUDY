@@ -1,0 +1,1977 @@
+****************************************************************************
+
+CASE STUDY 1
+***************************************************************************
+
+
+//*CASE01C
+        IDENTIFICATION DIVISION.                                        
+        PROGRAM-ID. CASE01C.                                            
+        DATA DIVISION.                                                  
+        WORKING-STORAGE SECTION.                                        
+        01 WSS-ERR-MSG.                                                 
+            05 WS-ERR-MSG.                                              
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE +720.          
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          
+              10 WS-ERR-LRECL        PIC  S9(9) COMP VALUE +72.         
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    
+            88 WS-EOT              VALUE  +100.                         
+            88 WS-SUCCESS          VALUE  +000.                         
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            
+            EXEC SQL INCLUDE CUSTADCL END-EXEC.                         
+            EXEC SQL INCLUDE CUSTDCL END-EXEC.                          
+            EXEC SQL INCLUDE CUSTYDCL END-EXEC.                         
+            EXEC SQL INCLUDE BANKDCL END-EXEC.                          
+            EXEC SQL                                                    
+            DECLARE CS-TB-BANK CURSOR FOR                               
+            SELECT A.CUST_ID,A.CUST_ACC_TYPE,B.CUST_NAME,B.CUST_TYPE,   
+            C.CUST_TYPE_NAME                                            
+            FROM CUSTACCT A, CUSTDET B, CUSTYPE C                       
+            WHERE A.CUST_ID = B.CUST_ID AND                             
+            B.CUST_TYPE = C.CUST_TYPE_INF                               
+            END-EXEC.                                                   
+        PROCEDURE DIVISION.                                             
+        0000-MAIN-PARA.                                                 
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  
+                 1000-INITIALIZATION-PARA-EXIT                          
+                 PERFORM 2000-PROCESS-PARA THRU                         
+                 2000-PROCESS-PARA-EXIT                                 
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT.                            
+        0000-MAIN-PARA-EXIT.                                            
+                 EXIT.                                                  
+        1000-INITIALIZATION-PARA.                                       
+        1000-INITIALIZATION-PARA-EXIT.                                  
+                 EXIT.                                                  
+        2000-PROCESS-PARA.                                              
+                 PERFORM 2100-OPEN-PARA THRU                            
+                 2100-OPEN-PARA-EXIT                                    
+                 PERFORM 2200-FETCH-PARA THRU                           
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      
+                 PERFORM 3000-CLOSE-PARA THRU                           
+                 3000-CLOSE-PARA-EXIT.                                  
+        2000-PROCESS-PARA-EXIT.                                         
+                 EXIT.                                                  
+        2100-OPEN-PARA.                                                 
+                 EXEC SQL OPEN CS-TB-BANK END-EXEC.                     
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN WS-EOT                                            
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT OPENED'                            
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+        2100-OPEN-PARA-EXIT.                                            
+                 EXIT.                                                  
+        2200-FETCH-PARA.                                                
+                 EXEC SQL FETCH CS-TB-BANK INTO :ACUST-ID,              
+                 :ACUST-ACC-TYPE,                                       
+                 :BCUST-NAME,                                           
+                 :BCUST-TYPE:NULL-IND,                                  
+                 :CCUST-TYPE-NAME                                       
+                 END-EXEC.                                              
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 PERFORM 2300-MOVE-PARA THRU                            
+                 2300-MOVE-PARA-EXIT                                    
+                 WHEN WS-EOT                                            
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT FETCHED'                           
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+         2200-FETCH-PARA-EXIT.                                          
+                 EXIT.                                                  
+         3000-CLOSE-PARA.                                               
+                 EXEC SQL CLOSE CS-TB-BANK END-EXEC.                    
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT CLOSED'                            
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+         3000-CLOSE-PARA-EXIT.                                          
+                 EXIT.                                                  
+         2300-MOVE-PARA.                                                
+                 IF (NULL-IND = -1)                                     
+                 CONTINUE                                               
+                 ELSE                                                   
+                 DISPLAY ACUST-ID                                       
+                 MOVE ACUST-ID TO CUST-ID                               
+                 MOVE 15 TO CUST-NAME-LEN                               
+                 MOVE BCUST-NAME-TEXT TO CUST-NAME-TEXT                 
+                 MOVE BCUST-TYPE TO CUST-TYPE                           
+                 MOVE 10 TO CUST-TYPE-NAME-LEN                          
+                 MOVE CCUST-TYPE-NAME-TEXT TO CUST-TYPE-NAME-TEXT       
+                 MOVE ACUST-ACC-TYPE TO CUST-ACC-TYPE                   
+                 IF ACUST-ACC-TYPE = 'S'                                
+                 MOVE 5000 TO MIN-BALANCE                               
+                 END-IF                                                 
+                 IF ACUST-ACC-TYPE = 'C'                                
+                 MOVE 1000 TO MIN-BALANCE                               
+                 END-IF                                                 
+                 IF ACUST-ACC-TYPE = 'CC'                               
+                 MOVE 10000 TO MIN-BALANCE                              
+                 END-IF                                                 
+                 MOVE SPACES TO BCUST-NAME                              
+                 MOVE SPACES TO BCUST-TYPE                              
+                 MOVE SPACES TO CCUST-TYPE-NAME                         
+                 MOVE SPACES TO ACUST-ACC-TYPE                          
+                 END-IF                                                 
+                 DISPLAY 'MOVE PARA'                                    
+                 PERFORM 2400-INSERT-PARA THRU                          
+                 2400-INSERT-PARA-EXIT.                                 
+         2300-MOVE-PARA-EXIT.                                           
+                 EXIT.                                                  
+         2400-INSERT-PARA.                                              
+                 DISPLAY CUST-ID CUST-ACC-TYPE MIN-BALANCE              
+                 EXEC SQL                                               
+                 INSERT INTO MYBANK VALUES (                            
+                 :CUST-ID,                                              
+                 :CUST-ACC-TYPE,                                        
+                 :CUST-NAME,                                            
+                 :CUST-TYPE,                                            
+                 :CUST-TYPE-NAME,                                       
+                 :MIN-BALANCE )                                         
+                 END-EXEC.                                              
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'INSERT FAILED'                                
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG.                                    
+         2400-INSERT-PARA-EXIT.                                         
+                 EXIT.                                                  
+         9000-TERMINATION-PARA.                                         
+                 STOP RUN.                                              
+         9000-TERMINATION-PARA-EXIT.                                    
+                 EXIT.                                                  
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   
+                 EXIT.                                                  
+
+
+//*CASE01SC
+--CREATE MYBANK                                                         00001011
+CREATE TABLE MYBANK (                                                   00010010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00030010
+CUST_ACC_TYPE CHAR(2) CHECK(CUST_ACC_TYPE IN('S','C','CC')),            00040010
+CUST_NAME VARCHAR(15) NOT NULL,                                         00050010
+CUST_TYPE CHAR(1) NOT NULL,                                             00060010
+CUST_TYPE_NAME VARCHAR(10) NOT NULL,                                    00070010
+MIN_BALANCE DECIMAL(8,2) NOT NULL ) ;                                   00080010
+--CREATE CUSTACCT                                                       00081011
+CREATE TABLE CUSTACCT (                                                 00090010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00100010
+CUST_ACC_TYPE CHAR(2) CHECK(CUST_ACC_TYPE IN('S','C','CC')) );          00110010
+--CREATE CUSTDET                                                        00111011
+CREATE TABLE CUSTDET (                                                  00120010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00130010
+CUST_NAME VARCHAR(15) NOT NULL,                                         00150010
+CUST_TYPE CHAR(1) ) ;                                                   00160010
+--CREATE CUSTYPE                                                        00160111
+CREATE TABLE CUSTYPE (                                                  00161010
+CUST_TYPE_INF CHAR(1) NOT NULL PRIMARY KEY,                             00190010
+CUST_TYPE_NAME VARCHAR(10) NOT NULL);                                   00200010
+
+
+
+
+//*CASE01SI
+INSERT INTO CUSTACCT VALUES(1001001001,'S');                            00010003
+INSERT INTO CUSTACCT VALUES(1001001002,'CC');                           00020003
+INSERT INTO CUSTACCT VALUES(1001001003,'S');                            00030003
+INSERT INTO CUSTACCT VALUES(1001001004,'C');                            00040003
+INSERT INTO CUSTACCT VALUES(1001001005,'C');                            00050003
+INSERT INTO CUSTACCT VALUES(1001001006,'CC');                           00060003
+INSERT INTO CUSTDET VALUES(1001001001,'JOHN','G');                      00061003
+INSERT INTO CUSTDET VALUES(1001001002,'DAVID','P');                     00062003
+INSERT INTO CUSTDET VALUES(1001001003,'MILLER','G');                    00063003
+INSERT INTO CUSTDET VALUES(1001001004,'PETER',NULL);                    00064003
+INSERT INTO CUSTDET VALUES(1001001005,'JOHNY','S');                     00065003
+INSERT INTO CUSTDET VALUES(1001001006,'THOMAS',NULL);                   00066003
+INSERT INTO CUSTYPE VALUES('G','GOLD');                                 00070003
+INSERT INTO CUSTYPE VALUES('P','PLATINUM');                             00080003
+INSERT INTO CUSTYPE VALUES('S','SILVER');                               00090003
+
+
+
+//*CUSTADCL
+      ******************************************************************
+      * DCLGEN TABLE(CUSTACCT)                                         *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTADCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTACCT TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             CUST_ACC_TYPE                  CHAR(2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTACCT                           *
+      ******************************************************************
+       01  DCLCUSTACCT.
+      *    *************************************************************
+      *                       CUST_ID
+           10 ACUST-ID             PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       CUST_ACC_TYPE
+           10 ACUST-ACC-TYPE       PIC X(2).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************
+
+
+
+
+//*CUSTDCL
+      ******************************************************************
+      * DCLGEN TABLE(CUSTDET)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(B)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTDET TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_TYPE                      CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTDET                            *
+      ******************************************************************
+       01  DCLCUSTDET.
+      *    *************************************************************
+      *                       CUST_ID
+           10 BCUST-ID             PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 BCUST-NAME.
+      *                       CUST_NAME LENGTH
+              49 BCUST-NAME-LEN    PIC S9(4) USAGE COMP.
+      *                       CUST_NAME
+              49 BCUST-NAME-TEXT   PIC X(15).
+      *    *************************************************************
+      *                       CUST_TYPE
+           10 BCUST-TYPE           PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 3       *
+      ******************************************************************
+
+
+
+//*CUSTYDCL
+      ******************************************************************
+      * DCLGEN TABLE(CUSTYPE)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTYDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(C)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTYPE TABLE
+           ( CUST_TYPE_INF                  CHAR(1) NOT NULL,
+             CUST_TYPE_NAME                 VARCHAR(10) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTYPE                            *
+      ******************************************************************
+       01  DCLCUSTYPE.
+      *    *************************************************************
+      *                       CUST_TYPE_INF
+           10 CCUST-TYPE-INF       PIC X(1).
+      *    *************************************************************
+           10 CCUST-TYPE-NAME.
+      *                       CUST_TYPE_NAME LENGTH
+              49 CCUST-TYPE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       CUST_TYPE_NAME
+              49 CCUST-TYPE-NAME-TEXT
+                 PIC X(10).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************
+
+
+
+//*BANKDCL
+      ******************************************************************
+      * DCLGEN TABLE(MYBANK)                                           *
+      *        LIBRARY(TEKUS01.MYLIB.DB2.DCLGEN(BANKDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE MYBANK TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             CUST_ACC_TYPE                  CHAR(2),
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_TYPE                      CHAR(1) NOT NULL,
+             CUST_TYPE_NAME                 VARCHAR(10) NOT NULL,
+             MIN_BALANCE                    DECIMAL(8, 2) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE MYBANK                             *
+      ******************************************************************
+       01  DCLMYBANK.
+      *    *************************************************************
+           10 CUST-ID              PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 CUST-ACC-TYPE        PIC X(2).
+      *    *************************************************************
+           10 CUST-NAME.
+              49 CUST-NAME-LEN     PIC S9(4) USAGE COMP.
+              49 CUST-NAME-TEXT    PIC X(15).
+      *    *************************************************************
+           10 CUST-TYPE            PIC X(1).
+      *    *************************************************************
+           10 CUST-TYPE-NAME.
+              49 CUST-TYPE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 CUST-TYPE-NAME-TEXT
+                 PIC X(10).
+      *    *************************************************************
+           10 MIN-BALANCE          PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 6       *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TCHN097A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CASE01C) PLAN(CASE01C) -                                  00140029
+      LIB('TCHN097.MYLIB.DB2.LOADLIB')                                  00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+****************************************************************************
+
+CASE STUDY 2
+****************************************************************************
+
+
+//*CASE02C
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. CASE02C.                                            00020000
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WSS-ERR-MSG.                                                 00050000
+            05 WS-ERR-MSG.                                              00060000
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.           00070000
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          00080000
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.            00090000
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00100000
+            88 WS-EOT              VALUE  +100.                         00110000
+            88 WS-SUCCESS          VALUE  +000.                         00120000
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00130000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00140000
+            EXEC SQL INCLUDE TRINDCL END-EXEC.                          00150001
+            EXEC SQL INCLUDE TRINFDCL END-EXEC.                         00160001
+            EXEC SQL INCLUDE LOCDCL END-EXEC.                           00170001
+            EXEC SQL                                                    00190000
+            DECLARE CS-TB-TRAINEE CURSOR FOR                            00200001
+            SELECT A.TRAINEE_ID,A.TRAINEE_NAME,                         00210001
+            A.TRAINEE_LOCATION_CODE,                                    00211001
+            B.LOCATION_NAME                                             00220001
+            FROM TRAINEE_INF A , LOCATION B WHERE                       00230001
+            A.TRAINEE_LOCATION_CODE = B.LOCATION_CODE                   00240001
+            END-EXEC.                                                   00260000
+        PROCEDURE DIVISION.                                             00270000
+        0000-MAIN-PARA.                                                 00280000
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  00290000
+                 1000-INITIALIZATION-PARA-EXIT                          00300000
+                 PERFORM 2000-PROCESS-PARA THRU                         00310000
+                 2000-PROCESS-PARA-EXIT                                 00320000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00330000
+                 9000-TERMINATION-PARA-EXIT.                            00340000
+        0000-MAIN-PARA-EXIT.                                            00350000
+                 EXIT.                                                  00360000
+        1000-INITIALIZATION-PARA.                                       00370000
+        1000-INITIALIZATION-PARA-EXIT.                                  00380000
+                 EXIT.                                                  00390000
+        2000-PROCESS-PARA.                                              00400000
+                 PERFORM 2100-OPEN-PARA THRU                            00410000
+                 2100-OPEN-PARA-EXIT                                    00420000
+                 PERFORM 2200-FETCH-PARA THRU                           00430000
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00440000
+                 PERFORM 3000-CLOSE-PARA THRU                           00450000
+                 3000-CLOSE-PARA-EXIT.                                  00460000
+        2000-PROCESS-PARA-EXIT.                                         00470000
+                 EXIT.                                                  00480000
+        2100-OPEN-PARA.                                                 00490000
+                 EXEC SQL OPEN CS-TB-TRAINEE END-EXEC.                  00500001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00510000
+                 EVALUATE TRUE                                          00520000
+                 WHEN WS-SUCCESS                                        00530000
+                 CONTINUE                                               00540000
+                 WHEN WS-EOT                                            00550000
+                 CONTINUE                                               00560000
+                 WHEN OTHER                                             00570000
+                 DISPLAY 'CURSOR NOT OPENED'                            00580000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00590000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00600000
+                 DISPLAY WS-ERR-MSG                                     00610000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00620000
+                 9000-TERMINATION-PARA-EXIT                             00630000
+                 END-EVALUATE.                                          00640000
+        2100-OPEN-PARA-EXIT.                                            00650000
+                 EXIT.                                                  00660000
+        2200-FETCH-PARA.                                                00670000
+                 EXEC SQL FETCH CS-TB-TRAINEE INTO :ATRAINEE-ID,        00680003
+                 :ATRAINEE-NAME,                                        00690001
+                 :ATRAINEE-LOCATION-CODE:NULL-IND,                      00700003
+                 :BLOCATION-NAME                                        00720001
+                 END-EXEC.                                              00730000
+                 MOVE SQLCODE TO WSS-SQLCODE                            00740000
+                 EVALUATE TRUE                                          00750000
+                 WHEN WS-SUCCESS                                        00760000
+                 PERFORM 2300-MOVE-PARA THRU                            00770000
+                 2300-MOVE-PARA-EXIT                                    00780000
+                 WHEN WS-EOT                                            00790000
+                 CONTINUE                                               00800000
+                 WHEN OTHER                                             00810000
+                 DISPLAY 'CURSOR NOT FETCHED'                           00820000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00830000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00840000
+                 DISPLAY WS-ERR-MSG                                     00850000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00860000
+                 9000-TERMINATION-PARA-EXIT                             00870000
+                 END-EVALUATE.                                          00880000
+         2200-FETCH-PARA-EXIT.                                          00890000
+                 EXIT.                                                  00900000
+         3000-CLOSE-PARA.                                               00910000
+                 EXEC SQL CLOSE CS-TB-TRAINEE END-EXEC.                 00920001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00930000
+                 EVALUATE TRUE                                          00940000
+                 WHEN WS-SUCCESS                                        00950000
+                 CONTINUE                                               00960000
+                 WHEN OTHER                                             00970000
+                 DISPLAY 'CURSOR NOT CLOSED'                            00980000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00990000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01000000
+                 DISPLAY WS-ERR-MSG                                     01010000
+                 PERFORM 9000-TERMINATION-PARA THRU                     01020000
+                 9000-TERMINATION-PARA-EXIT                             01030000
+                 END-EVALUATE.                                          01040000
+         3000-CLOSE-PARA-EXIT.                                          01050000
+                 EXIT.                                                  01060000
+         2300-MOVE-PARA.                                                01070000
+                 IF (NULL-IND = -1)                                     01080000
+                 CONTINUE                                               01090000
+                 ELSE                                                   01100000
+                 MOVE 5 TO TRAINEE-ID-LEN                               01110002
+                 MOVE ATRAINEE-ID-TEXT TO TRAINEE-ID-TEXT               01120002
+                 MOVE 20 TO TRAINEE-NAME-LEN                            01130001
+                 MOVE ATRAINEE-NAME-TEXT TO TRAINEE-NAME-TEXT           01140001
+                 MOVE 15 TO TRAINEE-LOCATION-LEN                        01141005
+                 MOVE BLOCATION-NAME-TEXT TO TRAINEE-LOCATION-TEXT      01142002
+                 IF ATRAINEE-LOCATION-CODE = 'MUM' OR 'CHN'             01190002
+                 MOVE 'Y' TO TRAINEE-ONBOARD-STATUS                     01200002
+                 ELSE                                                   01210002
+                 MOVE 'N' TO TRAINEE-ONBOARD-STATUS                     01211002
+                 END-IF                                                 01240000
+                 MOVE SPACES TO ATRAINEE-ID                             01280002
+                 MOVE SPACES TO ATRAINEE-NAME                           01290002
+                 MOVE SPACES TO ATRAINEE-LOCATION-CODE                  01300002
+                 MOVE SPACES TO BLOCATION-NAME                          01310002
+                 END-IF                                                 01320000
+                 PERFORM 2400-INSERT-PARA THRU                          01340000
+                 2400-INSERT-PARA-EXIT.                                 01350000
+         2300-MOVE-PARA-EXIT.                                           01360000
+                 EXIT.                                                  01370000
+         2400-INSERT-PARA.                                              01380000
+                 EXEC SQL                                               01400000
+                 INSERT INTO TRAINEE VALUES (                           01410002
+                 :TRAINEE-ID,                                           01420004
+                 :TRAINEE-NAME,                                         01430002
+                 :TRAINEE-LOCATION,                                     01440002
+                 :TRAINEE-ONBOARD-STATUS )                              01450002
+                 END-EXEC.                                              01480000
+                 MOVE SQLCODE TO WSS-SQLCODE                            01490000
+                 EVALUATE TRUE                                          01500000
+                 WHEN WS-SUCCESS                                        01510000
+                 CONTINUE                                               01550000
+                 WHEN OTHER                                             01560000
+                 DISPLAY 'INSERT FAILED'                                01570000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         01580000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01590000
+                 DISPLAY WS-ERR-MSG.                                    01600000
+         2400-INSERT-PARA-EXIT.                                         01610000
+                 EXIT.                                                  01620000
+         9000-TERMINATION-PARA.                                         01630000
+                 STOP RUN.                                              01640000
+         9000-TERMINATION-PARA-EXIT.                                    01650000
+                 EXIT.                                                  01660000
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   01670000
+                 EXIT.                                                  01680000
+
+
+
+//*CASE02SC
+CREATE TABLE TRAINEE(                                                   00010001
+TRAINEE_ID VARCHAR(5) NOT NULL PRIMARY KEY,                             00020002
+TRAINEE_NAME VARCHAR(20) NOT NULL,                                      00040001
+TRAINEE_LOCATION VARCHAR(15) NOT NULL,                                  00050001
+TRAINEE_ONBOARD_STATUS CHAR(1)                                          00051002
+  CHECK(TRAINEE_ONBOARD_STATUS IN('Y','N')));                           00051102
+CREATE TABLE TRAINEE_INF(                                               00051204
+TRAINEE_ID VARCHAR(5) NOT NULL PRIMARY KEY,                             00051302
+TRAINEE_NAME VARCHAR(20) NOT NULL,                                      00051402
+TRAINEE_LOCATION_CODE CHAR(3));                                         00051503
+CREATE TABLE LOCATION(                                                  00051603
+LOCATION_CODE CHAR(3) NOT NULL PRIMARY KEY,                             00051702
+LOCATION_NAME VARCHAR(15) NOT NULL );                                   00051802
+
+
+
+//*CASE02SI
+INSERT INTO TRAINEE_INF VALUES('IT123','SANJAY','CHN');                 00010007
+INSERT INTO TRAINEE_INF VALUES('IT224','CHARANYA','DEL');               00020007
+INSERT INTO TRAINEE_INF VALUES('IT125','CHITRA','BLR');                 00030007
+INSERT INTO TRAINEE_INF VALUES('IT007','RAHUL',NULL);                   00040007
+INSERT INTO TRAINEE_INF VALUES('IT675','AJAY','BLR');                   00050007
+INSERT INTO TRAINEE_INF VALUES('IT333','PRIYA','CHN');                  00060007
+INSERT INTO LOCATION VALUES('CHN','CHENNAI');                           00070007
+INSERT INTO LOCATION VALUES('DEL','DELHI');                             00080007
+INSERT INTO LOCATION VALUES('BLR','BANGLORE');                          00090007
+INSERT INTO LOCATION VALUES('MUM','MUMBAI');                            00100007
+
+
+
+//*TRINFDCL
+      ******************************************************************
+      * DCLGEN TABLE(TRAINEE_INF)                                      *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(TRINFDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TRAINEE_INF TABLE
+           ( TRAINEE_ID                     VARCHAR(5) NOT NULL,
+             TRAINEE_NAME                   VARCHAR(20) NOT NULL,
+             TRAINEE_LOCATION_CODE          CHAR(3)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TRAINEE_INF                        *
+      ******************************************************************
+       01  DCLTRAINEE-INF.
+      *    *************************************************************
+           10 ATRAINEE-ID.
+      *                       TRAINEE_ID LENGTH
+              49 ATRAINEE-ID-LEN   PIC S9(4) USAGE COMP.
+      *                       TRAINEE_ID
+              49 ATRAINEE-ID-TEXT
+                 PIC X(5).
+      *    *************************************************************
+           10 ATRAINEE-NAME.
+      *                       TRAINEE_NAME LENGTH
+              49 ATRAINEE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       TRAINEE_NAME
+              49 ATRAINEE-NAME-TEXT
+                 PIC X(20).
+      *    *************************************************************
+      *                       TRAINEE_LOCATION_CODE
+           10 ATRAINEE-LOCATION-CODE
+              PIC X(3).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 3       *
+      ******************************************************************
+
+
+//*TRINDCL
+      ******************************************************************
+      * DCLGEN TABLE(TRAINEE)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(TRINDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TRAINEE TABLE
+           ( TRAINEE_ID                     VARCHAR(5) NOT NULL,
+             TRAINEE_NAME                   VARCHAR(20) NOT NULL,
+             TRAINEE_LOCATION               VARCHAR(15) NOT NULL,
+             TRAINEE_ONBOARD_STATUS         CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TRAINEE                            *
+      ******************************************************************
+       01  DCLTRAINEE.
+      *    *************************************************************
+           10 TRAINEE-ID.
+              49 TRAINEE-ID-LEN    PIC S9(4) USAGE COMP.
+              49 TRAINEE-ID-TEXT   PIC X(5).
+      *    *************************************************************
+           10 TRAINEE-NAME.
+              49 TRAINEE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-NAME-TEXT
+                 PIC X(20).
+      *    *************************************************************
+           10 TRAINEE-LOCATION.
+              49 TRAINEE-LOCATION-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-LOCATION-TEXT
+                 PIC X(15).
+      *    *************************************************************
+           10 TRAINEE-ONBOARD-STATUS
+              PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+//*LOCDCL
+      ******************************************************************
+      * DCLGEN TABLE(LOCATION)                                         *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(LOCDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(B)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE LOCATION TABLE
+           ( LOCATION_CODE                  CHAR(3) NOT NULL,
+             LOCATION_NAME                  VARCHAR(15) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE LOCATION                           *
+      ******************************************************************
+       01  DCLLOCATION.
+      *    *************************************************************
+      *                       LOCATION_CODE
+           10 BLOCATION-CODE       PIC X(3).
+      *    *************************************************************
+           10 BLOCATION-NAME.
+      *                       LOCATION_NAME LENGTH
+              49 BLOCATION-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       LOCATION_NAME
+              49 BLOCATION-NAME-TEXT
+                 PIC X(15).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************
+
+
+//*RUNJCL
+//TCHN097A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CASE02C) PLAN(CASE02C) -                                  00140029
+      LIB('TCHN097.MYLIB.DB2.LOADLIB')                                  00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+***********************************************************************************
+
+CASE STUDY 3
+*******************************************************************************
+
+
+//*CASE03SC
+CREATE TABLE CUSTM(                                                     00010023
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00020012
+POL_NO INT NOT NULL ,                                                   00030015
+CUST_NAME VARCHAR(15) NOT NULL,                                         00040012
+CUST_GENDER CHAR(1) CHECK(CUST_GENDER IN ('M','F','O')),                00050013
+CUST_ANNUAL_INCOME DECIMAL(8,2) NOT NULL) ;                             00060013
+CREATE TABLE POLICY(POL_ID_DETAIL INT NOT NULL PRIMARY KEY,             00070020
+CUST_STATE CHAR(3), POLICY_TERM CHAR(2)                                 00080020
+CHECK(POLICY_TERM IN ('05','10','15')),                                 00090020
+POLICY_PREMIEUM DECIMAL(6,2) NOT NULL,                                  00100020
+POLICY_PREMIEUM_PAID CHAR(1)                                            00110020
+CHECK(POLICY_PREMIEUM_PAID IN ('Y','N')));                              00120020
+CREATE TABLE STATE (                                                    00130013
+STATE_ID CHAR(3) NOT NULL PRIMARY KEY,                                  00140013
+STATE_NAME VARCHAR(15) NOT NULL );                                      00150013
+CREATE TABLE POLICY_DETAIL (                                            00160014
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00161014
+POL_NO INT NOT NULL,                                                    00162021
+CUST_NAME VARCHAR(15) NOT NULL,                                         00163014
+CUST_GENDER CHAR(1) NOT NULL,                                           00164014
+CUST_ANNUAL_INCOME DECIMAL(8,2) NOT NULL,                               00165022
+CUST_STATE_NAME VARCHAR(15),                                            00166023
+POLICY_TERM CHAR(2) NOT NULL,                                           00167014
+POLICY_PREMIEUM DECIMAL(6,2) NOT NULL ,                                 00168021
+POLICY_PREMIEUM_PAID CHAR(1) NOT NULL,                                  00169021
+BONUS DECIMAL(8,2) );                                                   00170014
+
+
+
+//*CASE03SI
+INSERT INTO CUSTM VALUES(984523,465,'RAVICHANDREN','M',760000.00);      00010023
+INSERT INTO CUSTM VALUES(786986,678,'KAVITHA','F',987000.00);           00020023
+INSERT INTO CUSTM VALUES(675897,675,'POOJA','F',789000.00);             00030023
+INSERT INTO CUSTM VALUES(786567,987,'VIRAJ','M',879000.00);             00040023
+INSERT INTO CUSTM VALUES(786547,768,'AVINASH','M',860000.00);           00050023
+INSERT INTO CUSTM VALUES(786996,654,'KUMAR','M',760000.00);             00060023
+INSERT INTO POLICY VALUES(465,'TN','05',5031.00,'Y');                   00070023
+INSERT INTO POLICY VALUES(678,'MAH','10',3340.00,'N');                  00080023
+INSERT INTO POLICY VALUES(675,'DEL','05',6530.00,'Y');                  00090023
+INSERT INTO POLICY VALUES(987,'KAR','15',5607.00,'Y');                  00100023
+INSERT INTO POLICY VALUES(768,'KER','05',4567.00,'Y');                  00110023
+INSERT INTO POLICY VALUES(654,NULL,'15',6754.00,'N');                   00120023
+INSERT INTO STATE VALUES('TN','TAMILNADU');                             00130023
+INSERT INTO STATE VALUES('MAH','MAHARASTRA');                           00140023
+INSERT INTO STATE VALUES('DEL','DELHI');                                00150023
+INSERT INTO STATE VALUES('KAR','KARNATAKA');                            00160023
+INSERT INTO STATE VALUES('KER','KERALA');                               00170023
+
+
+
+//*CASE03C
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. CASE03C.                                            00020032
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WSS-ERR-MSG.                                                 00050000
+            05 WS-ERR-MSG.                                              00060000
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.           00070000
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          00080000
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.            00090000
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00100000
+            88 WS-EOT              VALUE  +100.                         00110000
+            88 WS-SUCCESS          VALUE  +000.                         00120000
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00130000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00190000
+            EXEC SQL INCLUDE CUSTMDCL END-EXEC.                         00201047
+            EXEC SQL INCLUDE POLDCL END-EXEC.                           00202031
+            EXEC SQL INCLUDE STATDCL END-EXEC.                          00203031
+            EXEC SQL INCLUDE PDETDCL END-EXEC.                          00204035
+            EXEC SQL                                                    00210000
+            DECLARE CS-TB-POLICY CURSOR FOR                             00220033
+            SELECT A.CUST_ID,A.POL_NO,A.CUST_NAME,A.CUST_GENDER,        00230032
+            A.CUST_ANNUAL_INCOME,B.CUST_STATE,C.STATE_NAME,             00240033
+            B.POLICY_TERM,B.POLICY_PREMIEUM,                            00250034
+            B.POLICY_PREMIEUM_PAID                                      00251034
+            FROM                                                        00260032
+            CUSTM A,POLICY B,STATE C                                    00261039
+            WHERE                                                       00262032
+            A.POL_NO = B.POL_ID_DETAIL AND                              00263032
+            B.CUST_STATE = C.STATE_ID                                   00270033
+            END-EXEC.                                                   00271036
+        PROCEDURE DIVISION.                                             00280000
+        0000-MAIN-PARA.                                                 00290000
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  00300000
+                 1000-INITIALIZATION-PARA-EXIT                          00310000
+                 PERFORM 2000-PROCESS-PARA THRU                         00320000
+                 2000-PROCESS-PARA-EXIT                                 00330000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00340000
+                 9000-TERMINATION-PARA-EXIT.                            00350000
+        0000-MAIN-PARA-EXIT.                                            00360000
+                 EXIT.                                                  00370000
+        1000-INITIALIZATION-PARA.                                       00380000
+        1000-INITIALIZATION-PARA-EXIT.                                  00390000
+                 EXIT.                                                  00400000
+        2000-PROCESS-PARA.                                              00410000
+                 PERFORM 2100-OPEN-PARA THRU                            00420000
+                 2100-OPEN-PARA-EXIT                                    00430000
+                 PERFORM 2200-FETCH-PARA THRU                           00440000
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00450000
+                 PERFORM 3000-CLOSE-PARA THRU                           00460000
+                 3000-CLOSE-PARA-EXIT.                                  00470000
+        2000-PROCESS-PARA-EXIT.                                         00480000
+                 EXIT.                                                  00490000
+        2100-OPEN-PARA.                                                 00500000
+                 EXEC SQL OPEN CS-TB-POLICY END-EXEC.                   00510033
+                 MOVE SQLCODE TO WSS-SQLCODE                            00520000
+                 EVALUATE TRUE                                          00530000
+                 WHEN WS-SUCCESS                                        00540000
+                 CONTINUE                                               00550000
+                 WHEN WS-EOT                                            00560000
+                 CONTINUE                                               00570000
+                 WHEN OTHER                                             00580000
+                 DISPLAY 'CURSOR NOT OPENED'                            00590000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00600000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00610000
+                 DISPLAY WS-ERR-MSG                                     00620000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00630000
+                 9000-TERMINATION-PARA-EXIT                             00640000
+                 END-EVALUATE.                                          00650000
+        2100-OPEN-PARA-EXIT.                                            00660000
+                 EXIT.                                                  00670000
+        2200-FETCH-PARA.                                                00680000
+                 EXEC SQL FETCH CS-TB-POLICY INTO :ACUST-ID,            00690033
+                 :APOL-NO,:ACUST-NAME,:ACUST-GENDER,                    00700033
+                 :ACUST-ANNUAL-INCOME,:BCUST-STATE:NULL-IND,            00700134
+                 :CSTATE-NAME,                                          00700233
+                 :BPOLICY-TERM,:BPOLICY-PREMIEUM,                       00701034
+                 :BPOLICY-PREMIEUM-PAID                                 00702034
+                 END-EXEC.                                              00720000
+                 MOVE SQLCODE TO WSS-SQLCODE                            00730000
+                 EVALUATE TRUE                                          00740000
+                 WHEN WS-SUCCESS                                        00750000
+                 PERFORM 2300-MOVE-PARA THRU                            00760000
+                 2300-MOVE-PARA-EXIT                                    00770000
+                 WHEN WS-EOT                                            00780000
+                 CONTINUE                                               00790000
+                 WHEN OTHER                                             00800000
+                 DISPLAY 'CURSOR NOT FETCHED'                           00810000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00820000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00830000
+                 DISPLAY WS-ERR-MSG                                     00840000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00850000
+                 9000-TERMINATION-PARA-EXIT                             00860000
+                 END-EVALUATE.                                          00870000
+         2200-FETCH-PARA-EXIT.                                          00880000
+                 EXIT.                                                  00890000
+         3000-CLOSE-PARA.                                               00900000
+                 EXEC SQL CLOSE CS-TB-POLICY END-EXEC.                  00910033
+                 MOVE SQLCODE TO WSS-SQLCODE                            00920000
+                 EVALUATE TRUE                                          00930000
+                 WHEN WS-SUCCESS                                        00940000
+                 CONTINUE                                               00950000
+                 WHEN OTHER                                             00960000
+                 DISPLAY 'CURSOR NOT CLOSED'                            00970000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00980000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00990000
+                 DISPLAY WS-ERR-MSG                                     01000000
+                 PERFORM 9000-TERMINATION-PARA THRU                     01010000
+                 9000-TERMINATION-PARA-EXIT                             01020000
+                 END-EVALUATE.                                          01030000
+         3000-CLOSE-PARA-EXIT.                                          01040000
+                 EXIT.                                                  01050000
+         2300-MOVE-PARA.                                                01060000
+                 IF (NULL-IND = -1)                                     01070000
+                 CONTINUE                                               01080000
+                 ELSE                                                   01090000
+                 MOVE ACUST-ID TO CUST-ID                               01140016
+                 MOVE APOL-NO TO POL-NO                                 01140134
+                 MOVE 15 TO CUST-NAME-LEN                               01141028
+                 MOVE ACUST-NAME-TEXT TO CUST-NAME-TEXT                 01150034
+                 MOVE ACUST-GENDER TO CUST-GENDER                       01160034
+                 MOVE ACUST-ANNUAL-INCOME TO CUST-ANNUAL-INCOME         01161034
+                 MOVE 15 TO CUST-STATE-NAME-LEN                         01171034
+                 MOVE CSTATE-NAME TO CUST-STATE-NAME                    01171134
+                 MOVE BPOLICY-TERM TO POLICY-TERM                       01171234
+                 MOVE BPOLICY-PREMIEUM-PAID TO POLICY-PREMIEUM-PAID     01171334
+                 MOVE BPOLICY-PREMIEUM TO POLICY-PREMIEUM               01171434
+                 IF ACUST-ANNUAL-INCOME > 0                             01171538
+                 PERFORM 2400-CALC-PARA THRU                            01171634
+                   2400-CALC-PARA-EXIT                                  01171734
+                 END-IF                                                 01172044
+                 MOVE SPACES TO ACUST-NAME                              01173045
+                 MOVE SPACES TO CSTATE-NAME.                            01174046
+         2300-MOVE-PARA-EXIT.                                           01182120
+                 EXIT.                                                  01182220
+         2400-CALC-PARA.                                                01182334
+                 IF  BPOLICY-TERM = '05'                                01182434
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (45/100))          01182542
+                 END-IF                                                 01182634
+                 IF  BPOLICY-TERM = '10'                                01182734
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (55/100))          01182842
+                 END-IF                                                 01182934
+                 IF  BPOLICY-TERM = '15'                                01183034
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (65/100))          01183142
+                 END-IF                                                 01183234
+                 PERFORM 2500-INSERT-PARA THRU                          01183334
+                  2500-INSERT-PARA-EXIT.                                01183434
+         2400-CALC-PARA-EXIT.                                           01183538
+                 EXIT.                                                  01183638
+         2500-INSERT-PARA.                                              01183734
+                 EXEC SQL                                               01184017
+                 INSERT INTO POLICY_DETAIL VALUES (                     01185241
+                 :CUST-ID,                                              01185319
+                 :POL-NO,                                               01185434
+                 :CUST-NAME,                                            01185519
+                 :CUST-GENDER,                                          01185634
+                 :CUST-ANNUAL-INCOME,                                   01185734
+                 :CUST-STATE-NAME,                                      01185934
+                 :POLICY-TERM,                                          01186034
+                 :POLICY-PREMIEUM,                                      01186134
+                 :POLICY-PREMIEUM-PAID,                                 01186234
+                 :BONUS )                                               01186334
+                 END-EXEC.                                              01186417
+                 MOVE SQLCODE TO WSS-SQLCODE                            01186718
+                 EVALUATE TRUE                                          01187018
+                 WHEN WS-SUCCESS                                        01188018
+                 CONTINUE                                               01189318
+                 WHEN OTHER                                             01189418
+                 DISPLAY 'INSERT FAILED'                                01189518
+                 DISPLAY 'ERROR STATUS' SQLCODE                         01189618
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01189718
+                 DISPLAY WS-ERR-MSG.                                    01189820
+         2500-INSERT-PARA-EXIT.                                         01189934
+                 EXIT.                                                  01190020
+         9000-TERMINATION-PARA.                                         01210000
+                 STOP RUN.                                              01220000
+         9000-TERMINATION-PARA-EXIT.                                    01230000
+                 EXIT.                                                  01240000
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   01250000
+                 EXIT.                                                  01260000
+
+
+
+//*CUSTMDCL
+      ******************************************************************
+      * DCLGEN TABLE(CUSTM)                                            *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTMDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTM TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             POL_NO                         INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_GENDER                    CHAR(1),
+             CUST_ANNUAL_INCOME             DECIMAL(8, 2) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTM                              *
+      ******************************************************************
+       01  DCLCUSTM.
+      *    *************************************************************
+      *                       CUST_ID
+           10 ACUST-ID             PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       POL_NO
+           10 APOL-NO              PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 ACUST-NAME.
+      *                       CUST_NAME LENGTH
+              49 ACUST-NAME-LEN    PIC S9(4) USAGE COMP.
+      *                       CUST_NAME
+              49 ACUST-NAME-TEXT   PIC X(15).
+      *    *************************************************************
+      *                       CUST_GENDER
+           10 ACUST-GENDER         PIC X(1).
+      *    *************************************************************
+      *                       CUST_ANNUAL_INCOME
+           10 ACUST-ANNUAL-INCOME  PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+
+
+
+
+//*POLDCL
+      ******************************************************************
+      * DCLGEN TABLE(POLICY)                                           *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(POLDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(B)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE POLICY TABLE
+           ( POL_ID_DETAIL                  INTEGER NOT NULL,
+             CUST_STATE                     CHAR(3),
+             POLICY_TERM                    CHAR(2),
+             POLICY_PREMIEUM                DECIMAL(6, 2) NOT NULL,
+             POLICY_PREMIEUM_PAID           CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE POLICY                             *
+      ******************************************************************
+       01  DCLPOLICY.
+      *    *************************************************************
+      *                       POL_ID_DETAIL
+           10 BPOL-ID-DETAIL       PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       CUST_STATE
+           10 BCUST-STATE          PIC X(3).
+      *    *************************************************************
+      *                       POLICY_TERM
+           10 BPOLICY-TERM         PIC X(2).
+      *    *************************************************************
+      *                       POLICY_PREMIEUM
+           10 BPOLICY-PREMIEUM     PIC S9(4)V9(2) USAGE COMP-3.
+      *    *************************************************************
+      *                       POLICY_PREMIEUM_PAID
+           10 BPOLICY-PREMIEUM-PAID
+              PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+
+
+
+//*STATDCL      
+      ******************************************************************
+      * DCLGEN TABLE(STATE)                                            *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(STATDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(C)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE STATE TABLE
+           ( STATE_ID                       CHAR(3) NOT NULL,
+             STATE_NAME                     VARCHAR(15) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE STATE                              *
+      ******************************************************************
+       01  DCLSTATE.
+      *    *************************************************************
+      *                       STATE_ID
+           10 CSTATE-ID            PIC X(3).
+      *    *************************************************************
+           10 CSTATE-NAME.
+      *                       STATE_NAME LENGTH
+              49 CSTATE-NAME-LEN   PIC S9(4) USAGE COMP.
+      *                       STATE_NAME
+              49 CSTATE-NAME-TEXT
+                 PIC X(15).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************
+
+
+
+
+//*PDETDCL
+
+      ******************************************************************
+      * DCLGEN TABLE(POLICY_DETAIL)                                    *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(PDETDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE POLICY_DETAIL TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             POL_NO                         INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_GENDER                    CHAR(1) NOT NULL,
+             CUST_ANNUAL_INCOME             DECIMAL(8, 2) NOT NULL,
+             CUST_STATE_NAME                VARCHAR(15),
+             POLICY_TERM                    CHAR(2) NOT NULL,
+             POLICY_PREMIEUM                DECIMAL(6, 2) NOT NULL,
+             POLICY_PREMIEUM_PAID           CHAR(1) NOT NULL,
+             BONUS                          DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE POLICY_DETAIL                      *
+      ******************************************************************
+       01  DCLPOLICY-DETAIL.
+      *    *************************************************************
+           10 CUST-ID              PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 POL-NO               PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 CUST-NAME.
+              49 CUST-NAME-LEN     PIC S9(4) USAGE COMP.
+              49 CUST-NAME-TEXT    PIC X(15).
+      *    *************************************************************
+           10 CUST-GENDER          PIC X(1).
+      *    *************************************************************
+           10 CUST-ANNUAL-INCOME   PIC S9(6)V9(2) USAGE COMP-3.
+      *    *************************************************************
+           10 CUST-STATE-NAME.
+              49 CUST-STATE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 CUST-STATE-NAME-TEXT
+                 PIC X(15).
+      *    *************************************************************
+           10 POLICY-TERM          PIC X(2).
+      *    *************************************************************
+           10 POLICY-PREMIEUM      PIC S9(4)V9(2) USAGE COMP-3.
+      *    *************************************************************
+           10 POLICY-PREMIEUM-PAID
+              PIC X(1).
+      *    *************************************************************
+           10 BONUS                PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *
+      ******************************************************************
+
+
+
+//*RUNJCL
+
+//TCHN097A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CASE03C) PLAN(CASE03C) -                                  00140029
+      LIB('TCHN097.MYLIB.DB2.LOADLIB')                                  00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+***********************************************************************************
+
+
+CASE STUDY 4 - TRAINEE DETAILS
+****************************************************************************
+
+//*CASE04C
+
+        IDENTIFICATION DIVISION.                                        00010011
+        PROGRAM-ID. CASE04C.                                            00020007
+        ENVIRONMENT DIVISION.                                           00030017
+        INPUT-OUTPUT SECTION.                                           00041009
+        FILE-CONTROL.                                                   00042008
+      *OUTPUT FILE                                                      00049508
+           SELECT TO001-OUTPUT ASSIGN TO OUTTRNPS                       00049608
+              ORGANIZATION IS SEQUENTIAL                                00049711
+              ACCESS MODE IS SEQUENTIAL                                 00049811
+              FILE STATUS IS WS-FILE-STATUS1.                           00049911
+        DATA DIVISION.                                                  00050017
+        FILE SECTION.                                                   00050111
+        FD TO001-OUTPUT.                                                00050217
+        01 TO001-OUTPUT-RECORD.                                         00050315
+      *    *************************************************************00050515
+           10 TO001-NEW-TRAINEE-ID.                                     00050616
+              49 TO001-NEW-TRAINEE-ID-TEXT   PIC X(8).                  00050816
+           10 FILLER                     PIC X(1).                      00050916
+      *    *************************************************************00051015
+           10 TO001-TRAINEE-NAME.                                       00051115
+              49 TO001-TRAINEE-NAME-TEXT                                00051415
+                 PIC X(20).                                             00051515
+           10 FILLER                     PIC X(1).                      00051616
+      *    *************************************************************00051715
+           10 TO001-TRAINEE-LOCATION.                                   00051815
+              49 TO001-TRAINEE-LOCATION-TEXT                            00052115
+                 PIC X(15).                                             00052215
+           10 FILLER                     PIC X(1).                      00052316
+      *    *************************************************************00052415
+           10 TO001-TRAINEE-ONBOARD-STATUS                              00052515
+              PIC X(1).                                                 00052615
+           10 FILLER                      PIC    X(33).                 00053516
+       WORKING-STORAGE SECTION.                                         00053616
+       01 WS-G-FILE-STATUS.                                             00053719
+          05 WS-FILE-STATUS1 PIC X(02).                                 00053819
+             88 WFS1-SUCCESS VALUE '00'.                                00053919
+             88 WFS1-EOF     VALUE '10'.                                00054019
+       01  WSS-ERR-MSG.                                                 00055019
+           05 WS-ERR-MSG.                                               00060019
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.           00070019
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          00080019
+           05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.             00090019
+       01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.     00100019
+           88 WS-EOT              VALUE  +100.                          00110019
+           88 WS-SUCCESS          VALUE  +000.                          00120019
+       01 NULL-IND                PIC  S9(4) USAGE COMP.                00130019
+       01 NEW-TRAINEE-ID          PIC X(08).                            00131019
+       01 OLD-TRAINEE-ID          PIC X(08).                            00132019
+       01 WS-CHN PIC X(3) VALUE 'CHN'.                                  00133019
+       01 WS-DEL PIC X(3) VALUE 'DEL'.                                  00134019
+       01 WS-BLR PIC X(3) VALUE 'BLR'.                                  00135019
+       01 WS-MUM PIC X(3) VALUE 'MUM'.                                  00136019
+       01 WS-OTH PIC X(3) VALUE 'OTH'.                                  00137019
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00140010
+            EXEC SQL INCLUDE TRINDCL END-EXEC.                          00150001
+            EXEC SQL                                                    00190000
+            DECLARE CS-TB-TRAINEE CURSOR FOR                            00200001
+            SELECT TRAINEE_ID,                                          00210007
+            TRAINEE_NAME,                                               00230007
+            TRAINEE_LOCATION,                                           00240012
+            TRAINEE_ONBOARD_STATUS FROM TRAINEE                         00250007
+            END-EXEC.                                                   00260000
+        PROCEDURE DIVISION.                                             00270000
+        0000-MAIN-PARA.                                                 00280000
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  00290009
+                 1000-INITIALIZATION-PARA-EXIT                          00300009
+                 PERFORM 2000-PROCESS-PARA THRU                         00310000
+                 2000-PROCESS-PARA-EXIT                                 00320000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00330009
+                 9000-TERMINATION-PARA-EXIT.                            00340009
+        0000-MAIN-PARA-EXIT.                                            00350000
+                 EXIT.                                                  00360000
+        1000-INITIALIZATION-PARA.                                       00370009
+        1000-INITIALIZATION-PARA-EXIT.                                  00380009
+                 EXIT.                                                  00390000
+        2000-PROCESS-PARA.                                              00400000
+                 PERFORM 2100-OPEN-PARA THRU                            00410000
+                 2100-OPEN-PARA-EXIT                                    00420000
+                 PERFORM 2200-FETCH-PARA THRU                           00430000
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00440011
+                 PERFORM 3000-CLOSE-PARA THRU                           00450000
+                 3000-CLOSE-PARA-EXIT.                                  00460000
+        2000-PROCESS-PARA-EXIT.                                         00470000
+                 EXIT.                                                  00480000
+        2100-OPEN-PARA.                                                 00490000
+                 EXEC SQL OPEN CS-TB-TRAINEE END-EXEC.                  00500001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00510000
+                 EVALUATE TRUE                                          00520000
+                 WHEN WS-SUCCESS                                        00530000
+                 CONTINUE                                               00540010
+                 WHEN WS-EOT                                            00550000
+                 CONTINUE                                               00560010
+                 WHEN OTHER                                             00570000
+                 DISPLAY 'CURSOR NOT OPENED'                            00580000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00590000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00600020
+                 DISPLAY WS-ERR-MSG                                     00610000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00620009
+                 9000-TERMINATION-PARA-EXIT                             00630009
+                 END-EVALUATE.                                          00640010
+                 OPEN OUTPUT TO001-OUTPUT                               00641010
+                 EVALUATE TRUE                                          00642010
+                 WHEN WFS1-SUCCESS                                      00643010
+                 CONTINUE                                               00644010
+                 WHEN OTHER                                             00645010
+                 DISPLAY "OUTPUT FILE OPEN FAILED"                      00646010
+                 DISPLAY 'FILE STATUS' WS-FILE-STATUS1                  00647016
+                 PERFORM 9000-TERMINATION-PARA THRU                     00647110
+                 9000-TERMINATION-PARA-EXIT                             00647210
+            END-EVALUATE.                                               00648010
+        2100-OPEN-PARA-EXIT.                                            00650000
+                 EXIT.                                                  00660000
+        2200-FETCH-PARA.                                                00670000
+                 EXEC SQL FETCH CS-TB-TRAINEE INTO                      00680010
+                 :TRAINEE-ID,                                           00681013
+                 :TRAINEE-NAME,                                         00682013
+                 :TRAINEE-LOCATION:NULL-IND,                            00683013
+                 :TRAINEE-ONBOARD-STATUS                                00684013
+                 END-EXEC.                                              00730000
+                 MOVE SQLCODE TO WSS-SQLCODE                            00740000
+                 EVALUATE TRUE                                          00750000
+                 WHEN WS-SUCCESS                                        00760000
+                 PERFORM 2300-CALC-PARA THRU                            00770010
+                 2300-CALC-PARA-EXIT                                    00780010
+                 WHEN WS-EOT                                            00790000
+                 CONTINUE                                               00800010
+                 WHEN OTHER                                             00810000
+                 DISPLAY 'CURSOR NOT FETCHED'                           00820000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00830000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00840020
+                 DISPLAY WS-ERR-MSG                                     00850000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00860010
+                 9000-TERMINATION-PARA-EXIT                             00870010
+                 END-EVALUATE.                                          00880000
+         2200-FETCH-PARA-EXIT.                                          00890000
+                 EXIT.                                                  00900000
+         3000-CLOSE-PARA.                                               00910000
+                 EXEC SQL CLOSE CS-TB-TRAINEE END-EXEC.                 00920001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00930000
+                 EVALUATE TRUE                                          00940000
+                 WHEN WS-SUCCESS                                        00950000
+                 CONTINUE                                               00960011
+                 WHEN OTHER                                             00970000
+                 DISPLAY 'CURSOR NOT CLOSED'                            00980000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00990000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01000020
+                 DISPLAY WS-ERR-MSG                                     01010000
+                 PERFORM 9000-TERMINATION-PARA THRU                     01020010
+                 9000-TERMINATION-PARA-EXIT                             01030010
+                 END-EVALUATE.                                          01040000
+                 CLOSE TO001-OUTPUT                                     01041016
+                 EVALUATE TRUE                                          01042011
+                 WHEN WFS1-SUCCESS                                      01043011
+                 CONTINUE                                               01044011
+                 WHEN OTHER                                             01045011
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01046011
+                 DISPLAY WS-FILE-STATUS1                                01047011
+               END-EVALUATE.                                            01048011
+         3000-CLOSE-PARA-EXIT.                                          01050000
+                 EXIT.                                                  01060000
+         2300-CALC-PARA.                                                01070010
+                 IF (NULL-IND = -1)                                     01080000
+                 CONTINUE                                               01090010
+                 ELSE                                                   01100000
+                 MOVE TRAINEE-ID-TEXT TO OLD-TRAINEE-ID                 01120010
+                 DISPLAY TRAINEE-LOCATION-TEXT                          01121026
+                 EVALUATE TRAINEE-LOCATION-TEXT                         01130010
+                 WHEN 'CHENNAI'                                         01140010
+                 STRING WS-CHN OLD-TRAINEE-ID                           01150016
+                 DELIMITED BY SIZE                                      01151016
+                 INTO NEW-TRAINEE-ID                                    01152016
+                 WHEN 'DELHI'                                           01160010
+                 STRING WS-DEL OLD-TRAINEE-ID                           01161016
+                 DELIMITED BY SIZE                                      01162016
+                 INTO NEW-TRAINEE-ID                                    01163016
+                 WHEN 'BANGLORE'                                        01180010
+                 STRING WS-BLR OLD-TRAINEE-ID                           01180116
+                 DELIMITED BY SIZE                                      01180216
+                 INTO NEW-TRAINEE-ID                                    01180316
+                 WHEN 'MUMBAI'                                          01200010
+                 STRING WS-MUM OLD-TRAINEE-ID                           01201016
+                 DELIMITED BY SIZE                                      01202016
+                 INTO NEW-TRAINEE-ID                                    01203016
+                 WHEN OTHER                                             01220010
+                 STRING WS-OTH OLD-TRAINEE-ID                           01221016
+                 DELIMITED BY SIZE                                      01222016
+                 INTO NEW-TRAINEE-ID                                    01223016
+                 END-EVALUATE                                           01240010
+                 DISPLAY NEW-TRAINEE-ID                                 01250021
+                 END-IF                                                 01320000
+                 PERFORM 2400-WRITE-PARA THRU                           01340010
+                 2400-WRITE-PARA-EXIT.                                  01350010
+         2300-CALC-PARA-EXIT.                                           01360010
+                 EXIT.                                                  01370000
+         2400-WRITE-PARA.                                               01380010
+                 MOVE NEW-TRAINEE-ID TO TO001-NEW-TRAINEE-ID            01390010
+                 MOVE TRAINEE-NAME-TEXT TO TO001-TRAINEE-NAME           01400010
+                 MOVE TRAINEE-LOCATION-TEXT TO TO001-TRAINEE-LOCATION   01410010
+                 MOVE TRAINEE-ONBOARD-STATUS TO                         01420010
+                         TO001-TRAINEE-ONBOARD-STATUS                   01430010
+                 WRITE TO001-OUTPUT-RECORD                              01440019
+                 MOVE SPACES TO TRAINEE-NAME-TEXT                       01450010
+                 MOVE SPACES TO TRAINEE-LOCATION-TEXT.                  01460018
+         2400-WRITE-PARA-EXIT.                                          01610010
+                 EXIT.                                                  01620000
+         9000-TERMINATION-PARA.                                         01630011
+                 STOP RUN.                                              01640000
+         9000-TERMINATION-PARA-EXIT.                                    01650011
+                 EXIT.                                                  01660000
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   01670000
+                 EXIT.                                                  01680000
+
+
+
+
+//*TRINDCL
+      ******************************************************************
+      * DCLGEN TABLE(TRAINEE)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(TRINDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TRAINEE TABLE
+           ( TRAINEE_ID                     VARCHAR(5) NOT NULL,
+             TRAINEE_NAME                   VARCHAR(20) NOT NULL,
+             TRAINEE_LOCATION               VARCHAR(15) NOT NULL,
+             TRAINEE_ONBOARD_STATUS         CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TRAINEE                            *
+      ******************************************************************
+       01  DCLTRAINEE.
+      *    *************************************************************
+           10 TRAINEE-ID.
+              49 TRAINEE-ID-LEN    PIC S9(4) USAGE COMP.
+              49 TRAINEE-ID-TEXT   PIC X(5).
+      *    *************************************************************
+           10 TRAINEE-NAME.
+              49 TRAINEE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-NAME-TEXT
+                 PIC X(20).
+      *    *************************************************************
+           10 TRAINEE-LOCATION.
+              49 TRAINEE-LOCATION-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-LOCATION-TEXT
+                 PIC X(15).
+      *    *************************************************************
+           10 TRAINEE-ONBOARD-STATUS
+              PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************
+
+
+
+//*RUNJCL
+//TCHN097A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//OUTTRNPS DD DSN=TEKUS01.MYDATA.DB2.CASE04.TRAINEE.PS,DISP=OLD
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CASE04C) PLAN(CASE04C) -                                  00140029
+      LIB('TCHN097.MYLIB.DB2.LOADLIB')                                  00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
+
+
+
+
+**********************************************************************************
+
+CASE STUDY 5
+**********************************************************************************
+
+//*CASE05C
+        IDENTIFICATION DIVISION.                                        00010001
+        PROGRAM-ID. CASE05C.                                            00020001
+        ENVIRONMENT DIVISION.                                           00030001
+        INPUT-OUTPUT SECTION.                                           00040001
+        FILE-CONTROL.                                                   00050001
+      **OUTPUT FILE                                                     00060001
+             SELECT TO001-OUTPUT ASSIGN TO OUTPS01                      00070002
+             ORGANIZATION IS SEQUENTIAL                                 00080001
+             ACCESS MODE IS SEQUENTIAL                                  00090001
+             FILE STATUS IS WS-FILE-STATUS1.                            00100001
+             SELECT TO002-OUTPUT ASSIGN TO OUTPS02                      00101002
+             ORGANIZATION IS SEQUENTIAL                                 00102002
+             ACCESS MODE IS SEQUENTIAL                                  00103002
+             FILE STATUS IS WS-FILE-STATUS2.                            00104002
+             SELECT TO003-OUTPUT ASSIGN TO OUTPS03                      00105002
+             ORGANIZATION IS SEQUENTIAL                                 00106002
+             ACCESS MODE IS SEQUENTIAL                                  00107002
+             FILE STATUS IS WS-FILE-STATUS3.                            00108002
+        DATA DIVISION.                                                  00110001
+        FILE SECTION.                                                   00120001
+        FD TO001-OUTPUT.                                                00130001
+        01 TO001-OUTPUT-RECORD.                                         00140001
+            05 TO001-CUST-ID          PIC  9(9).                        00150011
+            05 FILLER                 PIC  X(1).                        00160003
+            05 TO001-POL-NO           PIC  9(9).                        00170011
+            05 FILLER                 PIC  X(1).                        00180003
+            05 TO001-CUST-NAME        PIC  X(15).                       00190003
+            05 FILLER                 PIC  X(1).                        00200003
+            05 TO001-CUST-GENDER      PIC  X(1).                        00210003
+            05 FILLER                 PIC  X(1).                        00220003
+            05 TO001-ANNUAL-INCOME    PIC  9(6).9(2).                   00221013
+            05 FILLER                 PIC  X(1).                        00222003
+            05 TO001-STATE-NAME       PIC  X(15).                       00223005
+            05 FILLER                 PIC  X(1).                        00224003
+            05 TO001-POLICY-TERM      PIC  X(2).                        00225003
+            05 FILLER                 PIC  X(1).                        00226003
+            05 TO001-POLICY-PREMIEUM  PIC  9(4).9(2).                   00227013
+            05 FILLER                 PIC  X(1).                        00228003
+            05 TO001-POL-PREM-PAID    PIC  X(1).                        00229003
+            05 FILLER                 PIC  X(1).                        00229103
+            05 TO001-BONUS            PIC  9(6).9(2).                   00229213
+            05 FILLER                 PIC  X(14).                       00229314
+        FD TO002-OUTPUT.                                                00229403
+        01 TO002-OUTPUT-RECORD.                                         00229503
+            05 TO002-CUST-ID          PIC  9(9).                        00229611
+            05 FILLER                 PIC  X(1).                        00229703
+            05 TO002-POL-NO           PIC  9(9).                        00229811
+            05 FILLER                 PIC  X(1).                        00229903
+            05 TO002-CUST-NAME        PIC  X(15).                       00230003
+            05 FILLER                 PIC  X(1).                        00230103
+            05 TO002-CUST-GENDER      PIC  X(1).                        00230203
+            05 FILLER                 PIC  X(1).                        00230303
+            05 TO002-ANNUAL-INCOME    PIC  9(6).9(2).                   00230415
+            05 FILLER                 PIC  X(1).                        00230503
+            05 TO002-STATE-NAME       PIC  X(15).                       00230605
+            05 FILLER                 PIC  X(1).                        00230703
+            05 TO002-POLICY-TERM      PIC  X(2).                        00230803
+            05 FILLER                 PIC  X(1).                        00230903
+            05 TO002-POLICY-PREMIEUM  PIC  9(4).9(2).                   00231015
+            05 FILLER                 PIC  X(1).                        00231103
+            05 TO002-POL-PREM-PAID    PIC  X(1).                        00231203
+            05 FILLER                 PIC  X(1).                        00231303
+            05 TO002-BONUS            PIC  9(6).9(2).                   00231415
+            05 FILLER                 PIC  X(14).                       00231515
+        FD TO003-OUTPUT.                                                00231603
+        01 TO003-OUTPUT-RECORD.                                         00231703
+            05 TO003-CUST-ID          PIC  9(9).                        00231811
+            05 FILLER                 PIC  X(1).                        00231903
+            05 TO003-POL-NO           PIC  9(9).                        00232011
+            05 FILLER                 PIC  X(1).                        00232103
+            05 TO003-CUST-NAME        PIC  X(15).                       00232203
+            05 FILLER                 PIC  X(1).                        00232303
+            05 TO003-CUST-GENDER      PIC  X(1).                        00232403
+            05 FILLER                 PIC  X(1).                        00232503
+            05 TO003-ANNUAL-INCOME    PIC  9(6).9(2).                   00232615
+            05 FILLER                 PIC  X(1).                        00232703
+            05 TO003-STATE-NAME       PIC  X(15).                       00232805
+            05 FILLER                 PIC  X(1).                        00232903
+            05 TO003-POLICY-TERM      PIC  X(2).                        00233003
+            05 FILLER                 PIC  X(1).                        00233103
+            05 TO003-POLICY-PREMIEUM  PIC  9(4).9(2).                   00233215
+            05 FILLER                 PIC  X(1).                        00233303
+            05 TO003-POL-PREM-PAID    PIC  X(1).                        00233403
+            05 FILLER                 PIC  X(1).                        00233503
+            05 TO003-BONUS            PIC  9(6).9(2).                   00233615
+            05 FILLER                 PIC  X(14).                       00233715
+        WORKING-STORAGE SECTION.                                        00234001
+             EXEC SQL INCLUDE SQLCA END-EXEC.                           00240001
+             EXEC SQL INCLUDE POLDTDCL END-EXEC.                        00250003
+             EXEC SQL DECLARE CS-TB-POL1 CURSOR FOR                     00250104
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00250204
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00250304
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00250404
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '05'          00250504
+             END-EXEC.                                                  00250604
+             EXEC SQL DECLARE CS-TB-POL2 CURSOR FOR                     00250704
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00250804
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00250904
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00251004
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '10'          00251104
+             END-EXEC.                                                  00251204
+             EXEC SQL DECLARE CS-TB-POL3 CURSOR FOR                     00251304
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00251404
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00251504
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00251604
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '15'          00251704
+             END-EXEC.                                                  00251804
+        01 WSS-ERR-MSG.                                                 00251904
+            05 WS-ERR-MSG.                                              00252004
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE +720.          00253004
+              10 WS-ERR-TEXT       PIC  X(72) OCCURS 10 TIMES           00254004
+                                   INDEXED BY ERROR-INDEX.              00255004
+            05 WS-ERR-LRECL        PIC  S9(9) COMP VALUE +72.           00256004
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00257021
+            88 WS-EOT              VALUE  +100.                         00258021
+            88 WS-SUCCESS          VALUE  +000.                         00259021
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00259704
+        01 WS-G-FILE-STATUS.                                            00260001
+             05 WS-FILE-STATUS1  PIC    X(2).                           00270003
+                88 WFS1-SUCCESS  VALUE  '00'.                           00280001
+                88 WFS1-EOF      VALUE  '10'.                           00290001
+             05 WS-FILE-STATUS2  PIC    X(2).                           00292003
+                88 WFS2-SUCCESS  VALUE  '00'.                           00293003
+                88 WFS2-EOF      VALUE  '10'.                           00294003
+             05 WS-FILE-STATUS3  PIC    X(2).                           00295003
+                88 WFS3-SUCCESS  VALUE  '00'.                           00296003
+                88 WFS3-EOF      VALUE  '10'.                           00297003
+        PROCEDURE DIVISION.                                             00300001
+        0000-MAIN-PARA.                                                 00310001
+                 PERFORM 1000-INITIALIZATION-PARA                       00320001
+                 THRU 1000-INITIALIZATION-PARA-EXIT                     00330001
+                 PERFORM 2000-PROCESS-PARA THRU                         00340001
+                 2000-PROCESS-PARA-EXIT                                 00350001
+                 PERFORM 9000-TERMINATION-PARA THRU                     00360001
+                 9000-TERMINATION-PARA-EXIT.                            00370001
+        0000-MAIN-PARA-EXIT.                                            00380001
+                 EXIT.                                                  00390001
+        1000-INITIALIZATION-PARA.                                       00400001
+                 DISPLAY 'INITIALIZATION-PARA'.                         00410001
+        1000-INITIALIZATION-PARA-EXIT.                                  00420001
+                 EXIT.                                                  00430001
+        2000-PROCESS-PARA.                                              00440001
+                 PERFORM 2100-OPEN-PARA THRU                            00450004
+                 2100-OPEN-PARA-EXIT                                    00460004
+                 PERFORM 2200-FETCH-PARA THRU                           00470004
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00482017
+                 MOVE +000 TO WSS-SQLCODE                               00482136
+                 PERFORM 2300-FETCH-PARA THRU                           00483036
+                 2300-FETCH-PARA-EXIT UNTIL WS-EOT                      00484036
+                 MOVE +000 TO WSS-SQLCODE                               00485040
+                 PERFORM 2400-FETCH-PARA THRU                           00486040
+                 2400-FETCH-PARA-EXIT UNTIL WS-EOT                      00487040
+                 PERFORM 3000-CLOSE-PARA THRU                           00490004
+                 3000-CLOSE-PARA-EXIT.                                  00500004
+        2000-PROCESS-PARA-EXIT.                                         00510001
+                 EXIT.                                                  00520001
+        2100-OPEN-PARA.                                                 00530004
+                 EXEC SQL OPEN CS-TB-POL1 END-EXEC.                     00531004
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00532004
+                 IF WS-SUCCESS                                          00533004
+                 DISPLAY 'CURSOR OPEN1 SUCCESS' WSS-SQLCODE             00534004
+                  OPEN OUTPUT TO001-OUTPUT                              00540001
+                  IF WFS1-SUCCESS                                       00550004
+                   DISPLAY 'OUTPUT FILE1 OPEN SUCCESS'                  00590004
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1                00600001
+                  ELSE                                                  00601004
+                   DISPLAY 'OUTPUT FILE1 OPEN FAILED'                   00602004
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1                00603004
+                  END-IF                                                00610004
+                 ELSE                                                   00610204
+                   DISPLAY 'CURSOR OPEN1 UNSUCCESS' WSS-SQLCODE         00610304
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00610404
+                   WS-ERR-LRECL                                         00610504
+                   DISPLAY WS-ERR-MSG                                   00610604
+                   PERFORM 9000-TERMINATION-PARA THRU                   00610704
+                   9000-TERMINATION-PARA-EXIT                           00610804
+                   END-IF                                               00610904
+                 EXEC SQL OPEN CS-TB-POL2 END-EXEC.                     00611004
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00611104
+                 IF WS-SUCCESS                                          00611204
+                 DISPLAY 'CURSOR OPEN2 SUCCESS' WSS-SQLCODE             00611304
+                  OPEN OUTPUT TO002-OUTPUT                              00611404
+                  IF WFS2-SUCCESS                                       00611504
+                   DISPLAY 'OUTPUT FILE2 OPEN SUCCESS'                  00611604
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS2                00611704
+                  ELSE                                                  00611804
+                   DISPLAY 'OUTPUT FILE2 OPEN FAILED'                   00611904
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS2                00612004
+                  END-IF                                                00613004
+                 ELSE                                                   00614004
+                   DISPLAY 'CURSOR OPEN2 UNSUCCESS' WSS-SQLCODE         00615004
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00616004
+                   WS-ERR-LRECL                                         00617004
+                   DISPLAY WS-ERR-MSG                                   00618004
+                   PERFORM 9000-TERMINATION-PARA THRU                   00618104
+                   9000-TERMINATION-PARA-EXIT                           00618204
+                   END-IF                                               00618304
+                 EXEC SQL OPEN CS-TB-POL3 END-EXEC.                     00618404
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00618504
+                 IF WS-SUCCESS                                          00618604
+                 DISPLAY 'CURSOR OPEN3 SUCCESS' WSS-SQLCODE             00618704
+                  OPEN OUTPUT TO003-OUTPUT                              00619004
+                  IF WFS3-SUCCESS                                       00619104
+                   DISPLAY 'OUTPUT FILE3 OPEN SUCCESS'                  00619204
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS3                00619304
+                  ELSE                                                  00619404
+                   DISPLAY 'OUTPUT FILE3 OPEN FAILED'                   00619504
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS3                00619604
+                  END-IF                                                00619704
+                 ELSE                                                   00619804
+                   DISPLAY 'CURSOR OPEN3 UNSUCCESS' WSS-SQLCODE         00619904
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00620004
+                   WS-ERR-LRECL                                         00620104
+                   DISPLAY WS-ERR-MSG                                   00620204
+                   PERFORM 9000-TERMINATION-PARA THRU                   00620304
+                   9000-TERMINATION-PARA-EXIT                           00620404
+                   END-IF.                                              00620504
+        2100-OPEN-PARA-EXIT.                                            00622004
+                  EXIT.                                                 00630001
+        2200-FETCH-PARA.                                                00640004
+                  EXEC SQL FETCH CS-TB-POL1 INTO :CUST-ID,              00650004
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00660007
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00670007
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00680004
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00690004
+                  END-EXEC.                                             00700004
+                  MOVE SQLCODE TO WSS-SQLCODE                           00710004
+                  EVALUATE TRUE                                         00720029
+                  WHEN WS-SUCCESS                                       00721029
+                  CONTINUE                                              00722030
+                  DISPLAY 'CURSOR1 FETCHED'                             00730104
+                  PERFORM 2500-MOVE-PARA THRU                           00731017
+                  2500-MOVE-PARA-EXIT                                   00732017
+                  WHEN WS-EOT                                           00733029
+                  CONTINUE                                              00734029
+                  WHEN OTHER                                            00735029
+                  DISPLAY 'CURSOR1 NOT FETCHED'                         00736004
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00737004
+                  CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG                00738017
+                  WS-ERR-LRECL                                          00739017
+                  DISPLAY WS-ERR-MSG                                    00739117
+                  PERFORM 9000-TERMINATION-PARA THRU                    00739217
+                  9000-TERMINATION-PARA-EXIT                            00739317
+                  END-EVALUATE.                                         00739429
+        2200-FETCH-PARA-EXIT.                                           00739717
+                   EXIT.                                                00739817
+        2300-FETCH-PARA.                                                00739917
+                  DISPLAY 'FETCH2'.                                     00740039
+                  EXEC SQL FETCH CS-TB-POL2 INTO :CUST-ID,              00740104
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00740207
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00740307
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00740404
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00740504
+                  END-EXEC.                                             00740604
+                  MOVE SQLCODE TO WSS-SQLCODE                           00740735
+                  EVALUATE TRUE                                         00740829
+                  WHEN WS-SUCCESS                                       00740935
+                  DISPLAY 'CURSOR2 FETCHED'                             00741004
+                  PERFORM 2600-MOVE-PARA THRU                           00741117
+                  2600-MOVE-PARA-EXIT                                   00741217
+                  WHEN WS-EOT                                           00741335
+                  CONTINUE                                              00741429
+                  WHEN OTHER                                            00741729
+                  DISPLAY 'CURSOR2 NOT FETCHED'                         00741804
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00741904
+                  CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG                00742023
+                  WS-ERR-LRECL                                          00742123
+                  DISPLAY WS-ERR-MSG                                    00742223
+                  PERFORM 9000-TERMINATION-PARA THRU                    00742323
+                  9000-TERMINATION-PARA-EXIT                            00742423
+                  END-EVALUATE.                                         00742529
+        2300-FETCH-PARA-EXIT.                                           00742617
+                   EXIT.                                                00742717
+        2400-FETCH-PARA.                                                00742817
+                  DISPLAY 'FETCH3'.                                     00742939
+                  EXEC SQL FETCH CS-TB-POL3 INTO :CUST-ID,              00743004
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00743107
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00743207
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00743304
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00743404
+                  END-EXEC.                                             00743504
+                  MOVE SQLCODE TO WSS-SQLCODE                           00743623
+                  IF WS-SUCCESS                                         00743724
+                  DISPLAY 'CURSOR3 FETCHED'                             00743804
+                  PERFORM 2700-MOVE-PARA THRU                           00743917
+                  2700-MOVE-PARA-EXIT                                   00744017
+                  ELSE                                                  00744223
+                  DISPLAY 'CURSOR3 NOT FETCHED'                         00744304
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00744404
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00744504
+                   WS-ERR-LRECL                                         00744604
+                   DISPLAY WS-ERR-MSG                                   00744704
+                   PERFORM 9000-TERMINATION-PARA THRU                   00744804
+                   9000-TERMINATION-PARA-EXIT                           00744904
+                   END-IF.                                              00745023
+        2400-FETCH-PARA-EXIT.                                           00746017
+                  EXIT.                                                 00750001
+        3000-CLOSE-PARA.                                                00751005
+                 EXEC SQL CLOSE CS-TB-POL1 END-EXEC.                    00752005
+                 MOVE SQLCODE TO WSS-SQLCODE                            00753005
+                 IF WS-SUCCESS                                          00754016
+                 DISPLAY 'CURSOR1 CLOSED' WSS-SQLCODE                   00756016
+                 CLOSE TO001-OUTPUT                                     00757016
+                 IF WFS1-SUCCESS                                        00758016
+                 DISPLAY 'CLOSE FILE SUCCESS' WS-FILE-STATUS1           00758116
+                 ELSE                                                   00758216
+                 DISPLAY 'CLOSE FILE UNSUCCESS' WS-FILE-STATUS1         00758316
+                 END-IF                                                 00758416
+                 ELSE                                                   00758516
+                 DISPLAY 'CURSOR1 NOT CLOSED'                           00759005
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00759105
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00759205
+                 DISPLAY WS-ERR-MSG                                     00759305
+                 PERFORM 9000-TERMINATION-PARA THRU                     00759405
+                 9000-TERMINATION-PARA-EXIT                             00759505
+                 END-IF                                                 00759616
+                 EXEC SQL CLOSE CS-TB-POL2 END-EXEC.                    00759705
+                 MOVE SQLCODE TO WSS-SQLCODE                            00759805
+                 IF WS-SUCCESS                                          00759916
+                 DISPLAY 'CURSOR2 CLOSED' WSS-SQLCODE                   00760016
+                 CLOSE TO002-OUTPUT                                     00760116
+                 IF WFS2-SUCCESS                                        00760216
+                 DISPLAY 'CLOSE2 FILE SUCCESS' WS-FILE-STATUS2          00760316
+                 ELSE                                                   00760416
+                 DISPLAY 'CLOSE2 FILE UNSUCCESS' WS-FILE-STATUS2        00760516
+                 END-IF                                                 00760616
+                 ELSE                                                   00760716
+                 DISPLAY 'CURSOR2 NOT CLOSED'                           00760816
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00760916
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00761016
+                 DISPLAY WS-ERR-MSG                                     00761116
+                 PERFORM 9000-TERMINATION-PARA THRU                     00761216
+                 9000-TERMINATION-PARA-EXIT                             00761316
+                 END-IF                                                 00761416
+                 EXEC SQL CLOSE CS-TB-POL3 END-EXEC.                    00762705
+                 MOVE SQLCODE TO WSS-SQLCODE                            00762805
+                 IF WS-SUCCESS                                          00762916
+                 DISPLAY 'CURSOR3 CLOSED' WSS-SQLCODE                   00763016
+                 CLOSE TO003-OUTPUT                                     00763116
+                 IF WFS3-SUCCESS                                        00763216
+                 DISPLAY 'CLOSE3 FILE SUCCESS' WS-FILE-STATUS3          00763316
+                 ELSE                                                   00763416
+                 DISPLAY 'CLOSE3 FILE UNSUCCESS' WS-FILE-STATUS3        00763516
+                 END-IF                                                 00763616
+                 ELSE                                                   00763716
+                 DISPLAY 'CURSOR3 NOT CLOSED'                           00763816
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00763916
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00764016
+                 DISPLAY WS-ERR-MSG                                     00764116
+                 PERFORM 9000-TERMINATION-PARA THRU                     00764216
+                 9000-TERMINATION-PARA-EXIT                             00764316
+                 END-IF.                                                00764416
+        3000-CLOSE-PARA-EXIT.                                           00765205
+                 EXIT.                                                  00765305
+        2500-MOVE-PARA.                                                 00765417
+                 MOVE CUST-ID TO TO001-CUST-ID                          00765505
+                 MOVE POL-NO TO TO001-POL-NO                            00765605
+                 MOVE CUST-NAME-TEXT TO TO001-CUST-NAME                 00765705
+                 MOVE CUST-GENDER TO TO001-CUST-GENDER                  00765805
+                 MOVE CUST-ANNUAL-INCOME TO TO001-ANNUAL-INCOME         00765905
+                 MOVE CUST-STATE-NAME-TEXT TO TO001-STATE-NAME          00766005
+                 MOVE POLICY-TERM TO TO001-POLICY-TERM                  00766106
+                 MOVE POLICY-PREMIEUM TO TO001-POLICY-PREMIEUM          00766206
+                 MOVE POLICY-PREMIEUM-PAID TO TO001-POL-PREM-PAID       00766306
+                 MOVE BONUS TO TO001-BONUS                              00766406
+                 WRITE TO001-OUTPUT-RECORD.                             00766506
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00766610
+        2500-MOVE-PARA-EXIT.                                            00766717
+                 EXIT.                                                  00766806
+        2600-MOVE-PARA.                                                 00766917
+                 MOVE CUST-ID TO TO002-CUST-ID                          00767006
+                 MOVE POL-NO TO TO002-POL-NO                            00767106
+                 MOVE CUST-NAME-TEXT TO TO002-CUST-NAME                 00767206
+                 MOVE CUST-GENDER TO TO002-CUST-GENDER                  00767306
+                 MOVE CUST-ANNUAL-INCOME TO TO002-ANNUAL-INCOME         00767406
+                 MOVE CUST-STATE-NAME-TEXT TO TO002-STATE-NAME          00767506
+                 MOVE POLICY-TERM TO TO002-POLICY-TERM                  00767606
+                 MOVE POLICY-PREMIEUM TO TO002-POLICY-PREMIEUM          00767706
+                 MOVE POLICY-PREMIEUM-PAID TO TO002-POL-PREM-PAID       00767806
+                 MOVE BONUS TO TO002-BONUS                              00767906
+                 WRITE TO002-OUTPUT-RECORD.                             00768006
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00768110
+        2600-MOVE-PARA-EXIT.                                            00768217
+                 EXIT.                                                  00768306
+        2700-MOVE-PARA.                                                 00768417
+                 MOVE CUST-ID TO TO003-CUST-ID                          00768506
+                 MOVE POL-NO TO TO003-POL-NO                            00768606
+                 MOVE CUST-NAME-TEXT TO TO003-CUST-NAME                 00768706
+                 MOVE CUST-GENDER TO TO003-CUST-GENDER                  00768806
+                 MOVE CUST-ANNUAL-INCOME TO TO003-ANNUAL-INCOME         00768906
+                 MOVE CUST-STATE-NAME-TEXT TO TO003-STATE-NAME          00769006
+                 MOVE POLICY-TERM TO TO003-POLICY-TERM                  00769106
+                 MOVE POLICY-PREMIEUM TO TO003-POLICY-PREMIEUM          00769206
+                 MOVE POLICY-PREMIEUM-PAID TO TO003-POL-PREM-PAID       00769306
+                 MOVE BONUS TO TO003-BONUS                              00769406
+                 WRITE TO003-OUTPUT-RECORD.                             00769506
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00769610
+        2700-MOVE-PARA-EXIT.                                            00769717
+                 EXIT.                                                  00769806
+        9000-TERMINATION-PARA.                                          00769901
+                 STOP RUN.                                              00770005
+        9000-TERMINATION-PARA-EXIT.                                     00780001
+                 EXIT.                                                  00790005
+
+
+
+//*POLDTDCL
+
+      ******************************************************************
+      * DCLGEN TABLE(TCHN097.POLICY_DETAIL)                            *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(POLDTDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TCHN097.POLICY_DETAIL TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             POL_NO                         INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_GENDER                    CHAR(1) NOT NULL,
+             CUST_ANNUAL_INCOME             DECIMAL(8, 2) NOT NULL,
+             CUST_STATE_NAME                VARCHAR(15),
+             POLICY_TERM                    CHAR(2) NOT NULL,
+             POLICY_PREMIEUM                DECIMAL(6, 2) NOT NULL,
+             POLICY_PREMIEUM_PAID           CHAR(1) NOT NULL,
+             BONUS                          DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TCHN097.POLICY_DETAIL              *
+      ******************************************************************
+       01  DCLPOLICY-DETAIL.
+           10 CUST-ID              PIC S9(9) USAGE COMP.
+           10 POL-NO               PIC S9(9) USAGE COMP.
+           10 CUST-NAME.
+              49 CUST-NAME-LEN     PIC S9(4) USAGE COMP.
+              49 CUST-NAME-TEXT    PIC X(15).
+           10 CUST-GENDER          PIC X(1).
+           10 CUST-ANNUAL-INCOME   PIC S9(6)V9(2) USAGE COMP-3.
+           10 CUST-STATE-NAME.
+              49 CUST-STATE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 CUST-STATE-NAME-TEXT
+                 PIC X(15).
+           10 POLICY-TERM          PIC X(2).
+           10 POLICY-PREMIEUM      PIC S9(4)V9(2) USAGE COMP-3.
+           10 POLICY-PREMIEUM-PAID
+              PIC X(1).
+           10 BONUS                PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *
+      ******************************************************************
+
+
+
+//*RUNJCL
+
+//TCHN097A JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),        00001029
+//             REGION=0M                                                00001128
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20                                00040001
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD                             00050027
+//SYSTSPRT DD SYSOUT=*                                                  00080001
+//SYSPRINT DD SYSOUT=*                                                  00090001
+//SYSUDUMP DD SYSOUT=*                                                  00100001
+//SYSOUT   DD SYSOUT=*                                                  00110001
+//OUTPS01  DD DSN=TCHN097.DB2.CASE05.POLICY05.PS,DISP=OLD
+//OUTPS02  DD DSN=TCHN097.DB2.CASE05.POLICY10.PS,DISP=OLD
+//OUTPS03  DD DSN=TCHN097.DB2.CASE05.POLICY15.PS,DISP=OLD
+//SYSTSIN  DD *                                                         00120001
+ DSN SYSTEM(DSN1)                                                       00130001
+ RUN  PROGRAM(CASE05C) PLAN(CASE05C) -                                  00140029
+      LIB('TCHN097.MYLIB.DB2.LOADLIB')                                  00150029
+ END                                                                    00160001
+/*                                                                      00170001
+//SYSIN DD DUMMY                                                        00180001
+
+
+
+
+
+
